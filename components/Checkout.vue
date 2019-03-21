@@ -112,14 +112,13 @@ export default {
     },
     async upsertOrder () {
       console.log('begin upsertOrder')
-      // this should go in local config
-      let url = 'http://localhost:8080/api/ext/vsf-klarna-checkout/create' // should get from config
-      let apiUrl = store.getters['klarna-checkout/create']
+      let url = config.vsfapi.endpoints.create
+      let apiUrl = config.klarna.endpoints.orders
 
       if (this.getOrderId()) {
         console.log('found order id in upsertorder! getOrderId() = ', this.getOrderId())
-        apiUrl = store.getters['klarna-checkout/update'] + this.createdOrder.id
-        url = 'http://localhost:8080/api/ext/vsf-klarna-checkout/update' // should get from config
+        let url = config.vsfapi.endpoints.update
+        apiUrl += this.createdOrder.id
       }
       const body = {
         order: this.order,
@@ -148,9 +147,8 @@ export default {
       }, 1)
     },
     async retrieveOrder () {
-      const apiUrl = store.getters['klarna-checkout/retrieve'] + this.createdOrder.id
-      const url =
-        'http://localhost:8080/api/ext/vsf-klarna-checkout/retrieve' // should get from config
+      const apiUrl = config.klarna.endpoints.orders + this.createdOrder.id
+      let url = config.vsfapi.endpoints.retrieve
 
       const body = {klarnaApiUrl: apiUrl}
       await fetch(url, {

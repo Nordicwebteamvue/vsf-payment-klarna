@@ -17,27 +17,15 @@
       "password": "<password>"
     },
     "apiSecret": "test",
-    "endpointLocation": "eu",
-    "test": true,
-    "endpoint": {
-      "eu": { "live": "live_url", "test": "test_url },
-      "na": { "live": "live_url", "test": "test_url" }
+    "endpoints": {
+      "orders": "https://api.playground.klarna.com/checkout/v3/orders"
     }
   },
-  "api": {
-    "endpointLocation": "eu",
-    "test": false,
-    "endpoint": {
-      "eu": { 
-        "live": "live_url", 
-        "test": "test_url", 
-        "local": "https://api:port/api/ext/vsfkco" 
-        },
-      "na": { 
-        "live": "live_url", 
-        "test": "test_url", 
-        "local": "https://api:port/api/ext/vsfkco" 
-        }
+  "vsfapi": {
+    "endpoints": {
+      "create": "http://localhost:8080/api/ext/vsf-klarna-checkout/create",
+      "update": "http://localhost:8080/api/ext/vsf-klarna-checkout/update",
+      "retrieve": "http://localhost:8080/api/ext/vsf-klarna-checkout/retrieve"
     }
   }
 ```
