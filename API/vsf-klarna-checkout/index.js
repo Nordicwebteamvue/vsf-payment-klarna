@@ -97,5 +97,32 @@ module.exports = ({ config, db }) => {
     })
   })
 
+  api.post('/push', (req, res) => {
+    if (!req.query.checkout_uri) {
+      console.log(req)
+      // send response to appropriate error handler for logging
+      // ...
+
+      apiStatus(res, 'Bad Request', 400)
+    }
+    const orderId = req.query.checkout_uri
+    console.log('order id: ', orderId)
+
+    /*
+      send the order id to whatever integration we're running
+      so that it can confirm the order with Klarna, i.e:
+
+      var gateway = ecommerceRestClient.connect({
+        auth: <auth>
+      })
+
+      gateway.transaction.order({
+        order_id: orderId
+      })
+    */
+
+   apiStatus(res)
+  })
+
   return api
 }
