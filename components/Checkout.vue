@@ -10,6 +10,9 @@
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import config from 'config'
 import store from '@vue-storefront/store'
+import {post, getScriptTagsFromSnippet, callApi} from './helpers'
+
+const storageTarget = '@vsf/klarna_order_id'
 
 export default {
   name: 'KlarnaCheckout',
@@ -44,7 +47,6 @@ export default {
     // this.sendOrderToApi()
   },
   beforeMount () {
-    // Uncomment this when communications with klarna api is ready
     this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder())
   },
   computed: {
@@ -92,8 +94,8 @@ export default {
     },
     configureLocaleAndMerchant () {
       const checkoutOrder = {
-        purchase_country: this.storeView.i18n.defaultCountry, // this.payment.country,
-        purchase_currency: this.storeView.i18n.currencyCode, // this.getCountryName(),
+        purchase_country: this.storeView.i18n.defaultCountry,
+        purchase_currency: this.storeView.i18n.currencyCode,
         locale: this.storeView.i18n.defaultLocale,
         merchant_urls: {
           id: config.klarna.checkout.merchant.id,
@@ -101,22 +103,20 @@ export default {
           checkout: config.klarna.checkout.merchant.checkoutUri,
           confirmation: config.klarna.checkout.merchant.confirmationUri,
           push: config.klarna.checkout.merchant.pushUri,
-          validation: 'https://www.estore.com/api/validation', // set below in config
-          shipping_option_update: 'https://www.estore.com/api/shipment',
-          address_update: 'https://www.estore.com/api/address',
-          notification: 'https://www.estore.com/api/pending',
-          country_change: 'https://www.estore.com/api/country'
+          validation: 'https://www.estore.com/api/validation', // TODO: Get from config
+          shipping_option_update: 'https://www.estore.com/api/shipment', // TODO: Get from config
+          address_update: 'https://www.estore.com/api/address', // TODO: Get from config
+          notification: 'https://www.estore.com/api/pending', // TODO: Get from config
+          country_change: 'https://www.estore.com/api/country' // TODO: Get from config
         }
       }
       this.order = { ...this.order, ...checkoutOrder }
     },
     async upsertOrder () {
-      console.log('begin upsertOrder')
       let url = config.vsfapi.endpoints.create
       let apiUrl = config.klarna.endpoints.orders
 
       if (this.getOrderId()) {
-        console.log('found order id in upsertorder! getOrderId() = ', this.getOrderId())
         let url = config.vsfapi.endpoints.update
         apiUrl += this.createdOrder.id
       }
@@ -125,20 +125,13 @@ export default {
         klarnaApiUrl: apiUrl,
         userAgent: navigator.userAgent
       }
-      console.log('Sending to vsf api')
       this.loading = true
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-      const { result } = await res.json()
-      const dummy = document.createElement('div')
-      dummy.innerHTML = result.snippet
-      const scriptsTags = dummy.querySelectorAll('script')
+      const { result } = await post(url, body)
+      const scriptsTags = getScriptTagsFromSnippet(result.snippet)
       this.snippet = result.snippet
       setTimeout(() => {
         Array.from(scriptsTags).forEach(tag => {
+          // TODO: Make this work with <script> tag insertion
           (() => {eval(tag.text)}).call(window) // eslint-disable-line
           this.$refs.scripts.appendChild(tag)
         })
@@ -148,55 +141,35 @@ export default {
     },
     async retrieveOrder () {
       const apiUrl = config.klarna.endpoints.orders + this.createdOrder.id
-      let url = config.vsfapi.endpoints.retrieve
+      const url = config.vsfapi.endpoints.retrieve
 
-      const body = {klarnaApiUrl: apiUrl}
-      await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-        .then(res => res.json())
-        .then(res => { this.snippet = res.result.snippet; return res })
-        .catch(error => console.error('Error:', error))
+      const { result } = await post(url, {klarnaApiUrl: apiUrl})
+      this.snippet = result.snippet
+      return snippet
     },
     async configureUpdateOrder () {
-      console.log('trying to update order...')
       if (!this.createdOrder.id) {
-        console.log('no order to update!')
         return
       }
-      console.log('order id found!')
       await this.suspendCheckout()
       this.order.cart.items = {}
       this.addCartItemsToOrder()
       await this.upsertOrder()
       await this.resumeCheckout()
     },
-    callApi (callback) {
-      return new Promise((resolve, reject) => {
-        window._klarnaCheckout((api) => {
-          callback(api)
-          resolve()
-        })
-      })
-    },
     suspendCheckout () {
-      return this.callApi(api => api.suspend())
+      return callApi(api => api.suspend())
     },
     resumeCheckout () {
-      return this.callApi(api => api.resume())
+      return callApi(api => api.resume())
     },
     saveOrderIdToLocalStorage () {
-      // if (this.createdOrder.id) {
-      //   localStorage.setItem('@vsf/klarna_order_id', this.createdOrder.id)
-      // }
       this.createdOrder.id
         ? localStorage.setItem('@vsf/klarna_order_id', this.createdOrder.id)
-        : localStorage.setItem('@vsf/klarna_order_id', '')
+        : localStorage.removeItem()
     },
     getOrderId () {
-      return this.createdOrder.id || localStorage.getItem('@vsf/klarna_order_id') //
+      return this.createdOrder.id || localStorage.getItem('@vsf/klarna_order_id')
     },
     saveSnippet () {
       if (!this.snippet) {

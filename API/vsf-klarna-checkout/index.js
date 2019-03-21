@@ -121,7 +121,7 @@ module.exports = ({ config, db }) => {
       })
     */
 
-   apiStatus(res)
+    apiStatus(res)
   })
 
   return api

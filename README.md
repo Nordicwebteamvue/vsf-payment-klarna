@@ -1,7 +1,6 @@
 # vsf-payment-klarna
 
 ```
-// app config
 "klarna": {
   "checkout": {
     "merchant": {
