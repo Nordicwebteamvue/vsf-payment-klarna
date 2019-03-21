@@ -11,6 +11,14 @@ import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import config from 'config'
 import store from '@vue-storefront/store'
 
+const storageTarget = '@vsf/klarna_order_id'
+
+const post = (url, body) => fetch(url, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(body)
+}).then(res => res.json())
+
 export default {
   name: 'KlarnaCheckout',
   data () {
@@ -44,7 +52,6 @@ export default {
     // this.sendOrderToApi()
   },
   beforeMount () {
-    // Uncomment this when communications with klarna api is ready
     this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder())
   },
   computed: {
@@ -111,35 +118,27 @@ export default {
       this.order = { ...this.order, ...checkoutOrder }
     },
     async upsertOrder () {
-      console.log('begin upsertOrder')
-      // this should go in local config
-      let url = 'http://localhost:8080/api/ext/vsf-klarna-checkout/create' // should get from config
+      let url = 'http://localhost:8080/api/ext/vsf-klarna-checkout/create' // TODO: Get from config
       let apiUrl = store.getters['klarna-checkout/create']
 
       if (this.getOrderId()) {
-        console.log('found order id in upsertorder! getOrderId() = ', this.getOrderId())
         apiUrl = store.getters['klarna-checkout/update'] + this.createdOrder.id
-        url = 'http://localhost:8080/api/ext/vsf-klarna-checkout/update' // should get from config
+        url = 'http://localhost:8080/api/ext/vsf-klarna-checkout/update' // TODO: Get from config
       }
       const body = {
         order: this.order,
         klarnaApiUrl: apiUrl,
         userAgent: navigator.userAgent
       }
-      console.log('Sending to vsf api')
       this.loading = true
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-      const { result } = await res.json()
+      const { result } = await post(url, body)
       const dummy = document.createElement('div')
       dummy.innerHTML = result.snippet
       const scriptsTags = dummy.querySelectorAll('script')
       this.snippet = result.snippet
       setTimeout(() => {
         Array.from(scriptsTags).forEach(tag => {
+          // TODO: Make this work with <script> tag insertion
           (() => {eval(tag.text)}).call(window) // eslint-disable-line
           this.$refs.scripts.appendChild(tag)
         })
@@ -150,25 +149,17 @@ export default {
     async retrieveOrder () {
       const apiUrl = store.getters['klarna-checkout/retrieve'] + this.createdOrder.id
       const url =
-        'http://localhost:8080/api/ext/vsf-klarna-checkout/retrieve' // should get from config
+        'http://localhost:8080/api/ext/vsf-klarna-checkout/retrieve' // TODO: Get from config
 
       const body = {klarnaApiUrl: apiUrl}
-      await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-        .then(res => res.json())
-        .then(res => { this.snippet = res.result.snippet; return res })
-        .catch(error => console.error('Error:', error))
+      const { result } = await post(url, body)
+      this.snippet = result.snippet
+      return snippet
     },
     async configureUpdateOrder () {
-      console.log('trying to update order...')
       if (!this.createdOrder.id) {
-        console.log('no order to update!')
         return
       }
-      console.log('order id found!')
       await this.suspendCheckout()
       this.order.cart.items = {}
       this.addCartItemsToOrder()
@@ -190,12 +181,9 @@ export default {
       return this.callApi(api => api.resume())
     },
     saveOrderIdToLocalStorage () {
-      // if (this.createdOrder.id) {
-      //   localStorage.setItem('@vsf/klarna_order_id', this.createdOrder.id)
-      // }
       this.createdOrder.id
         ? localStorage.setItem('@vsf/klarna_order_id', this.createdOrder.id)
-        : localStorage.setItem('@vsf/klarna_order_id', '')
+        : localStorage.removeItem()
     },
     getOrderId () {
       return this.createdOrder.id || localStorage.getItem('@vsf/klarna_order_id') //
