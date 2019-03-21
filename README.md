@@ -6,10 +6,10 @@
     "checkout": {
       "merchant": {
         "id": "200",
-        "termsUri": "https://www.safira.com/terms-conditions",
-        "checkoutUri": "https://www.safira.com/checkout/klarna",
-        "confirmationUri": "https://www.safira.com/checkout/confirmation",
-        "pushUri": "https://www.safira.com/checkout/push"
+        "termsUri": "<terms uri>",
+        "checkoutUri": "<checkout uri>",
+        "confirmationUri": "<confirmation uri>",
+        "pushUri": "<push uri>"
       }
     },
     "apiCredentials": {
@@ -20,7 +20,7 @@
     "endpointLocation": "eu",
     "test": true,
     "endpoint": {
-      "eu": { "live": "live_url", "test": "https://api.playground.klarna.com/" },
+      "eu": { "live": "live_url", "test": "test_url },
       "na": { "live": "live_url", "test": "test_url" }
     }
   },
@@ -28,8 +28,16 @@
     "endpointLocation": "eu",
     "test": false,
     "endpoint": {
-      "eu": { "live": "live_url", "test": "test_url", "local": "http://localhost:8080/api/ext/vsfkco" },
-      "na": { "live": "live_url", "test": "test_url" }
+      "eu": { 
+        "live": "live_url", 
+        "test": "test_url", 
+        "local": "https://api:port/api/ext/vsfkco" 
+        },
+      "na": { 
+        "live": "live_url", 
+        "test": "test_url", 
+        "local": "https://api:port/api/ext/vsfkco" 
+        }
     }
   }
 ```
