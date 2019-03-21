@@ -10,14 +10,9 @@
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import config from 'config'
 import store from '@vue-storefront/store'
+import {post, getScriptTagsFromSnippet, callApi} from './helpers'
 
 const storageTarget = '@vsf/klarna_order_id'
-
-const post = (url, body) => fetch(url, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(body)
-}).then(res => res.json())
 
 export default {
   name: 'KlarnaCheckout',
@@ -99,8 +94,8 @@ export default {
     },
     configureLocaleAndMerchant () {
       const checkoutOrder = {
-        purchase_country: this.storeView.i18n.defaultCountry, // this.payment.country,
-        purchase_currency: this.storeView.i18n.currencyCode, // this.getCountryName(),
+        purchase_country: this.storeView.i18n.defaultCountry,
+        purchase_currency: this.storeView.i18n.currencyCode,
         locale: this.storeView.i18n.defaultLocale,
         merchant_urls: {
           id: config.klarna.checkout.merchant.id,
@@ -108,11 +103,11 @@ export default {
           checkout: config.klarna.checkout.merchant.checkoutUri,
           confirmation: config.klarna.checkout.merchant.confirmationUri,
           push: config.klarna.checkout.merchant.pushUri,
-          validation: 'https://www.estore.com/api/validation', // set below in config
-          shipping_option_update: 'https://www.estore.com/api/shipment',
-          address_update: 'https://www.estore.com/api/address',
-          notification: 'https://www.estore.com/api/pending',
-          country_change: 'https://www.estore.com/api/country'
+          validation: 'https://www.estore.com/api/validation', // TODO: Get from config
+          shipping_option_update: 'https://www.estore.com/api/shipment', // TODO: Get from config
+          address_update: 'https://www.estore.com/api/address', // TODO: Get from config
+          notification: 'https://www.estore.com/api/pending', // TODO: Get from config
+          country_change: 'https://www.estore.com/api/country' // TODO: Get from config
         }
       }
       this.order = { ...this.order, ...checkoutOrder }
@@ -132,9 +127,7 @@ export default {
       }
       this.loading = true
       const { result } = await post(url, body)
-      const dummy = document.createElement('div')
-      dummy.innerHTML = result.snippet
-      const scriptsTags = dummy.querySelectorAll('script')
+      const scriptsTags = getScriptTagsFromSnippet(result.snippet)
       this.snippet = result.snippet
       setTimeout(() => {
         Array.from(scriptsTags).forEach(tag => {
@@ -151,8 +144,7 @@ export default {
       const url =
         'http://localhost:8080/api/ext/vsf-klarna-checkout/retrieve' // TODO: Get from config
 
-      const body = {klarnaApiUrl: apiUrl}
-      const { result } = await post(url, body)
+      const { result } = await post(url, {klarnaApiUrl: apiUrl})
       this.snippet = result.snippet
       return snippet
     },
@@ -166,19 +158,11 @@ export default {
       await this.upsertOrder()
       await this.resumeCheckout()
     },
-    callApi (callback) {
-      return new Promise((resolve, reject) => {
-        window._klarnaCheckout((api) => {
-          callback(api)
-          resolve()
-        })
-      })
-    },
     suspendCheckout () {
-      return this.callApi(api => api.suspend())
+      return callApi(api => api.suspend())
     },
     resumeCheckout () {
-      return this.callApi(api => api.resume())
+      return callApi(api => api.resume())
     },
     saveOrderIdToLocalStorage () {
       this.createdOrder.id
@@ -186,7 +170,7 @@ export default {
         : localStorage.removeItem()
     },
     getOrderId () {
-      return this.createdOrder.id || localStorage.getItem('@vsf/klarna_order_id') //
+      return this.createdOrder.id || localStorage.getItem('@vsf/klarna_order_id')
     },
     saveSnippet () {
       if (!this.snippet) {
