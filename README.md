@@ -34,6 +34,7 @@
 ```sh
 git clone --recurse-submodules https://github.com/kodbruket/vsf-payment-klarna
 cd vsf-payment-klarna
+yarn # set up git hooks
 docker-compose up
 # new tab
 docker-compose exec storefront-api sh -c "yarn mage2vs import && \
