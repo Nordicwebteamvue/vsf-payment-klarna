@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint .",
-    "cypress": "cypress open -p 6129"
+    "cypress": "cypress open -p 6129",
+    "cypress:ci": "cypress run"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.6",

@@ -4,13 +4,13 @@
       "merchant": {
         "id": "200",
         "terms": "https://example.com/terms",
-        "checkout": "http://localhost:3000/checkout?sid={checkout.order.id}",
-        "confirmation": "http://localhost:8080/api/ext/payment-klarna-example/confirmation?sid={checkout.order.id}",
-        "push": "http://localhost:8080/api/ext/payment-klarna-example/push?uri={checkout.order.id}",
-        "validation": "http://localhost:8080/api/ext/payment-klarna/validation",
-        "shipping_option_update": "http://localhost:8080/api/ext/payment-klarna-example/shipping_option_update",
-        "address_update": "http://localhost:8080/api/ext/payment-klarna/address_update",
-        "notification": "http://localhost:8080/api/ext/payment-klarna/notification"
+        "checkout": "https://example.com/checkout?sid={checkout.order.id}",
+        "confirmation": "https://example.com/api/ext/payment-klarna-example/confirmation?sid={checkout.order.id}",
+        "push": "https://example.com/api/ext/payment-klarna-example/push?uri={checkout.order.id}",
+        "validation": "https://example.com/api/ext/payment-klarna/validation",
+        "shipping_option_update": "https://example.com/api/ext/payment-klarna-example/shipping_option_update",
+        "address_update": "https://example.com/api/ext/payment-klarna/address_update",
+        "notification": "https://example.com/api/ext/payment-klarna/notification"
       }
     },
     "endpoint": "http://localhost:8080/api/ext/payment-klarna/create-or-update-order"
