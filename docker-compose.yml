@@ -1,19 +1,21 @@
-version: '2.4'
+version: '3.4'
 services:
   elasticsearch:
     build: vue-storefront-api/docker/elasticsearch/
     volumes:
       - ./vue-storefront-api/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - 'esdat1:/usr/share/elasticsearch/data'
+      - esdat1:/usr/share/elasticsearch/data
     ports:
       - '9200:9200'
       - '9300:9300'
     environment:
       ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+
   redis:
     image: 'redis:4-alpine'
     ports:
       - '6379:6379'
+
   storefront-api:
     build:
       context: vue-storefront-api
@@ -22,46 +24,24 @@ services:
     environment:
       VS_ENV: dev
     ports:
-      - '3001:3001'
-    tmpfs:
-      - /var/www/dist
+      - '8080:8080'
     volumes:
-      - './vue-storefront-api/config:/var/www/config'
-      - './vue-storefront-api/ecosystem.json:/var/www/ecosystem.json'
-      - './vue-storefront-api/migrations:/var/www/migrations'
-      - './vue-storefront-api/package.json:/var/www/package.json'
-      - './vue-storefront-api/scripts:/var/www/scripts'
-      - './vue-storefront-api/src:/var/www/src'
-      - './vue-storefront-api/var:/var/www/var'
-      - './.extra/config/storefront-api.json:/var/www/config/local.json'
+      - './API/config.json:/var/www/config/local.json'
+      - './API/payment-klarna:/var/www/src/api/extensions/payment-klarna'
+      - './API/payment-klarna-example:/var/www/src/api/extensions/payment-klarna-example'
+
   storefront-ui:
     build:
       context: vue-storefront
       dockerfile: docker/vue-storefront/Dockerfile
+      network: host
     env_file: vue-storefront/docker/vue-storefront/default.env
     environment:
       VS_ENV: dev
     ports:
       - '3000:3000'
-    tmpfs:
-      - /var/www/dist
     volumes:
-      - './vue-storefront/.babelrc:/var/www/.babelrc'
-      - './vue-storefront/config:/var/www/config'
-      - './vue-storefront/core:/var/www/core'
-      - './vue-storefront/ecosystem.json:/var/www/ecosystem.json'
-      - './vue-storefront/.eslintignore:/var/www/.eslintignore'
-      - './vue-storefront/.eslintrc.js:/var/www/.eslintrc.js'
-      - './vue-storefront/lerna.json:/var/www/lerna.json'
-      - './vue-storefront/tsconfig.json:/var/www/tsconfig.json'
-      - './vue-storefront/tsconfig-build.json:/var/www/tsconfig-build.json'
-      - './vue-storefront/shims.d.ts:/var/www/shims.d.ts'
-      - './vue-storefront/package.json:/var/www/package.json'
-      - './vue-storefront/src:/var/www/src'
-      - './vue-storefront/var:/var/www/var'
-      - './.extra/config/storefront-ui.json:/var/www/config/local.json'
-volumes:
-  composer: null
-  db-data: null
-  elasticsearch-data: null
-  vendor: null
+      - './frontend/config.json:/var/www/config/local.json'
+      - './frontend/theme:/var/www/src/themes/default'
+      - './frontend/modules.ts:/var/www/src/modules/index.ts'
+      - './frontend/payment-klarna:/var/www/src/modules/payment-klarna'
