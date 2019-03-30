@@ -4,16 +4,16 @@
       "merchant": {
         "id": "200",
         "terms": "https://example.com/terms",
-        "checkout": "http://storefront-api:8080/api/ext/payment-klarna-example/checkout?sid={checkout.order.id}",
-        "confirmation": "http://storefront-api:8080/api/ext/payment-klarna-example/confirmation?sid={checkout.order.id}",
-        "push": "http://storefront-api:8080/api/ext/payment-klarna-example/push?uri={checkout.order.id}",
-        "validation": "https://example.com/validation",
-        "shipping_option_update": "https://example.com/shipping_option_update",
-        "address_update": "https://example.com/address_update",
-        "notification": "https://example.com/notification"
+        "checkout": "http://localhost:3000/checkout?sid={checkout.order.id}",
+        "confirmation": "http://localhost:8080/api/ext/payment-klarna-example/confirmation?sid={checkout.order.id}",
+        "push": "http://localhost:8080/api/ext/payment-klarna-example/push?uri={checkout.order.id}",
+        "validation": "http://localhost:8080/api/ext/payment-klarna/validation",
+        "shipping_option_update": "http://localhost:8080/api/ext/payment-klarna-example/shipping_option_update",
+        "address_update": "http://localhost:8080/api/ext/payment-klarna/address_update",
+        "notification": "http://localhost:8080/api/ext/payment-klarna/notification"
       }
     },
-    "endpoint": "http://storefront-api:8080/api/ext/payment-klarna/create-or-update-order"
+    "endpoint": "http://localhost:8080/api/ext/payment-klarna/create-or-update-order"
   },
   "server": {
     "host": "localhost",
@@ -37,7 +37,7 @@
       "error"
     ],
     "invalidateCacheKey": "aeSu7aip",
-    "dynamicConfigReload": false,
+    "dynamicConfigReload": true,
     "dynamicConfigContinueOnError": false,
     "dynamicConfigExclude": [
       "ssr",

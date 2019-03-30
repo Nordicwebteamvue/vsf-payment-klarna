@@ -9,7 +9,7 @@ module.exports = {
   },
   // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
   extends: [
-    'plugin:vue/recommended', 'standard'
+    'plugin:vue/recommended', 'standard', 'plugin:vue/recommended'
   ],
   plugins: [
     'vue',
@@ -17,6 +17,7 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
+    'no-extra-parens': 2,
     /* max attributes-per-line and order-in-components
     ** we should use this later, when eslint-plugin-vue will support auto fixing this
     */

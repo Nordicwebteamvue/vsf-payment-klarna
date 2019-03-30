@@ -1,8 +1,10 @@
 <template>
   <div class="klarna-checkout" id="klarna-checkout">
     <div id="ref-scripts" ref="scripts" />
-    <div id="this-loading" v-if="loading">Loading</div>
-    <div id="this-snippet" v-if="snippet" v-html="snippet" />
+    <div id="this-loading" v-if="loading">
+      Loading
+    </div>
+    <div id="this-snippet" v-if="snippet" v-html="snippet" /> <!-- eslint-disable-line vue/no-v-html -->
   </div>
 </template>
 
@@ -39,6 +41,7 @@ export default {
   },
   async mounted () {
     // The call chain
+    console.log('this.shippingInformation', this.shippingMethods, this.cartTotals)
     this.saveOrderIdToLocalStorage()
     this.order.order_amount = this.grandTotal
     this.order.order_tax_amount = this.taxAmount
@@ -54,7 +57,8 @@ export default {
     ...mapGetters({
       cartItems: 'cart/items',
       cartTotals: 'cart/totals',
-      shippingInformation: 'cart/shippingInformation'
+      shippingInformation: 'cart/shippingInformation',
+      shippingMethods: 'shipping/shippingMethods'
     }),
     shippingMethodName () {
       return this.cartTotals.find(seg => seg.code === 'shipping').title
@@ -84,15 +88,39 @@ export default {
         total_tax_amount: unitPrice * shippingTaxRate,
         total_amount: unitPrice - (unitPrice * shippingTaxRate)
       }
-      this.order.order_lines = [...orderLines, shippingInformation]
+      this.order.order_lines = [ ...orderLines, shippingInformation ]
     },
     configureLocaleAndMerchant () {
       const checkoutOrder = {
         purchase_country: this.storeView.i18n.defaultCountry,
         purchase_currency: this.storeView.i18n.currencyCode,
         locale: this.storeView.i18n.defaultLocale,
-        merchant_urls: config.klarna.checkout.merchant
+        merchant_urls: config.klarna.checkout.merchant,
+        shipping_options: this.shippingMethods.map((method, index) => {
+          const taxAmount = method.price_incl_tax - method.amount
+          return {
+            'id': method.carrier_code,
+            'name': `${method.method_title}`,
+            'description': 'Delivers in 5-7 days',
+            'price': method.price_incl_tax * 100,
+            'tax_amount': taxAmount * 100,
+            'tax_rate': taxAmount / method.amount * 10000,
+            'preselected': index === 0,
+            'shipping_method': method.method_code
+          }
+        })
       }
+      checkoutOrder.shipping_options.push({
+        'id': 'test',
+        'name': `Test`,
+        'description': 'Probably wont deliver',
+        'price': 0,
+        'tax_amount': 0,
+        'tax_rate': 0,
+        'preselected': false,
+        'shipping_method': 'test'
+      })
+      console.log('checkoutOrder', checkoutOrder)
       this.order = { ...this.order, ...checkoutOrder }
     },
     async upsertOrder () {

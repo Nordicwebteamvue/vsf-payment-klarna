@@ -10,8 +10,8 @@
   ],
   "klarna": {
     "auth": {
-      "user": "user",
-      "pass": "pass"
+      "user": "PK05273_caa011a9eda3",
+      "pass": "TSL8CTtBVK9y8p76"
     },
     "endpoints": {
       "orders": "https://api.playground.klarna.com/checkout/v3/orders"
@@ -24,7 +24,7 @@
     "excludeDisabledProducts": false
   },
   "elasticsearch": {
-    "host": "localhost",
+    "host": "elasticsearch",
     "port": 9200,
     "protocol": "http",
     "user": "elastic",
@@ -46,7 +46,7 @@
     "apiVersion": "5.6"
   },
   "redis": {
-    "host": "localhost",
+    "host": "redis",
     "port": 6379,
     "db": 0
   },

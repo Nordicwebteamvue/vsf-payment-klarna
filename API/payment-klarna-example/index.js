@@ -30,5 +30,10 @@ module.exports = ({ config, db }) => {
     })
   })
 
+  api.post('/shipping_option_update', (req, res) => {
+    // sendShippingOrderUpdateToEcommerce(req.body)
+    return apiStatus(res, 'Thanks', 200)
+  })
+
   return api
 }

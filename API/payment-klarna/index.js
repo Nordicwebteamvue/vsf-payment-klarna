@@ -20,6 +20,7 @@ module.exports = ({ config, db }) => {
         'Content-Type': 'application/json'
       }
     }, (error, response, body) => {
+      console.log('KLARNA BODY 😎😎😎', body, order)
       if (error || body.error_code) {
         apiStatus(res, 'Klarna error', 400)
         return

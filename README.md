@@ -22,3 +22,11 @@ docker-compose exec storefront-api yarn migrate
 ```
 
 Visit http://localhost:3000
+
+#### e2e
+
+`yarn cypress`
+
+#### Tunnel
+
+`ssh -R vsf-payment-klarna:80:localhost:8080 serveo.net`

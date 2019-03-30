@@ -2,8 +2,7 @@
 
 context('Actions', () => {
   it('can render checkout', () => {
-    cy.visit('http://localhost:3000/c/men-11')
-    cy.get('.product-image__content').eq(4).click()
+    cy.visit('http://localhost:3000/p/24-WB07/overnight-duffle')
     cy.wait(100)
     cy.get(`[data-testid="closeCookieButton"]`).click()
     cy.wait(100)
@@ -12,7 +11,7 @@ context('Actions', () => {
     cy.scrollTo(0, 0)
     cy.get(`[data-testid="minicartCount"]`).contains('1')
     cy.get(`[data-testid="minicartCount"]`).parent().click()
-    cy.wait(100)
+    cy.wait(250)
     cy.get(`[data-testid="subscribeSubmit"]`).first().click()
   })
 })
