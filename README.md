@@ -13,6 +13,7 @@
 ```sh
 git clone --recurse-submodules https://github.com/kodbruket/vsf-payment-klarna
 cd vsf-payment-klarna
+cp API/config.sample.json API/config.json
 yarn # set up git hooks
 docker-compose up
 # new tab
