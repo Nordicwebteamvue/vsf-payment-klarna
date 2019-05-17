@@ -17,19 +17,11 @@
 <script>
 import Checkout from '@vue-storefront/core/pages/Checkout'
 import KlarnaCheckout from 'src/modules/payment-klarna/components/Checkout'
-import PersonalDetails from 'theme/components/core/blocks/Checkout/PersonalDetails'
-import Shipping from 'theme/components/core/blocks/Checkout/Shipping'
-import Payment from 'theme/components/core/blocks/Checkout/Payment'
-import OrderReview from 'theme/components/core/blocks/Checkout/OrderReview'
 import CartSummary from 'theme/components/core/blocks/Checkout/CartSummary'
 import ThankYouPage from 'theme/components/core/blocks/Checkout/ThankYouPage'
 
 export default {
   components: {
-    PersonalDetails,
-    Shipping,
-    Payment,
-    OrderReview,
     CartSummary,
     ThankYouPage,
     KlarnaCheckout

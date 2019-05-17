@@ -40,8 +40,7 @@ export default {
     }
   },
   async mounted () {
-    // The call chain
-    console.log('this.shippingInformation', this.shippingMethods, this.cartTotals)
+    console.log('this.$store.state.cart.cartItems', this.$store.state.cart.cartItems)
     this.saveOrderIdToLocalStorage()
     this.order.order_amount = this.grandTotal
     this.order.order_tax_amount = this.taxAmount
@@ -70,7 +69,8 @@ export default {
       return this.cartTotals.find(seg => seg.code === 'grand_total').value * 100
     },
     taxAmount () {
-      return this.cartTotals.find(seg => seg.code === 'tax').value * 100
+      const tax = this.cartTotals.find(seg => seg.code === 'tax')
+      return tax ? tax.value * 100 : 0
     }
   },
   methods: {
@@ -120,7 +120,6 @@ export default {
         'preselected': false,
         'shipping_method': 'test'
       })
-      console.log('checkoutOrder', checkoutOrder)
       this.order = { ...this.order, ...checkoutOrder }
     },
     async upsertOrder () {

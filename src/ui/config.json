@@ -38,7 +38,7 @@
     ],
     "invalidateCacheKey": "aeSu7aip",
     "dynamicConfigReload": true,
-    "dynamicConfigContinueOnError": false,
+    "dynamicConfigContinueOnError": true,
     "dynamicConfigExclude": [
       "ssr",
       "storeViews",
