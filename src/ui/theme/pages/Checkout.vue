@@ -1,7 +1,7 @@
 <template>
   <div id="checkout">
     <div class="container">
-      <div class="row" v-show="!orderPlaced">
+      <div class="row" v-show="!isThankYouPage">
         <div class="col-sm-7 col-xs-12 pb70">
           <klarna-checkout />
         </div>
@@ -9,22 +9,24 @@
           <cart-summary />
         </div>
       </div>
-      <thank-you-page v-show="orderPlaced" />
     </div>
+    <thank-you-page v-show="isThankYouPage" />
   </div>
 </template>
 
 <script>
 import Checkout from '@vue-storefront/core/pages/Checkout'
-import KlarnaCheckout from 'src/modules/payment-klarna/components/Checkout'
 import CartSummary from 'theme/components/core/blocks/Checkout/CartSummary'
 import ThankYouPage from 'theme/components/core/blocks/Checkout/ThankYouPage'
+import KlarnaCheckout from 'src/modules/payment-klarna/components/KlarnaCheckout'
+
+console.log('KlarnaCheckout', KlarnaCheckout)
 
 export default {
   components: {
+    KlarnaCheckout,
     CartSummary,
-    ThankYouPage,
-    KlarnaCheckout
+    ThankYouPage
   },
   mixins: [Checkout],
   methods: {
