@@ -22,6 +22,11 @@ const calculateTotalAmount = (product) => {
   return (product.qty * (product.priceInclTax * 100)) - (product.totals.discount_amount * 100)
 }
 
+const calculateTotalTaxAmount = (product) => {
+  const totalAmount = calculateTotalAmount(product)
+  return (totalAmount - totalAmount  * 10000 / (10000 + product.totals.tax_percent * 100))
+}
+
 export const mapProductToKlarna = product => ({
   reference: product.sku,
   name: product.name,
@@ -30,7 +35,7 @@ export const mapProductToKlarna = product => ({
   tax_rate: product.totals.tax_percent * 100,
   total_amount: calculateTotalAmount(product),
   total_discount_amount: product.totals.discount_amount * 100,
-  total_tax_amount: calculateTotalAmount(product) - calculateTotalAmount(product) * 10000 / (10000 + product.totals.tax_percent * 100)
+  total_tax_amount: calculateTotalTaxAmount(product)
 })
 
 export const calculateShippingTaxRate = (shippingInformation) => {

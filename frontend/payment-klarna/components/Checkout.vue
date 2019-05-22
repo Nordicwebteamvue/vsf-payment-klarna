@@ -16,8 +16,7 @@ import {
   post,
   getScriptTagsFromSnippet,
   callApi,
-  mapProductToKlarna,
-  calculateShippingTaxRate
+  mapProductToKlarna
 } from './helpers'
 
 const storageTarget = '@vsf/klarna_order_id'
@@ -40,8 +39,6 @@ export default {
     }
   },
   async mounted () {
-    // The call chain
-    console.log('this.shippingInformation', this.shippingMethods, this.cartTotals)
     this.saveOrderIdToLocalStorage()
     this.order.order_amount = this.grandTotal
     this.order.order_tax_amount = this.taxAmount
@@ -76,19 +73,7 @@ export default {
   methods: {
     addCartItemsToOrder () {
       const orderLines = this.cartItems.map(mapProductToKlarna)
-      const shippingTaxRate = calculateShippingTaxRate(this.shippingInformation) || 0
-      const unitPrice = this.shippingInformation.platformTotals.base_shipping_incl_tax * 100
-      const shippingInformation = {
-        type: 'shipping_fee',
-        reference: 'SHIPPING REFERENCE HERE',
-        name: this.shippingMethodName,
-        quantity: 1,
-        unit_price: unitPrice,
-        tax_rate: shippingTaxRate,
-        total_tax_amount: unitPrice * (1 - 1 / (1 + (shippingTaxRate / 10000))),
-        total_amount: unitPrice
-      }
-      this.order.order_lines = [ ...orderLines, shippingInformation ]
+      this.order.order_lines = [ ...orderLines ]
     },
     configureLocaleAndMerchant () {
       const checkoutOrder = {
@@ -102,25 +87,14 @@ export default {
             'id': method.carrier_code,
             'name': `${method.method_title}`,
             'description': 'Delivers in 5-7 days',
-            'price': method.price_incl_tax * 100,
-            'tax_amount': taxAmount * 100,
-            'tax_rate': method.amount ? taxAmount / method.amount * 10000 : 0,
+            'price': method.price_incl_tax ? method.price_incl_tax * 100 : 0,
+            'tax_amount': taxAmount ? taxAmount * 100 : 0,
+            'tax_rate': method.amount && taxAmount ? taxAmount / method.amount * 10000 : 0,
             'preselected': index === 0,
             'shipping_method': method.method_code
           }
         })
       }
-      checkoutOrder.shipping_options.push({
-        'id': 'test',
-        'name': `Test`,
-        'description': 'Probably wont deliver',
-        'price': 0,
-        'tax_amount': 0,
-        'tax_rate': 0,
-        'preselected': false,
-        'shipping_method': 'test'
-      })
-      console.log('checkoutOrder', checkoutOrder)
       this.order = { ...this.order, ...checkoutOrder }
     },
     async upsertOrder () {
