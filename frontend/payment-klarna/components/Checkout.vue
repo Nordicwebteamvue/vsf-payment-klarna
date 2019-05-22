@@ -57,9 +57,6 @@ export default {
       shippingInformation: 'cart/shippingInformation',
       shippingMethods: 'shipping/shippingMethods'
     }),
-    shippingMethodName () {
-      return this.cartTotals.find(seg => seg.code === 'shipping').title
-    },
     subTotalInclTax () {
       return this.cartTotals.find(seg => seg.code === 'subtotalInclTax').value * 100
     },
