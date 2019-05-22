@@ -85,8 +85,8 @@ export default {
         quantity: 1,
         unit_price: unitPrice,
         tax_rate: shippingTaxRate,
-        total_tax_amount: unitPrice * shippingTaxRate,
-        total_amount: unitPrice - (unitPrice * shippingTaxRate)
+        total_tax_amount: unitPrice * (1 - 1 / (1 + (shippingTaxRate / 10000))),
+        total_amount: unitPrice
       }
       this.order.order_lines = [ ...orderLines, shippingInformation ]
     },
