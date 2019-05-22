@@ -76,7 +76,7 @@ export default {
   methods: {
     addCartItemsToOrder () {
       const orderLines = this.cartItems.map(mapProductToKlarna)
-      const shippingTaxRate = calculateShippingTaxRate(this.shippingInformation)
+      const shippingTaxRate = calculateShippingTaxRate(this.shippingInformation) || 0
       const unitPrice = this.shippingInformation.platformTotals.base_shipping_incl_tax * 100
       const shippingInformation = {
         type: 'shipping_fee',
@@ -104,7 +104,7 @@ export default {
             'description': 'Delivers in 5-7 days',
             'price': method.price_incl_tax * 100,
             'tax_amount': taxAmount * 100,
-            'tax_rate': taxAmount / method.amount * 10000,
+            'tax_rate': method.amount ? taxAmount / method.amount * 10000 : 0,
             'preselected': index === 0,
             'shipping_method': method.method_code
           }
