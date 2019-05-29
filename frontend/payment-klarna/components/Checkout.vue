@@ -11,7 +11,7 @@
 <script>
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import config from 'config'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import {
   post,
   getScriptTagsFromSnippet,
@@ -57,6 +57,9 @@ export default {
       shippingInformation: 'cart/shippingInformation',
       shippingMethods: 'shipping/shippingMethods'
     }),
+    ...mapState({
+      cartServerToken: state => state.cart.cartServerToken
+    }),
     subTotalInclTax () {
       return this.cartTotals.find(seg => seg.code === 'subtotalInclTax').value * 100
     },
@@ -78,6 +81,7 @@ export default {
         purchase_currency: this.storeView.i18n.currencyCode,
         locale: this.storeView.i18n.defaultLocale,
         merchant_urls: config.klarna.checkout.merchant,
+        merchant_reference2: this.cartServerToken,
         shipping_options: this.shippingMethods.map((method, index) => {
           const taxAmount = method.price_incl_tax - method.amount
           return {
