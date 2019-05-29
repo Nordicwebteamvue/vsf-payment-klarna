@@ -86,12 +86,10 @@ export default {
           return {
             'id': method.carrier_code,
             'name': `${method.method_title}`,
-            'description': 'Delivers in 5-7 days',
             'price': method.price_incl_tax ? method.price_incl_tax * 100 : 0,
             'tax_amount': taxAmount ? taxAmount * 100 : 0,
             'tax_rate': method.amount && taxAmount ? taxAmount / method.amount * 10000 : 0,
-            'preselected': index === 0,
-            'shipping_method': method.method_code
+            'preselected': index === 0
           }
         })
       }
