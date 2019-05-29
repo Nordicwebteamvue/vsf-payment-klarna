@@ -81,7 +81,6 @@ export default {
         purchase_currency: this.storeView.i18n.currencyCode,
         locale: this.storeView.i18n.defaultLocale,
         merchant_urls: config.klarna.checkout.merchant,
-        merchant_reference2: this.cartServerToken,
         shipping_options: this.shippingMethods.map((method, index) => {
           const taxAmount = method.price_incl_tax - method.amount
           return {
@@ -99,7 +98,7 @@ export default {
       this.order = { ...this.order, ...checkoutOrder }
     },
     async upsertOrder () {
-      let url = config.klarna.endpoint
+      let url = config.klarna.endpoint.replace('{{cartId}}', this.cartServerToken)
 
       const body = {
         order: this.order,

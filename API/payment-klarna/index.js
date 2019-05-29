@@ -1,6 +1,7 @@
 import { apiStatus } from '../../../lib/util'
 import { Router } from 'express'
 import request from 'request'
+import jwt from 'jsonwebtoken'
 
 module.exports = ({ config, db }) => {
   const api = Router()
@@ -9,6 +10,9 @@ module.exports = ({ config, db }) => {
     const {order, agent} = req.body
     if (!order) {
       return apiStatus(res, 'Bad Request', 400)
+    }
+    if (req.query.cartId) {
+      order.merchant_reference2 = jwt.decode(req.query.cartId).cartId
     }
     request.post({
       url: config.klarna.endpoints.orders,
