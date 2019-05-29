@@ -24,12 +24,36 @@ module.exports = ({ config, db }) => {
         'Content-Type': 'application/json'
       }
     }, (error, response, body) => {
-      console.log('KLARNA BODY 😎😎😎', body, order)
+      console.log('Klarna request:', order)
+      console.log('Klarna response:', body)
       if (error || body.error_code) {
         apiStatus(res, 'Klarna error', 400)
         return
       }
       apiStatus(res, {orderId: body.order_id, snippet: body.html_snippet})
+    })
+  })
+
+  api.get('/order-id', (req, res) => {
+    const {sid} = req.query
+    if (!sid) {
+      apiStatus(res, 'Missing sid', 400)
+      return
+    }
+    request.get({
+      url: config.klarna.endpoints.orders + '/' + sid,
+      auth: config.klarna.auth,
+      json: true,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }, (error, response, body) => {
+      if (error) {
+        apiStatus(res, 'Klarna error', 400)
+        return
+      }
+      console.log(body.html_snippet)
+      apiStatus(res, body)
     })
   })
 

@@ -50,6 +50,18 @@ export default {
   beforeMount () {
     this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder())
   },
+  props: {
+    orderExtra: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    },
+    shippingOptions: {
+      type: Boolean,
+      default: true
+    }
+  },
   computed: {
     ...mapGetters({
       cartItems: 'cart/items',
@@ -81,7 +93,10 @@ export default {
         purchase_currency: this.storeView.i18n.currencyCode,
         locale: this.storeView.i18n.defaultLocale,
         merchant_urls: config.klarna.checkout.merchant,
-        shipping_options: this.shippingMethods.map((method, index) => {
+        shipping_options: []
+      }
+      if (this.shippingOptions) {
+        checkoutOrder.shipping_options = this.shippingMethods.map((method, index) => {
           const taxAmount = method.price_incl_tax - method.amount
           return {
             'id': method.carrier_code,
@@ -93,7 +108,7 @@ export default {
           }
         })
       }
-      this.order = { ...this.order, ...checkoutOrder }
+      this.order = { ...this.order, ...checkoutOrder, ...this.orderExtra }
     },
     async upsertOrder () {
       let url = config.klarna.endpoint.replace('{{cartId}}', this.cartServerToken)
