@@ -52,7 +52,6 @@ module.exports = ({ config, db }) => {
         apiStatus(res, 'Klarna error', 400)
         return
       }
-      console.log(body.html_snippet)
       apiStatus(res, body)
     })
   })
