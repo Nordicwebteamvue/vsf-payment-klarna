@@ -1,10 +1,10 @@
 <template>
-  <div id="confirmation">
-    <div id="ref-scripts" ref="scripts" />
-    <div id="this-loading" v-if="loading">
-      Loading
+  <div class="confirmation">
+    <div ref="scripts" />
+    <div v-if="loading">
+      <loading-spinner />
     </div>
-    <div id="this-snippet" v-if="html" v-html="html" /> <!-- eslint-disable-line vue/no-v-html -->
+    <div v-if="html" v-html="html" /> <!-- eslint-disable-line vue/no-v-html -->
   </div>
 </template>
 
@@ -16,6 +16,7 @@ import fetch from 'isomorphic-fetch'
 import qs from 'qs'
 import config from 'config'
 import { isServer } from '@vue-storefront/core/helpers'
+import LoadingSpinner from './LoadingSpinner.vue'
 
 export default {
   name: 'KlarnaConfirmation',
@@ -24,6 +25,9 @@ export default {
       loading: false,
       html: ''
     }
+  },
+  components: {
+    LoadingSpinner
   },
   async mounted () {
     if (!isServer) {
@@ -36,7 +40,7 @@ export default {
       const url = config.klarna.confirmation.replace('{{sid}}', sid)
       const result = await fetch(url)
       const json = await result.json()
-      console.log('snippet', json.result.html_snippet)
+      this.$store.dispatch('cart/clear')
       this.html = json.result.html_snippet
       const scriptsTags = getScriptTagsFromSnippet(this.html)
       setTimeout(() => {
@@ -53,9 +57,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .new-collection {
-    @media (max-width: 767px) {
-      padding-top: 0;
-    }
+  .confirmation {
+    min-height: 580px;
   }
 </style>
