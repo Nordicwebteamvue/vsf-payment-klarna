@@ -1,3 +1,12 @@
+interface SubState {
+  loading: Boolean,
+  snippet?: String,
+  scriptsTags: any,
+  orderId?: String
+}
+
 export default interface CheckoutState {
-  apiUrl: string
+  confirmation: SubState,
+  checkout: SubState,
+  shippingOptions: Boolean
 }

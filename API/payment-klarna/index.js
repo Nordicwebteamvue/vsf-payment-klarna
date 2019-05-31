@@ -7,11 +7,14 @@ module.exports = ({ config, db }) => {
   const api = Router()
 
   api.post('/create-or-update-order', (req, res) => {
-    const {order, agent} = req.body
-    if (!order) {
-      return apiStatus(res, 'Bad Request', 400)
+    const {order} = req.body
+    const {cartId} = req.query
+    if (!order || !cartId) {
+      return apiStatus(res, 'Bad Request: Missing order or cartId', 400)
     }
-    if (req.query.cartId) {
+    if (/^\d+$/.test(cartId)) {
+      order.merchant_reference2 = cartId
+    } else {
       order.merchant_reference2 = jwt.decode(req.query.cartId).cartId
     }
     request.post({
@@ -20,7 +23,6 @@ module.exports = ({ config, db }) => {
       body: order,
       json: true,
       headers: {
-        'User-Agent': agent,
         'Content-Type': 'application/json'
       }
     }, (error, response, body) => {
