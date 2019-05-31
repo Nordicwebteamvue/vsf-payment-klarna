@@ -5,13 +5,12 @@
     "searchEngine": "elasticsearch"
   },
   "registeredExtensions": [
-    "payment-klarna",
-    "payment-klarna-example"
+    "payment-klarna-bridge"
   ],
   "klarna": {
     "auth": {
-      "user": "PK05273_caa011a9eda3",
-      "pass": "TSL8CTtBVK9y8p76"
+      "user": "",
+      "pass": ""
     },
     "endpoints": {
       "orders": "https://api.playground.klarna.com/checkout/v3/orders"

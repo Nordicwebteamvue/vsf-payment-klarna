@@ -12,6 +12,7 @@ const MyAccount = () => import(/* webpackChunkName: "vsf-my-account" */ 'theme/p
 const Static = () => import(/* webpackChunkName: "vsf-static" */ 'theme/pages/Static.vue')
 const CustomCmsPage = () => import(/* webpackChunkName: "vsf-custom-cms" */ 'theme/pages/CustomCmsPage.vue')
 const CmsData = () => import(/* webpackChunkName: "vsf-data" */ 'src/modules/magento-2-cms/components/CmsData')
+const Confirmation = () => import(/* webpackChunkName: "vsf-klarna-confirmation" */ 'src/modules/payment-klarna/components/Confirmation')
 
 let routes = [
   { name: 'home', path: '/', component: Home, alias: '/pwa.html' },
