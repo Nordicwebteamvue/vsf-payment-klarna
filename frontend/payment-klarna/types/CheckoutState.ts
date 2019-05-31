@@ -7,5 +7,6 @@ interface SubState {
 
 export default interface CheckoutState {
   confirmation: SubState,
-  checkout: SubState
+  checkout: SubState,
+  shippingOptions: Boolean
 }

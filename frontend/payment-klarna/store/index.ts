@@ -10,6 +10,7 @@ export const module: Module<CheckoutState, any> = {
   getters,
   mutations,
   state: {
+    shippingOptions: true,
     checkout: {
       orderId: '',
       loading: false,

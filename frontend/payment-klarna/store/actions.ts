@@ -7,7 +7,7 @@ import qs from 'qs'
 import { getScriptTagsFromSnippet } from '../helpers'
 
 export const actions: ActionTree<CheckoutState, RootState> = {
-  async createOrder ({ commit, state }, { body }) {
+  async createOrder ({ commit, state }, { order }) {
     commit('createOrder')
     const url = config.klarna.endpoint
     const { result }: any = await TaskQueue.execute({
@@ -16,7 +16,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
-        body: JSON.stringify(body)
+        body: JSON.stringify({order})
       },
       silent: true
     })

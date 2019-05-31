@@ -7,10 +7,10 @@ module.exports = ({ config, db }) => {
   const api = Router()
 
   api.post('/create-or-update-order', (req, res) => {
-    const {order, agent} = req.body
+    const {order} = req.body
     const {cartId} = req.query
     if (!order || !cartId) {
-      return apiStatus(res, 'Bad Request', 400)
+      return apiStatus(res, 'Bad Request: Missing order or cartId', 400)
     }
     if (/^\d+$/.test(cartId)) {
       order.merchant_reference2 = cartId
@@ -23,7 +23,6 @@ module.exports = ({ config, db }) => {
       body: order,
       json: true,
       headers: {
-        'User-Agent': agent,
         'Content-Type': 'application/json'
       }
     }, (error, response, body) => {
