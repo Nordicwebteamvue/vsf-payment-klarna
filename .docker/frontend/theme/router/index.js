@@ -16,6 +16,7 @@ const Confirmation = () => import(/* webpackChunkName: "vsf-klarna-confirmation"
 
 let routes = [
   { name: 'home', path: '/', component: Home, alias: '/pwa.html' },
+  { name: 'confirmation', path: '/confirmation', component: Confirmation },
   { name: 'checkout', path: '/checkout', component: Checkout },
   { name: 'legal', path: '/legal', component: Static, props: {page: 'lorem', title: 'Legal Notice'}, meta: {title: 'Legal Notice', description: 'Legal Notice - example of description usage'} },
   { name: 'privacy', path: '/privacy', component: Static, props: {page: 'lorem', title: 'Privacy'} },
