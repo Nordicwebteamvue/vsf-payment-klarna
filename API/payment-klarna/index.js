@@ -8,10 +8,13 @@ module.exports = ({ config, db }) => {
 
   api.post('/create-or-update-order', (req, res) => {
     const {order, agent} = req.body
-    if (!order) {
+    const {cartId} = req.query
+    if (!order || !cartId) {
       return apiStatus(res, 'Bad Request', 400)
     }
-    if (req.query.cartId) {
+    if (/^\d+$/.test(cartId)) {
+      order.merchant_reference2 = cartId
+    } else {
       order.merchant_reference2 = jwt.decode(req.query.cartId).cartId
     }
     request.post({

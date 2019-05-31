@@ -1,10 +1,10 @@
 <template>
   <div class="klarna-checkout" id="klarna-checkout">
-    <div id="ref-scripts" ref="scripts" />
-    <div id="this-loading" v-if="loading">
-      Loading
+    <div ref="scripts" />
+    <div v-if="checkout.loading">
+      <loading-spinner />
     </div>
-    <div id="this-snippet" v-if="snippet" v-html="snippet" /> <!-- eslint-disable-line vue/no-v-html -->
+    <div v-if="checkout.snippet" v-html="checkout.snippet" /> <!-- eslint-disable-line vue/no-v-html -->
   </div>
 </template>
 
@@ -13,11 +13,10 @@ import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import config from 'config'
 import { mapGetters, mapState } from 'vuex'
 import {
-  post,
-  getScriptTagsFromSnippet,
   callApi,
   mapProductToKlarna
-} from './helpers'
+} from '../helpers'
+import LoadingSpinner from './LoadingSpinner.vue'
 
 const storageTarget = '@vsf/klarna_order_id'
 
@@ -30,11 +29,9 @@ export default {
         order_amount: 0,
         order_tax_amount: 0
       },
-      snippet: null,
       createdOrder: {
         id: ''
       },
-      loading: false,
       storeView: currentStoreView()
     }
   },
@@ -62,8 +59,12 @@ export default {
       default: true
     }
   },
+  components: {
+    LoadingSpinner
+  },
   computed: {
     ...mapGetters({
+      checkout: 'kco/checkout',
       cartItems: 'cart/items',
       cartTotals: 'cart/totals',
       shippingInformation: 'cart/shippingInformation',
@@ -111,8 +112,6 @@ export default {
       this.order = { ...this.order, ...checkoutOrder, ...this.orderExtra }
     },
     async upsertOrder () {
-      let url = config.klarna.endpoint.replace('{{cartId}}', this.cartServerToken)
-
       const body = {
         order: this.order,
         userAgent: navigator.userAgent
@@ -120,18 +119,14 @@ export default {
       if (this.getOrderId()) {
         body.orderId = this.getOrderId()
       }
-      this.loading = true
-      const { result } = await post(url, body)
-      const scriptsTags = getScriptTagsFromSnippet(result.snippet)
-      this.snippet = result.snippet
+      await this.$store.dispatch('kco/createOrder', { body })
       setTimeout(() => {
-        Array.from(scriptsTags).forEach(tag => {
+        Array.from(this.checkout.scriptsTags).forEach(tag => {
           // TODO: Make this work with <script> tag insertion
           (() => {eval(tag.text)}).call(window) // eslint-disable-line
           this.$refs.scripts.appendChild(tag)
         })
-        this.createdOrder.id = result.orderId || null
-        this.loading = false
+        this.createdOrder.id = this.checkout.orderId || null
       }, 1)
     },
     async configureUpdateOrder () {
