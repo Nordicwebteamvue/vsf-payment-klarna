@@ -7,8 +7,9 @@ import qs from 'qs'
 import { getScriptTagsFromSnippet } from '../helpers'
 
 export const actions: ActionTree<CheckoutState, RootState> = {
-  async createOrder ({ commit, state }, { order }) {
+  async createOrder ({ commit, state, getters }) {
     commit('createOrder')
+    const { order } = getters
     const url = config.klarna.endpoint
     const { result }: any = await TaskQueue.execute({
       url,

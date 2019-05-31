@@ -44,15 +44,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      checkout: 'kco/checkout',
-      testOrder: 'kco/order',
-      cartItems: 'cart/items',
-      cartTotals: 'cart/totals'
+      checkout: 'kco/checkout'
     })
   },
   methods: {
     async upsertOrder () {
-      await this.$store.dispatch('kco/createOrder', { order: this.testOrder })
+      await this.$store.dispatch('kco/createOrder')
       setTimeout(() => {
         Array.from(this.checkout.scriptsTags).forEach(tag => {
           // TODO: Make this work with <script> tag insertion
