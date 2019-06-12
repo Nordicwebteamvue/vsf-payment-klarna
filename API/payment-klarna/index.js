@@ -12,10 +12,10 @@ module.exports = ({ config, db }) => {
     if (!order || !cartId) {
       return apiStatus(res, 'Bad Request: Missing order or cartId', 400)
     }
-    if (/^\d+$/.test(cartId)) {
-      order.merchant_reference2 = cartId
-    } else {
+    if (/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/.test(cartId)) {
       order.merchant_reference2 = jwt.decode(req.query.cartId).cartId
+    } else {
+      order.merchant_reference2 = cartId
     }
     request.post({
       url: config.klarna.endpoints.orders,
