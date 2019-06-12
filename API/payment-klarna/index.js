@@ -26,10 +26,12 @@ module.exports = ({ config, db }) => {
         'Content-Type': 'application/json'
       }
     }, (error, response, body) => {
-      console.log('Klarna request:', order)
-      console.log('Klarna response:', body)
       if (error || body.error_code) {
-        apiStatus(res, 'Klarna error', 400)
+        apiStatus(res, {
+          error: 'Klarna error',
+          body,
+          order
+        }, 400)
         return
       }
       apiStatus(res, {orderId: body.order_id, snippet: body.html_snippet})
