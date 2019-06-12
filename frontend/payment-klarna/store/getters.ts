@@ -36,7 +36,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       checkoutOrder.shipping_options = shippingMethods.map((method, index) => {
         const taxAmount = method.price_incl_tax - method.amount
         return {
-          id: method.code,
+          id: method.code || method.carrier_code,
           name: `${method.method_title}`,
           price: method.price_incl_tax ? method.price_incl_tax * 100 : 0,
           tax_amount: taxAmount ? taxAmount * 100 : 0,
