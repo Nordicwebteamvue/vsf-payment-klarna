@@ -1,5 +1,6 @@
 import { VueStorefrontModule, VueStorefrontModuleConfig } from '@vue-storefront/core/lib/module'
 import { afterRegistration } from './hooks/afterRegistration'
+import { beforeRegistration } from './hooks/beforeRegistration'
 import './extendCart'
 import { module } from './store'
 
@@ -8,6 +9,7 @@ const KEY = 'kco'
 const moduleConfig: VueStorefrontModuleConfig = {
   key: KEY,
   afterRegistration,
+  beforeRegistration,
   store: { modules: [{ key: KEY, module }] },
 }
 

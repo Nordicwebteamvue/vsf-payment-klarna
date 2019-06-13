@@ -21,6 +21,11 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       },
       silent: true
     })
+    if (result.error) {
+      console.log('error', result)
+      commit('createOrderError', result.error)
+      return
+    }
     commit('createdOrder', {
       orderId: result.orderId,
       snippet: result.snippet,

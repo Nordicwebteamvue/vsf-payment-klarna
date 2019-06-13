@@ -4,6 +4,9 @@
     <div v-if="checkout.loading">
       <loading-spinner />
     </div>
+    <div v-if="checkout.error">
+      Loading Klarna failed
+    </div>
     <div v-if="checkout.snippet" v-html="checkout.snippet" /> <!-- eslint-disable-line vue/no-v-html -->
   </div>
 </template>
@@ -20,21 +23,18 @@ export default {
   name: 'KlarnaCheckout',
   data () {
     return {
-      order: {
-        order_lines: [],
-        order_amount: 0,
-        order_tax_amount: 0
-      },
       createdOrder: {
         id: ''
-      },
-      storeView: currentStoreView()
+      }
     }
   },
   async mounted () {
-    this.saveOrderIdToLocalStorage()
-    await this.upsertOrder()
-    this.saveOrderIdToLocalStorage()
+    console.log('MOUNTED KLARNA (error)')
+    setTimeout(async () => {
+      this.saveOrderIdToLocalStorage()
+      await this.upsertOrder()
+      this.saveOrderIdToLocalStorage()
+    }, 100)
   },
   beforeMount () {
     this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder())
