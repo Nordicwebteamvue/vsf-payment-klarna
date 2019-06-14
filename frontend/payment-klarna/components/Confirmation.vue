@@ -31,7 +31,8 @@ export default {
       if (!sid) {
         return
       }
-      await this.$store.dispatch('kco/confirmation', { sid })
+      const result = await this.$store.dispatch('kco/confirmation', { sid })
+      this.$bus.$emit('checkout-do-placeOrder', result)
       setTimeout(() => {
         Array.from(this.confirmation.scriptsTags).forEach(tag => {
           // TODO: Make this work with <script> tag insertion
