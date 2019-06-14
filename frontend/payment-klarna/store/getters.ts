@@ -38,7 +38,6 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       purchase_country: storeView.i18n.defaultCountry,
       purchase_currency: storeView.i18n.currencyCode,
       locale: storeView.i18n.defaultLocale,
-      merchant_urls: config.klarna.checkout.merchant,
       shipping_options: [],
       order_lines: cartItems.map(mapProductToKlarna),
       order_amount: totals.subtotal_incl_tax * 100,

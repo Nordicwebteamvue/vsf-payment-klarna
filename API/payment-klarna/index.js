@@ -17,6 +17,7 @@ module.exports = ({ config, db }) => {
     } else {
       order.merchant_reference2 = cartId
     }
+    order.merchant_urls = config.klarna.merchant_urls
     request.post({
       url: config.klarna.endpoints.orders,
       auth: config.klarna.auth,
