@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import { mapGetters } from 'vuex'
 import { callApi } from '../helpers'
 import LoadingSpinner from './LoadingSpinner.vue'
@@ -29,7 +28,6 @@ export default {
     }
   },
   async mounted () {
-    console.log('MOUNTED KLARNA (error)')
     setTimeout(async () => {
       this.saveOrderIdToLocalStorage()
       await this.upsertOrder()

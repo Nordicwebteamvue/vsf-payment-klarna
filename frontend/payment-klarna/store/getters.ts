@@ -6,7 +6,6 @@ import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import { calculateTotalTaxAmount, calculateTotalAmount } from '../helpers'
 
 const mapProductToKlarna = (product) => {
-  console.log('product', product)
   return {
     reference: product.sku,
     name: product.totals.name,
@@ -17,6 +16,10 @@ const mapProductToKlarna = (product) => {
     total_discount_amount: (product.totals.discount_amount || 0) * 100,
     total_tax_amount: product.totals.tax_amount * 100
   }
+}
+
+const getTaxAmount = (totalAmount: number, taxRate: number) => {
+  return totalAmount / (1 + (1 / taxRate))
 }
 
 export const getters: GetterTree<CheckoutState, RootState> = {
@@ -30,10 +33,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     const storeView = currentStoreView()
     const shippingMethods = rootState.shipping.methods
     const cartItems = rootGetters['cart/items']
-    console.log('cartItems', cartItems)
     const {platformTotals: totals} = rootState.cart
-    console.log('platformTotals', totals)
-    console.log('rootGetters', rootGetters['cart/shippingInformation']['platformTotals'])
     const checkoutOrder: any = {
       purchase_country: storeView.i18n.defaultCountry,
       purchase_currency: storeView.i18n.currencyCode,
@@ -41,22 +41,23 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       merchant_urls: config.klarna.checkout.merchant,
       shipping_options: [],
       order_lines: cartItems.map(mapProductToKlarna),
-      order_amount: totals.grand_total * 100,
-      order_tax_amount: totals.tax_amount * 100
+      order_amount: totals.subtotal_incl_tax * 100,
+      order_tax_amount: (totals.subtotal_incl_tax - totals.subtotal) * 100
     }
     if (state.checkout.orderId) {
       checkoutOrder.orderId = state.checkout.orderId
     }
     if (state.shippingOptions) {
       checkoutOrder.shipping_options = shippingMethods.map((method, index: number) => {
-        console.log('shippingMethod', method)
-        const taxAmount = method.price_incl_tax - method.amount
+        const price = method.price_incl_tax || method.price || 0
+        const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
+        const taxAmount = getTaxAmount(price, shippingTaxRate)
         return {
           id: method.code || method.carrier_code,
           name: `${method.method_title}`,
-          price: method.price_incl_tax ? method.price_incl_tax * 100 : 0,
+          price: price ? price * 100 : 0,
           tax_amount: taxAmount ? taxAmount * 100 : 0,
-          tax_rate: method.amount && taxAmount ? taxAmount / method.amount * 10000 : 0,
+          tax_rate: shippingTaxRate * 10000,
           preselected: index === 0
         }
       })
