@@ -53,7 +53,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
         const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
         const taxAmount = getTaxAmount(price, shippingTaxRate)
         return {
-          id: method.code || method.carrier_code,
+          id: method.code || `${method.carrier_code}_${method.method_code}`,
           name: `${method.method_title}`,
           price: price ? price * 100 : 0,
           tax_amount: taxAmount ? taxAmount * 100 : 0,
