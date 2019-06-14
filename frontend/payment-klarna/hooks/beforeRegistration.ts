@@ -1,14 +1,5 @@
-export function beforeRegistration({ Vue, config, store, isServer }) {
-  const VSF_KLARNA_CODE = 'vsfklarna'
-
-  store.dispatch('payment/addMethod', {
-    'title': 'Klarna Checkout',
-    'code': VSF_KLARNA_CODE,
-    'cost': 0,
-    'costInclTax': 0,
-    'default': false,
-    'offline': true
-  })
+export function beforeRegistration({ Vue, store }) {
+  const VSF_KLARNA_CODE = 'klarna_kp'
 
   if (!Vue.prototype.$isServer) {
     let isKlarna = false
