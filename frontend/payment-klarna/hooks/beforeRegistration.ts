@@ -1,17 +1,17 @@
-export function beforeRegistration({ Vue, store }) {
-  const VSF_KLARNA_CODE = 'klarna_kp'
+import { router } from '@vue-storefront/core/app'
+import { RouterManager } from '@vue-storefront/core/lib/router-manager'
+const Confirmation = () => import(/* webpackChunkName: "vsf-klarna-confirmation" */ '../components/Confirmation.vue')
 
-  if (!Vue.prototype.$isServer) {
-    let isKlarna = false
-    store.watch((state) => state.checkout.paymentDetails, (_prevMethodCode: string, newMethodCode: string) => {
-      isKlarna = newMethodCode === VSF_KLARNA_CODE
-    })
-
-    const invokePlaceOrder = () => {
-      if (isKlarna) {
-        Vue.prototype.$bus.$emit('checkout-do-placeOrder', {})
+export function beforeRegistration({ Vue, store, config }) {
+  const placeOrderOnConfirmation = config.klarna.placeOrderOnConfirmation || true
+  RouterManager.addRoutes([
+    {
+      name: 'klarna-confirmation',
+      path: '/confirmation',
+      component: Confirmation,
+      props: {
+        placeOrderOnConfirmation
       }
     }
-    Vue.prototype.$bus.$on('checkout-before-placeOrder', invokePlaceOrder)
-  }
+  ], router)
 }
