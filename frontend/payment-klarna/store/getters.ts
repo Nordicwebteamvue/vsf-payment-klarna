@@ -33,6 +33,9 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     const shippingMethods = rootState.shipping.methods
     const cartItems = rootGetters['cart/items']
     const {platformTotals: totals} = rootState.cart
+    if (!totals) {
+      return {}
+    }
     const checkoutOrder: any = {
       purchase_country: storeView.i18n.defaultCountry,
       purchase_currency: storeView.i18n.currencyCode,
