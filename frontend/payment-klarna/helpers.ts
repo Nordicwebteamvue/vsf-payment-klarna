@@ -11,22 +11,3 @@ export const callApi = (callback: (api: any) => {}) => new Promise((resolve) => 
     resolve()
   })
 })
-
-export const calculateTotalAmount = (product) => {
-  return (product.qty * (product.priceInclTax * 100)) - (product.totals.discount_amount * 100)
-}
-
-export const calculateTotalTaxAmount = (product) => {
-  const totalAmount = calculateTotalAmount(product)
-  return (totalAmount - totalAmount  * 10000 / (10000 + product.totals.tax_percent * 100))
-}
-
-export const calculateShippingTaxRate = (shippingInformation) => {
-  const {
-    shipping_amount: shippingAmount,
-    shipping_incl_tax: shippingAmountInclTax
-  } = shippingInformation.platformTotals
-
-  const shippingTaxRateFormatted = (((shippingAmountInclTax - shippingAmount) / shippingAmount) * 100) * 100
-  return shippingTaxRateFormatted
-}

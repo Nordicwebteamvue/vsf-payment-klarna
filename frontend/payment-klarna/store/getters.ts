@@ -3,7 +3,6 @@ import CheckoutState from '../types/CheckoutState'
 import RootState from '@vue-storefront/core/types/RootState'
 import config from 'config'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
-import { calculateTotalTaxAmount, calculateTotalAmount } from '../helpers'
 
 const mapProductToKlarna = (product) => {
   return {
@@ -53,7 +52,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
         const taxAmount = getTaxAmount(price, shippingTaxRate)
         return {
           id: method.code || `${method.carrier_code}_${method.method_code}`,
-          name: `${method.method_title}`,
+          name: `${method.carrier_title}`,
           price: price ? price * 100 : 0,
           tax_amount: taxAmount ? taxAmount * 100 : 0,
           tax_rate: shippingTaxRate * 10000,
