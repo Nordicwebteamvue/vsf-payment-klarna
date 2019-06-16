@@ -21,11 +21,18 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       },
       silent: true
     })
+    if (result.error) {
+      console.log('error', result)
+      commit('createOrderError', result.error)
+      return
+    }
+    const {snippet, ...klarnaResult} = result
     commit('createdOrder', {
-      orderId: result.orderId,
-      snippet: result.snippet,
+      orderId: klarnaResult.orderId,
+      snippet: snippet,
       scriptsTags: getScriptTagsFromSnippet(result.snippet)
     })
+    return klarnaResult
   },
   async confirmation ({ commit, state, dispatch }, { sid }) {
     commit('getConfirmation')
