@@ -19,14 +19,14 @@ export const callApi = (callback) => new Promise((resolve, reject) => {
 })
 
 const calculateTotalAmount = (product) => {
-  return (product.qty * (product.priceInclTax * 100)) - (product.totals.discount_amount * 100)
+  return (product.qty * ((product.priceInclTax || product.totals.price_incl_tax) * 100)) - (product.totals.discount_amount * 100)
 }
 
 export const mapProductToKlarna = product => ({
   reference: product.sku,
   name: product.name,
   quantity: product.qty,
-  unit_price: product.priceInclTax * 100,
+  unit_price: (product.priceInclTax || product.totals.price_incl_tax) * 100,
   tax_rate: product.totals.tax_percent * 100,
   total_amount: calculateTotalAmount(product),
   total_discount_amount: product.totals.discount_amount * 100,
