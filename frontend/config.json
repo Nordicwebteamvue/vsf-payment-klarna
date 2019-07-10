@@ -13,7 +13,8 @@
         "notification": "https://example.com/api/ext/payment-klarna/notification"
       }
     },
-    "endpoint": "http://localhost:8080/api/ext/payment-klarna/create-or-update-order"
+    "endpoint": "http://localhost:8080/api/ext/payment-klarna/create-or-update-order",
+    "showShippingOptions": true
   },
   "server": {
     "host": "localhost",
