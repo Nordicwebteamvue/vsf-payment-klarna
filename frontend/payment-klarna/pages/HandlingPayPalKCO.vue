@@ -87,7 +87,7 @@ export default {
           payment_method: 'paypal'
         },
         redirect_urls: {
-          return_url: config.paypal.return_url,
+          return_url: config.baseUrl + currentStoreView().i18n.defaultCountry.toLowerCase() + '/' + config.paypal.return_url,
           cancel_url: config.paypal.cancel_url
         },
         transactions: [{
