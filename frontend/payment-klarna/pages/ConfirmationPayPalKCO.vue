@@ -1,19 +1,9 @@
-<template>
-  <div class="paypay-wrapup">
-    <span>{{ $t("You will be redirected to PayPal's web portal to complete and pay your order securely. Please wait while your payment is being processed....") }}</span>
-  </div>
-</template>
-
-<style scoped>
-  .paypay-wrapup
-  {
-    margin: 20px 0;
-    text-align: center;
-    min-height: 400px;
-    display: flex;
-    align-items: center;
+<style lang="scss" scoped>
+  .confirmation {
+    min-height: 580px;
   }
 </style>
+
 <script>
 import config from 'config'
 import store from '@vue-storefront/core/store'
@@ -21,7 +11,7 @@ import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import paypal from 'paypal-rest-sdk-kodbruket-fixed'
 
 export default {
-  name: 'PaypalKCO',
+  name: 'PaypalConfirmationKCO',
   data () {
     const storeView = currentStoreView()
     return {
@@ -34,30 +24,8 @@ export default {
   mounted () {
     // Build PayPal payment reques
     this.$Progress.start()
-    this.$bus.$on('cart-after-updatetotals', this.afterTotals)
   },
   methods: {
-    afterTotals () {
-      try {
-        this.initPayPal()
-      } catch (e) {
-        this.$Progress.fail()
-        console.log(e)
-        // window.location = config.paypal.cancel_url
-      }
-    },
-    grandTotal () {
-      return store.state.cart.platformTotals.grand_total
-    },
-    subTotal () {
-      return store.state.cart.platformTotals.subtotal
-    },
-    shipping () {
-      return store.state.cart.platformTotals.shipping_amount
-    },
-    tax () {
-      return store.state.cart.platformTotals.tax_amount
-    },
     initPayPal () {
       paypal.configure({
         mode: config.paypal.env, // Sandbox or live
