@@ -13,7 +13,6 @@ import { mapGetters } from 'vuex'
 import qs from 'qs'
 import { isServer } from '@vue-storefront/core/helpers'
 import LoadingSpinner from './LoadingSpinner.vue'
-import { Subscribe } from 'src/modules/klaviyo/components/Subscribe'
 
 export default {
   name: 'KlarnaConfirmation',
@@ -25,7 +24,6 @@ export default {
   components: {
     LoadingSpinner
   },
-  mixins: [Subscribe],
   async mounted () {
     if (!isServer) {
       const queryString = this.$route.fullPath.replace(this.$route.path, '')
