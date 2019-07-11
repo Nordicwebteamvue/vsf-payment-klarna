@@ -7,7 +7,7 @@ module.exports = ({ config, db }) => {
   const api = Router()
 
   api.post('/create-or-update-order', (req, res) => {
-    const {order} = req.body
+    const { order, storeCode } = req.body
     const {cartId} = req.query
     if (!order || !cartId) {
       return apiStatus(res, 'Bad Request: Missing order or cartId', 400)
@@ -17,7 +17,27 @@ module.exports = ({ config, db }) => {
     } else {
       order.merchant_reference2 = cartId
     }
+    const storeCodeinUrl = '{storeCode}'
     order.merchant_urls = config.klarna.merchant_urls
+
+    // if {storeCode} key is provided in config,
+    // replace with current store view string, otherwise do nothing.
+    // todo: refactor this
+    order.merchant_urls.terms =
+      order.merchant_urls.terms.indexOf(storeCodeinUrl) !== -1 ?
+      order.merchant_urls.terms.replace(storeCodeinUrl, storeCode) :
+      order.merchant_urls.terms
+
+    order.merchant_urls.checkout =
+      order.merchant_urls.checkout.indexOf(storeCodeinUrl) !== -1 ?
+      order.merchant_urls.checkout.replace(storeCodeinUrl, storeCode) :
+      order.merchant_urls.checkout
+
+    order.merchant_urls.confirmation =
+      order.merchant_urls.confirmation.indexOf(storeCodeinUrl) !== -1 ?
+      order.merchant_urls.confirmation.replace(storeCodeinUrl, storeCode) :
+      order.merchant_urls.confirmation
+
     request.post({
       url: config.klarna.endpoints.orders,
       auth: config.klarna.auth,

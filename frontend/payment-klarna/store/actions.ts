@@ -5,6 +5,7 @@ import config from 'config'
 import RootState from '@vue-storefront/core/types/RootState'
 import qs from 'qs'
 import { getScriptTagsFromSnippet } from '../helpers'
+import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
 export const actions: ActionTree<CheckoutState, RootState> = {
     async createOrder ({ commit, state, getters }) {
@@ -17,7 +18,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 mode: 'cors',
-                body: JSON.stringify({order})
+                body: JSON.stringify({ order, storeCode: currentStoreView().storeCode })
             },
             silent: true
         })
