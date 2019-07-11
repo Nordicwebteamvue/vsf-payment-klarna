@@ -1,5 +1,5 @@
 const PayPalKcoPage = () => import(/* webpackChunkName: "vsf-payment-klarna" */ './HandlingPayPalKCO.vue')
-const PayPalConfirmKcoPage = () => import(/* webpackChunkName: "vsf-payment-klarna" */ './ConfirmationPayPalKCO.vue')
+const PaypalConfirmationKCO = () => import(/* webpackChunkName: "vsf-payment-klarna" */ './ConfirmationPayPalKCO.vue')
 
 export const PayPalKcoRoutes = [
   {
@@ -10,6 +10,6 @@ export const PayPalKcoRoutes = [
   {
     name: 'paypal-response',
     path: '/paypal-response',
-    component: PayPalConfirmKcoPage
+    component: PaypalConfirmationKCO
   },
 ]
