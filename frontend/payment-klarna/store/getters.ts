@@ -43,7 +43,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       shipping_options: [],
       order_lines: cartItems.map(mapProductToKlarna),
       order_amount: totals.subtotal_incl_tax * 100,
-      order_tax_amount: (totals.subtotal_incl_tax - totals.subtotal) * 100
+      order_tax_amount: (totals.subtotal_incl_tax - totals.subtotal) * 100,
+      options: config.klarna.options
     }
     if (state.checkout.orderId) {
       checkoutOrder.orderId = state.checkout.orderId
