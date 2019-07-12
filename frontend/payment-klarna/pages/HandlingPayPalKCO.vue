@@ -43,7 +43,7 @@ export default {
       } catch (e) {
         this.$Progress.fail()
         console.log(e)
-        // window.location = config.paypal.cancel_url
+        window.location = config.paypal.cancel_url
       }
     },
     grandTotal () {
@@ -129,6 +129,7 @@ export default {
           } else {
             this.$Progress.fail()
             console.error('no redirect URI present')
+            window.location = config.paypal.cancel_url
           }
         }
       })
