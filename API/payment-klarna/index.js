@@ -5,7 +5,6 @@ import jwt from 'jsonwebtoken'
 
 module.exports = ({ config, db }) => {
   const api = Router()
-
   api.post('/create-or-update-order', (req, res) => {
     const { order, storeCode } = req.body
     const {cartId} = req.query
@@ -17,27 +16,9 @@ module.exports = ({ config, db }) => {
     } else {
       order.merchant_reference2 = cartId
     }
-    const storeCodeinUrl = '{storeCode}'
     order.merchant_urls = config.klarna.merchant_urls
-
-    // if {storeCode} key is provided in config,
-    // replace with current store view string, otherwise do nothing.
-    // todo: refactor this
-    order.merchant_urls.terms =
-      order.merchant_urls.terms.indexOf(storeCodeinUrl) !== -1 ?
-      order.merchant_urls.terms.replace(storeCodeinUrl, storeCode) :
-      order.merchant_urls.terms
-
-    order.merchant_urls.checkout =
-      order.merchant_urls.checkout.indexOf(storeCodeinUrl) !== -1 ?
-      order.merchant_urls.checkout.replace(storeCodeinUrl, storeCode) :
-      order.merchant_urls.checkout
-
-    order.merchant_urls.confirmation =
-      order.merchant_urls.confirmation.indexOf(storeCodeinUrl) !== -1 ?
-      order.merchant_urls.confirmation.replace(storeCodeinUrl, storeCode) :
-      order.merchant_urls.confirmation
-
+    addStoreCode(order.merchant_urls, storeCode)
+    
     request.post({
       url: config.klarna.endpoints.orders,
       auth: config.klarna.auth,
@@ -119,5 +100,10 @@ module.exports = ({ config, db }) => {
     })
   })
 
+  function addStoreCode(merchant_urls, storeCode = '') {
+    Object.keys(merchant_urls).forEach(url => {
+      merchant_urls[url] = merchant_urls[url].replace('{storeCode}', storeCode).replace(/([^:]\/)\/+/g, "$1")
+    })
+  }
   return api
 }
