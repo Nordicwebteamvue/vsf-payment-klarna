@@ -201,7 +201,10 @@ export default {
           this.order.shipping = payment.transactions[0].item_list.shipping_address
           this.showBlock = true
           this.message = i18n.t('Once your order has been processed, a payment confirmation will be sent to') + ' ' + payment.payer.payer_info.email
+          this.$bus.$on('checkout-before-placeOrder', {})
           this.$bus.$emit('checkout-do-placeOrder', payment)
+          console.log(payment)
+          console.log('Max is master')
           this.$Progress.finish()
         }
       })

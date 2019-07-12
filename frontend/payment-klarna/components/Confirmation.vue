@@ -33,6 +33,15 @@ export default {
       }
       const result = await this.$store.dispatch('kco/confirmation', { sid })
       this.$bus.$emit('checkout-do-placeOrder', result)
+      const checkboxes = result.merchant_requested.additional_checkboxes
+      if (checkboxes) {
+        const newsletter = checkboxes.find(({id}) => id === 'newsletter_opt_in')
+        if (newsletter && newsletter.checked) {
+          this.$bus.$emit('newsletter-signup', {
+            email: result.billing_address.email
+          })
+        }
+      }
       setTimeout(() => {
         Array.from(this.confirmation.scriptsTags).forEach(tag => {
           // TODO: Make this work with <script> tag insertion
