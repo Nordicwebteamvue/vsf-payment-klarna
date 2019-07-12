@@ -18,7 +18,6 @@ module.exports = ({ config, db }) => {
     }
     order.merchant_urls = config.klarna.merchant_urls
     addStoreCode(order.merchant_urls, storeCode)
-    
     request.post({
       url: config.klarna.endpoints.orders,
       auth: config.klarna.auth,
@@ -100,9 +99,9 @@ module.exports = ({ config, db }) => {
     })
   })
 
-  function addStoreCode(merchant_urls, storeCode = '') {
-    Object.keys(merchant_urls).forEach(url => {
-      merchant_urls[url] = merchant_urls[url].replace('{storeCode}', storeCode).replace(/([^:]\/)\/+/g, "$1")
+  function addStoreCode (merchantUrls, storeCode = '') {
+    Object.keys(merchantUrls).forEach(url => {
+      merchantUrls[url] = merchantUrls[url].replace('{storeCode}', storeCode).replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
     })
   }
   return api
