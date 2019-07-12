@@ -101,7 +101,7 @@ module.exports = ({ config, db }) => {
 
   function addStoreCode (merchantUrls, storeCode = '') {
     Object.keys(merchantUrls).forEach(url => {
-      merchantUrls[url] = merchantUrls[url].replace('{storeCode}', storeCode).replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
+      merchantUrls[url] = merchantUrls[url].replace('{{storeCode}}', storeCode).replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
     })
   }
   return api
