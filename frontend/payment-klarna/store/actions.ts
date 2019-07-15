@@ -54,5 +54,25 @@ export const actions: ActionTree<CheckoutState, RootState> = {
             scriptsTags: getScriptTagsFromSnippet(snippet)
         })
         return klarnaResult
+    },
+    async retrievePayPalKco ({ commit, state, dispatch },) {
+        commit('getKcoPayPal')
+        let klarnaSidArray = JSON.parse(localStorage.getItem('_klarna_sdid_ch'))
+        // last sid of order
+        let sid = klarnaSidArray[klarnaSidArray.length - 1 ][0];
+        const url = config.klarna.confirmation.replace('{{sid}}', sid)
+        const { result }: any = await TaskQueue.execute({
+            url,
+            payload: {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'cors'
+            },
+            silent: true
+        })
+        commit('setKcoPayPal', {
+            result
+        })
+        return result;
     }
 }

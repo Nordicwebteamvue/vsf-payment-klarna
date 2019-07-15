@@ -24,5 +24,11 @@ export const mutations: MutationTree<any> = {
       ...payload,
       loading: false
     }
+  },
+  getKcoPayPal (state, payload) {
+    state.checkout.loading = true
+  },
+  setKcoPayPal (state, payload) {
+    state.checkout.kcoPayPal = payload
   }
 }

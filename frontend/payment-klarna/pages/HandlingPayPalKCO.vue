@@ -16,9 +16,9 @@
 </style>
 <script>
 import config from 'config'
-import store from '@vue-storefront/core/store'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import paypal from 'paypal-rest-sdk-kodbruket-fixed'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'PaypalKCO',
@@ -27,14 +27,26 @@ export default {
     return {
       loader: false,
       commit: true,
-      currency: storeView.i18n.currencyCode,
       locale: storeView.i18n.defaultLocale.replace('-', '_') // Convert to PayPal format of locale
+    }
+  },
+  beforeMount () {
+    try {
+      this.$store.dispatch('kco/retrievePayPalKco')
+    } catch (e) {
+      console.error(e)
+      window.location = config.paypal.cancel_url
     }
   },
   mounted () {
     // Build PayPal payment reques
     this.$Progress.start()
     this.$bus.$on('cart-after-updatetotals', this.afterTotals)
+  },
+  computed: {
+    ...mapGetters({
+      checkout: 'kco/checkout'
+    })
   },
   methods: {
     afterTotals () {
@@ -47,16 +59,25 @@ export default {
       }
     },
     grandTotal () {
-      return store.state.cart.platformTotals.grand_total
+      return this.checkout.kcoPayPal.result.order_amount / 100
     },
     subTotal () {
-      return store.state.cart.platformTotals.subtotal
+      return this.checkout.kcoPayPal.result.order_amount / 100
     },
     shipping () {
-      return store.state.cart.platformTotals.shipping_amount
+      return 0
     },
     tax () {
-      return store.state.cart.platformTotals.tax_amount
+      return 0
+    },
+    currency () {
+      return this.checkout.kcoPayPal.result.purchase_currency
+    },
+    items () {
+      return this.checkout.kcoPayPal.result.order_lines
+    },
+    shippingAddress () {
+      return this.checkout.kcoPayPal.result.shipping_address
     },
     initPayPal () {
       paypal.configure({
@@ -64,22 +85,30 @@ export default {
         client_id: config.paypal.client,
         client_secret: config.paypal.secret
       })
-
       let items = []
-
-      const cartItems = store.state.cart.cartItems
-
+      const cartItems = this.items()
       cartItems.map((product) => {
         items.push({
           name: product.name,
-          sku: product.sku,
+          sku: product.reference,
           description: product.description ? product.description : product.name,
-          currency: this.currency,
+          currency: this.currency(),
           tax: 0,
-          price: product.totals.price,
-          quantity: product.totals.qty
+          price: product.unit_price / 100,
+          quantity: product.quantity
         })
       })
+
+      let shippingAddress = {
+        recipient_name: this.shippingAddress().given_name,
+        line1: this.shippingAddress().street_address,
+        line2: null,
+        city: this.shippingAddress().city,
+        country_code: this.shippingAddress().country.toUpperCase(),
+        postal_code: this.shippingAddress().postal_code,
+        phone: this.shippingAddress().phone,
+        state: null
+      }
 
       var payReq = JSON.stringify({
         intent: 'sale',
@@ -93,15 +122,16 @@ export default {
         transactions: [{
           amount: {
             total: this.grandTotal(),
-            currency: this.currency,
+            currency: this.currency(),
             details: {
               subtotal: this.subTotal(),
-              tax: 0,
+              tax: this.tax(),
               shipping: this.shipping()
             }
           },
           item_list: {
-            items: items
+            items: items,
+            shipping_address: shippingAddress
           },
           description: config.paypal.description
         }]
