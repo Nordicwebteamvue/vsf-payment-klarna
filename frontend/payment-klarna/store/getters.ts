@@ -58,7 +58,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
           name: `${method.carrier_title}`,
           price: price ? price * 100 : 0,
           tax_amount: taxAmount ? taxAmount * 100 : 0,
-          tax_rate: shippingTaxRate * 10000,
+          tax_rate: shippingTaxRate ? shippingTaxRate * 10000: 0,
           preselected: index === 0
         }
       })
