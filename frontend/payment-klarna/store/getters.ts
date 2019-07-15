@@ -46,9 +46,9 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     if (!totals) {
       return {}
     }
-    const external_payment_methods = (config.klarna.external_payment_methods !== 'undefined') ? config.klarna.external_payment_methods.map(mapRedirectUrl) : null;
 
-    const external_checkouts = (config.klarna.external_checkouts !== 'undefined') ? config.klarna.external_checkouts : null;
+    const external_payment_methods = config.klarna.external_payment_methods ? config.klarna.external_payment_methods.map(mapRedirectUrl) : null;
+    const external_checkouts = config.klarna.external_checkouts ? config.klarna.external_checkouts : null;
 
     const checkoutOrder: any = {
       purchase_country: storeView.i18n.defaultCountry,
@@ -58,8 +58,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       order_lines: cartItems.map(mapProductToKlarna),
       order_amount: totals.subtotal_incl_tax * 100,
       order_tax_amount: (totals.subtotal_incl_tax - totals.subtotal) * 100,
-      external_payment_methods: external_payment_methods,
-      external_checkouts: external_checkouts
+      external_payment_methods,
+      external_checkouts
     }
     if (state.checkout.orderId) {
       checkoutOrder.orderId = state.checkout.orderId
