@@ -17,6 +17,15 @@ const mapProductToKlarna = (product) => {
   }
 }
 
+const mapRedirectUrl = (externalPaymentConfig) => {
+  if (externalPaymentConfig.name == 'PayPal')
+  {
+    let uri = externalPaymentConfig.redirect_url
+    externalPaymentConfig.redirect_url = config.baseUrl + currentStoreView().i18n.defaultCountry.toLowerCase() + '/' + uri;
+  }
+  return externalPaymentConfig
+}
+
 const getTaxAmount = (totalAmount: number, taxRate: number) => {
   return totalAmount / (1 + (1 / taxRate))
 }
@@ -29,6 +38,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     return state.confirmation
   },
   order (state, getters, rootState, rootGetters) {
+
     const storeView = currentStoreView()
     const shippingMethods = rootState.shipping.methods
     const cartItems = rootGetters['cart/items']
@@ -36,6 +46,10 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     if (!totals) {
       return {}
     }
+    const external_payment_methods = (config.klarna.external_payment_methods !== 'undefined') ? config.klarna.external_payment_methods.map(mapRedirectUrl) : null;
+
+    const external_checkouts = (config.klarna.external_checkouts !== 'undefined') ? config.klarna.external_checkouts : null;
+
     const checkoutOrder: any = {
       purchase_country: storeView.i18n.defaultCountry,
       purchase_currency: storeView.i18n.currencyCode,
@@ -44,7 +58,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       order_lines: cartItems.map(mapProductToKlarna),
       order_amount: totals.subtotal_incl_tax * 100,
       order_tax_amount: (totals.subtotal_incl_tax - totals.subtotal) * 100,
-      options: config.klarna.options
+      external_payment_methods: external_payment_methods,
+      external_checkouts: external_checkouts
     }
     if (state.checkout.orderId) {
       checkoutOrder.orderId = state.checkout.orderId

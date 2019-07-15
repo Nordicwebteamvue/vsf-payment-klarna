@@ -1,0 +1,169 @@
+<template>
+  <div class="paypay-wrapup">
+    <span>{{ $t("You will be redirected to PayPal's web portal to complete and pay your order securely. Please wait while your payment is being processed....") }}</span>
+  </div>
+</template>
+
+<style scoped>
+  .paypay-wrapup
+  {
+    margin: 20px 0;
+    text-align: center;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+  }
+</style>
+<script>
+import config from 'config'
+import { currentStoreView } from '@vue-storefront/core/lib/multistore'
+import paypal from 'paypal-rest-sdk-kodbruket-fixed'
+import { mapGetters } from 'vuex'
+
+export default {
+  name: 'PaypalKCO',
+  data () {
+    const storeView = currentStoreView()
+    return {
+      loader: false,
+      commit: true,
+      locale: storeView.i18n.defaultLocale.replace('-', '_') // Convert to PayPal format of locale
+    }
+  },
+  beforeMount () {
+    try {
+      this.$store.dispatch('kco/retrievePayPalKco')
+    } catch (e) {
+      console.error(e)
+      window.location = config.paypal.cancel_url
+    }
+  },
+  mounted () {
+    // Build PayPal payment reques
+    this.$Progress.start()
+    this.$bus.$on('cart-after-updatetotals', this.afterTotals)
+  },
+  computed: {
+    ...mapGetters({
+      checkout: 'kco/checkout'
+    })
+  },
+  methods: {
+    afterTotals () {
+      try {
+        this.initPayPal()
+      } catch (e) {
+        this.$Progress.fail()
+        console.log(e)
+        window.location = config.paypal.cancel_url
+      }
+    },
+    grandTotal () {
+      return this.checkout.kcoPayPal.result.order_amount / 100
+    },
+    subTotal () {
+      return this.checkout.kcoPayPal.result.order_amount / 100
+    },
+    shipping () {
+      return 0
+    },
+    tax () {
+      return 0
+    },
+    currency () {
+      return this.checkout.kcoPayPal.result.purchase_currency
+    },
+    items () {
+      return this.checkout.kcoPayPal.result.order_lines
+    },
+    shippingAddress () {
+      return this.checkout.kcoPayPal.result.shipping_address
+    },
+    initPayPal () {
+      paypal.configure({
+        mode: config.paypal.env, // Sandbox or live
+        client_id: config.paypal.client,
+        client_secret: config.paypal.secret
+      })
+      let items = []
+      const cartItems = this.items()
+      cartItems.map((product) => {
+        items.push({
+          name: product.name,
+          sku: product.reference,
+          description: product.description ? product.description : product.name,
+          currency: this.currency(),
+          tax: 0,
+          price: product.unit_price / 100,
+          quantity: product.quantity
+        })
+      })
+
+      let shippingAddress = {
+        recipient_name: this.shippingAddress().given_name,
+        line1: this.shippingAddress().street_address,
+        line2: null,
+        city: this.shippingAddress().city,
+        country_code: this.shippingAddress().country.toUpperCase(),
+        postal_code: this.shippingAddress().postal_code,
+        phone: this.shippingAddress().phone,
+        state: null
+      }
+
+      var payReq = JSON.stringify({
+        intent: 'sale',
+        payer: {
+          payment_method: 'paypal'
+        },
+        redirect_urls: {
+          return_url: config.baseUrl + currentStoreView().i18n.defaultCountry.toLowerCase() + '/' + config.paypal.return_url,
+          cancel_url: config.paypal.cancel_url
+        },
+        transactions: [{
+          amount: {
+            total: this.grandTotal(),
+            currency: this.currency(),
+            details: {
+              subtotal: this.subTotal(),
+              tax: this.tax(),
+              shipping: this.shipping()
+            }
+          },
+          item_list: {
+            items: items,
+            shipping_address: shippingAddress
+          },
+          description: config.paypal.description
+        }]
+      })
+
+      paypal.payment.create(payReq, (error, payment) => {
+        var links = {}
+
+        if (error) {
+          console.error(JSON.stringify(error))
+        } else {
+          // Capture HATEOAS links
+          payment.links.forEach((linkObj) => {
+            links[linkObj.rel] = {
+              href: linkObj.href,
+              method: linkObj.method
+            }
+          })
+
+          // If the redirect URL is present, redirect the customer to that URL
+          if (links.hasOwnProperty('approval_url')) {
+            this.$Progress.finish()
+            // Redirect the customer to links['approval_url'].href
+            window.location = links['approval_url'].href
+          } else {
+            this.$Progress.fail()
+            console.error('no redirect URI present')
+            window.location = config.paypal.cancel_url
+          }
+        }
+      })
+    }
+  }
+}
+</script>
