@@ -21,7 +21,7 @@ const mapRedirectUrl = (externalPaymentConfig) => {
   if (externalPaymentConfig.name == 'PayPal')
   {
     let uri = externalPaymentConfig.redirect_url
-    externalPaymentConfig.redirect_url = config.baseUrl+currentStoreView().i18n.defaultCountry.toLowerCase()+'/'+uri;
+    externalPaymentConfig.redirect_url = config.baseUrl + currentStoreView().i18n.defaultCountry.toLowerCase() + '/' + uri;
   }
   return externalPaymentConfig
 }
@@ -48,7 +48,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     }
     const external_payment_methods = (config.klarna.external_payment_methods !== 'undefined') ? config.klarna.external_payment_methods.map(mapRedirectUrl) : null;
 
-    const external_checkouts       = (config.klarna.external_checkouts !== 'undefined') ? config.klarna.external_checkouts : null;
+    const external_checkouts = (config.klarna.external_checkouts !== 'undefined') ? config.klarna.external_checkouts : null;
 
     const checkoutOrder: any = {
       purchase_country: storeView.i18n.defaultCountry,

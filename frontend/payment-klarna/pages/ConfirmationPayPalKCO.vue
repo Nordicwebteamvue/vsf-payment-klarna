@@ -29,15 +29,13 @@
             {{ order.total }}
           </div>
         </div>
-        <!-- eslint-disable-next-line -->
-        <div class="line"></div>
+        <div class="line"/>
         <div class="payment my10 py10">
           <div>
             {{ i18n.t('Paid By') }}
           </div>
           <div>
-            <!-- eslint-disable-next-line -->
-            <img width="75" v-bind:src="order.image_url"/>
+            <img width="75" :src="order.image_url">
           </div>
         </div>
       </div>

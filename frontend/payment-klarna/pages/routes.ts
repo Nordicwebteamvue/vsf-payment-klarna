@@ -3,12 +3,12 @@ const PaypalConfirmationKCO = () => import(/* webpackChunkName: "vsf-payment-kla
 
 export const PayPalKcoRoutes = [
   {
-    name: 'paypal-handling-order',
+    name: 'kco-paypal-handling-order',
     path: '/paypal-handling-order',
     component: PayPalKcoPage
   },
   {
-    name: 'paypal-response',
+    name: 'kco-paypal-response',
     path: '/paypal-response',
     component: PaypalConfirmationKCO
   },
