@@ -6,7 +6,7 @@ import { PayPalKcoRoutes } from '../pages/routes'
 
 export function beforeRegistration({ Vue, store, config }) {
   const placeOrderOnConfirmation = config.klarna.placeOrderOnConfirmation || true
-  RouterManager.addRoutes([
+  const routes = [
     {
       name: 'klarna-confirmation',
       path: '/confirmation',
@@ -15,7 +15,9 @@ export function beforeRegistration({ Vue, store, config }) {
         placeOrderOnConfirmation
       }
     }
-  ], router)
+  ]
+  RouterManager.addRoutes(routes, router)
+  setupMultistoreRoutes(config, router, routes)
   RouterManager.addRoutes(PayPalKcoRoutes, router)
   setupMultistoreRoutes(config, router, PayPalKcoRoutes)
 }
