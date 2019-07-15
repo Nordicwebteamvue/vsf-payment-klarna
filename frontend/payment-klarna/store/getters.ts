@@ -59,7 +59,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       order_amount: totals.subtotal_incl_tax * 100,
       order_tax_amount: (totals.subtotal_incl_tax - totals.subtotal) * 100,
       external_payment_methods,
-      external_checkouts
+      external_checkouts,
+      options: config.klarna.options ? config.klarna.options : null
     }
     if (state.checkout.orderId) {
       checkoutOrder.orderId = state.checkout.orderId
