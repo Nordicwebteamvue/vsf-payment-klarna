@@ -110,7 +110,7 @@ export default {
           shipping_carrier_code: 'flatrate',
           payment_method_code: 'vsfpaypal',
           payment_method_additional: {
-            paymentMethod: 'kcopaypalvsf',
+            paymentMethod: 'kcopaypalvsf'
           },
           shippingExtraFields: ''
         }
