@@ -75,7 +75,6 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     return result;
   },
   setMerchantData ({ commit }, merchantData) {
-    console.log('setMerchantData', merchantData)
     commit('merchantData', merchantData)
   },
   resetMerchantData ({ commit }) {
