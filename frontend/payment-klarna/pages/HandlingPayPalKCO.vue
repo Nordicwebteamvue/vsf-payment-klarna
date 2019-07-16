@@ -58,7 +58,7 @@ export default {
       } catch (e) {
         this.$Progress.fail()
         console.log(e)
-        // window.location = config.paypal.cancel_url
+        window.location = config.paypal.cancel_url
       }
     },
     grandTotal () {
@@ -109,7 +109,9 @@ export default {
           shipping_method_code: 'flatrate',
           shipping_carrier_code: 'flatrate',
           payment_method_code: 'vsfpaypal',
-          payment_method_additional: '',
+          payment_method_additional: {
+            paymentMethod: 'kcopaypalvsf',
+          },
           shippingExtraFields: ''
         }
       }
@@ -154,16 +156,16 @@ export default {
         })
       })
 
-      // let shippingAddress = {
-      //   recipient_name: this.shippingAddress().given_name,
-      //   line1: this.shippingAddress().street_address,
-      //   line2: null,
-      //   city: this.shippingAddress().city,
-      //   country_code: this.shippingAddress().country.toUpperCase(),
-      //   postal_code: this.shippingAddress().postal_code,
-      //   phone: this.shippingAddress().phone,
-      //   state: null
-      // }
+      let shippingAddress = {
+        recipient_name: this.shippingAddress().given_name,
+        line1: this.shippingAddress().street_address,
+        line2: null,
+        city: this.shippingAddress().city,
+        country_code: this.shippingAddress().country.toUpperCase(),
+        postal_code: this.shippingAddress().postal_code,
+        phone: this.shippingAddress().phone,
+        state: null
+      }
 
       var payReq = JSON.stringify({
         intent: 'sale',
@@ -185,7 +187,8 @@ export default {
             }
           },
           item_list: {
-            items: items
+            items: items,
+            shipping_address: shippingAddress
           },
           description: config.paypal.description
         }]
@@ -209,11 +212,11 @@ export default {
           if (links.hasOwnProperty('approval_url')) {
             this.$Progress.finish()
             // Redirect the customer to links['approval_url'].href
-            // window.location = links['approval_url'].href
+            window.location = links['approval_url'].href
           } else {
             this.$Progress.fail()
             console.error('no redirect URI present')
-            // window.location = config.paypal.cancel_url
+            window.location = config.paypal.cancel_url
           }
         }
       })
