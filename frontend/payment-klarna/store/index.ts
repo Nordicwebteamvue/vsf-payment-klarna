@@ -11,6 +11,7 @@ export const module: Module<CheckoutState, any> = {
   mutations,
   state: {
     shippingOptions: true,
+    merchantData: {},
     checkout: {
       orderId: '',
       loading: false,

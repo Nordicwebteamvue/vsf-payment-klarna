@@ -30,5 +30,8 @@ export const mutations: MutationTree<any> = {
   },
   setKcoPayPal (state, payload) {
     state.checkout.kcoPayPal = payload
+  },
+  merchantData (state, payload) {
+    state.merchantData = payload
   }
 }
