@@ -10,4 +10,5 @@ export default interface CheckoutState {
   confirmation: SubState;
   checkout: SubState;
   shippingOptions: Boolean;
+  merchantData: Object;
 }
