@@ -33,5 +33,8 @@ export const mutations: MutationTree<any> = {
   },
   merchantData (state, payload) {
     state.merchantData = payload
+  },
+  resetMerchantData (state) {
+    state.merchantData = {}
   }
 }

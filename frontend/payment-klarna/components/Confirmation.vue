@@ -38,6 +38,7 @@ export default {
           merchantData: JSON.parse(result.merchant_data),
           result
         })
+        this.$store.dispatch('kco/resetMerchantData')
       }
       const checkboxes = result.merchant_requested && result.merchant_requested.additional_checkboxes
       if (checkboxes) {
