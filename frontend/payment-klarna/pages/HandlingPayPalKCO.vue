@@ -62,10 +62,10 @@ export default {
       }
     },
     PayPalReturnUrl () {
-      return config.baseUrl + currentStoreView().i18n.defaultCountry.toLowerCase() + '/' + config.paypal.return_url
+      return config.baseUrl + currentStoreView().storeCode + '/' + config.paypal.return_url
     },
     PayPalCancelUrl () {
-      return config.paypal.cancel_url.replace('{{storeCode}}', currentStoreView().i18n.defaultCountry.toLowerCase()).replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
+      return config.paypal.cancel_url.replace('{{storeCode}}', currentStoreView().storeCode).replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
     },
     grandTotal () {
       return this.checkout.kcoPayPal.result.order_amount / 100
@@ -220,7 +220,7 @@ export default {
           } else {
             this.$Progress.fail()
             console.error('no redirect URI present')
-            window.location = config.paypal.cancel_url
+            window.location = this.PayPalCancelUrl()
           }
         }
       })
