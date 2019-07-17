@@ -21,7 +21,7 @@ const mapRedirectUrl = (externalPaymentConfig) => {
   if (externalPaymentConfig.name == 'PayPal')
   {
     let uri = externalPaymentConfig.redirect_url
-    externalPaymentConfig.redirect_url = config.baseUrl + currentStoreView().i18n.defaultCountry.toLowerCase() + '/' + uri;
+    externalPaymentConfig.redirect_url = config.baseUrl + currentStoreView().storeCode + '/' + uri;
   }
   return externalPaymentConfig
 }
@@ -38,7 +38,6 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     return state.confirmation
   },
   order (state, getters, rootState, rootGetters) {
-
     const storeView = currentStoreView()
     const shippingMethods = rootState.shipping.methods
     const cartItems = rootGetters['cart/items']
@@ -56,16 +55,19 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       locale: storeView.i18n.defaultLocale,
       shipping_options: [],
       order_lines: cartItems.map(mapProductToKlarna),
-      order_amount: totals.subtotal_incl_tax * 100,
-      order_tax_amount: (totals.subtotal_incl_tax - totals.subtotal) * 100,
+      order_amount: totals.base_grand_total * 100,
+      order_tax_amount: totals.base_tax_amount * 100,
       external_payment_methods,
       external_checkouts,
-      options: config.klarna.options ? config.klarna.options : null
+      options: config.klarna.options ? config.klarna.options : null,
+      merchant_data: JSON.stringify(state.merchantData)
     }
     if (state.checkout.orderId) {
       checkoutOrder.orderId = state.checkout.orderId
     }
     if (config.klarna.showShippingOptions && state.shippingOptions) {
+      checkoutOrder.order_amount = totals.subtotal_incl_tax * 100
+      checkoutOrder.order_tax_amount = (totals.subtotal_incl_tax - totals.subtotal) * 100
       checkoutOrder.shipping_options = shippingMethods.map((method, index: number) => {
         const price = method.price_incl_tax || method.price || 0
         const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
@@ -75,10 +77,30 @@ export const getters: GetterTree<CheckoutState, RootState> = {
           name: `${method.carrier_title}`,
           price: price ? price * 100 : 0,
           tax_amount: taxAmount ? taxAmount * 100 : 0,
-          tax_rate: shippingTaxRate * 10000,
+          tax_rate: shippingTaxRate ? shippingTaxRate * 10000: 0,
           preselected: index === 0
         }
       })
+    }
+    if (!config.klarna.showShippingOptions) {
+      const { shippingMethod: code } = rootState.checkout.shippingDetails
+      const shippingMethod = rootGetters['shipping/shippingMethods']
+        .find(method => method.method_code === code)
+      if (shippingMethod) {
+        const price = shippingMethod.price_incl_tax || shippingMethod.price || 0
+        const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
+        const taxAmount = getTaxAmount(shippingMethod.price_incl_tax, shippingTaxRate)
+        checkoutOrder.order_lines.push({
+          type: 'shipping_fee',
+          reference: code,
+          quantity: 1,
+          name: `${shippingMethod.carrier_title} (${shippingMethod.method_title})`,
+          total_amount: price ? price * 100 : 0,
+          unit_price: price ? price * 100 : 0,
+          total_tax_amount: taxAmount ? taxAmount * 100 : 0,
+          tax_rate: shippingTaxRate ? shippingTaxRate * 10000: 0
+        })
+      }
     }
     return checkoutOrder
   }

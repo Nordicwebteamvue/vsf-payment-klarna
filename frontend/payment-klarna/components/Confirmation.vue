@@ -33,7 +33,14 @@ export default {
       }
       const result = await this.$store.dispatch('kco/confirmation', { sid })
       this.$bus.$emit('checkout-do-placeOrder', result)
-      const checkboxes = result.merchant_requested.additional_checkboxes
+      if (result.merchant_data) {
+        this.$bus.$emit('kco-merchant-data', {
+          merchantData: JSON.parse(result.merchant_data),
+          result
+        })
+        this.$store.dispatch('kco/resetMerchantData')
+      }
+      const checkboxes = result.merchant_requested && result.merchant_requested.additional_checkboxes
       if (checkboxes) {
         const newsletter = checkboxes.find(({id}) => id === 'newsletter_opt_in')
         if (newsletter && newsletter.checked) {
