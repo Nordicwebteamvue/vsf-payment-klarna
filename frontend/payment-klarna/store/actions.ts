@@ -12,13 +12,15 @@ export const actions: ActionTree<CheckoutState, RootState> = {
         commit('createOrder')
         const { order } = getters
         const url = config.klarna.endpoint
+        const storeCode = currentStoreView().storeCode
+        const dataSourceStoreCode = config.storeViews[storeCode].dataSourceStoreCode
         const { result }: any = await TaskQueue.execute({
             url,
             payload: {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 mode: 'cors',
-                body: JSON.stringify({ order, storeCode: currentStoreView().storeCode })
+                body: JSON.stringify({ order, storeCode, dataSourceStoreCode })
             },
             silent: true
         })
