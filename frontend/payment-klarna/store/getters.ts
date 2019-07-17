@@ -21,7 +21,7 @@ const mapRedirectUrl = (externalPaymentConfig) => {
   if (externalPaymentConfig.name == 'PayPal')
   {
     let uri = externalPaymentConfig.redirect_url
-    externalPaymentConfig.redirect_url = config.baseUrl + currentStoreView().i18n.defaultCountry.toLowerCase() + '/' + uri;
+    externalPaymentConfig.redirect_url = config.baseUrl + currentStoreView().storeCode + '/' + uri;
   }
   return externalPaymentConfig
 }

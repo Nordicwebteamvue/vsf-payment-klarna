@@ -40,7 +40,7 @@ export default {
     }
   },
   mounted () {
-    // Build PayPal payment reques
+    // Build PayPal payment request
     this.$Progress.start()
     this.$bus.$on('cart-after-updatetotals', this.afterTotals)
   },
@@ -58,8 +58,14 @@ export default {
       } catch (e) {
         this.$Progress.fail()
         console.log(e)
-        window.location = config.paypal.cancel_url
+        window.location = this.PayPalCancelUrl()
       }
+    },
+    PayPalReturnUrl () {
+      return config.baseUrl + currentStoreView().storeCode + '/' + config.paypal.return_url
+    },
+    PayPalCancelUrl () {
+      return config.paypal.cancel_url.replace('{{storeCode}}', currentStoreView().storeCode).replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
     },
     grandTotal () {
       return this.checkout.kcoPayPal.result.order_amount / 100
@@ -166,15 +172,14 @@ export default {
         phone: this.shippingAddress().phone,
         state: null
       }
-
       var payReq = JSON.stringify({
         intent: 'sale',
         payer: {
           payment_method: 'paypal'
         },
         redirect_urls: {
-          return_url: config.baseUrl + currentStoreView().i18n.defaultCountry.toLowerCase() + '/' + config.paypal.return_url,
-          cancel_url: config.paypal.cancel_url
+          return_url: this.PayPalReturnUrl(),
+          cancel_url: this.PayPalCancelUrl
         },
         transactions: [{
           amount: {
@@ -193,7 +198,6 @@ export default {
           description: config.paypal.description
         }]
       })
-
       paypal.payment.create(payReq, (error, payment) => {
         var links = {}
 
@@ -216,7 +220,7 @@ export default {
           } else {
             this.$Progress.fail()
             console.error('no redirect URI present')
-            window.location = config.paypal.cancel_url
+            window.location = this.PayPalCancelUrl()
           }
         }
       })
