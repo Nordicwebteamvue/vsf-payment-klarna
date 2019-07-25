@@ -33,6 +33,7 @@ export default {
       }
       const result = await this.$store.dispatch('kco/confirmation', { sid })
       this.$bus.$emit('checkout-do-placeOrder', result)
+      this.$store.dispatch('cart/clear')
       if (result.merchant_data) {
         this.$bus.$emit('kco-merchant-data', {
           merchantData: JSON.parse(result.merchant_data),
