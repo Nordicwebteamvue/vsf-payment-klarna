@@ -35,7 +35,12 @@ export default {
     }, 100)
   },
   beforeMount () {
-    this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder())
+    this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder)
+    this.$bus.$on('checkout-after-shippingMethodChanged', this.test)
+  },
+  beforeDestroy () {
+    this.$bus.$off('updateKlarnaOrder', this.configureUpdateOrder)
+    this.$bus.$off('checkout-after-shippingMethodChanged', this.test)
   },
   components: {
     LoadingSpinner
@@ -46,6 +51,11 @@ export default {
     })
   },
   methods: {
+    test (payload) {
+      // This needs to refresh platformTotals with new shipping
+      console.log('udc inside test payload: ', payload)
+      this.$store.dispatch('cart/refreshTotals', payload)
+    },
     async upsertOrder () {
       await this.$store.dispatch('kco/createOrder')
       setTimeout(() => {
