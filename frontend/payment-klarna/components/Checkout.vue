@@ -28,11 +28,11 @@ export default {
     }
   },
   async mounted () {
-    setTimeout(async () => {
+    this.$bus.$on('cart-after-updatetotals', async () => {
       this.saveOrderIdToLocalStorage()
       await this.upsertOrder()
       this.saveOrderIdToLocalStorage()
-    }, 100)
+    })
   },
   beforeMount () {
     this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder())
