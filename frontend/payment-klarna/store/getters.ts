@@ -2,10 +2,24 @@ import { GetterTree } from 'vuex'
 import CheckoutState from '../types/CheckoutState'
 import RootState from '@vue-storefront/core/types/RootState'
 import config from 'config'
-import { currentStoreView } from '@vue-storefront/core/lib/multistore'
+import { currentStoreView, localizedRoute } from '@vue-storefront/core/lib/multistore'
+import { getThumbnailPath } from '@vue-storefront/core/helpers'
+import { router } from '@vue-storefront/core/app'
+
+const getProductUrl = product => {
+  const storeView = currentStoreView()
+  const productUrl = localizedRoute({
+    name: product.type_id + '-product',
+    fullPath: product.url_path,
+    params: { parentSku: product.parentSku ? product.parentSku : product.sku, slug: product.slug, childSku: product.sku }
+  }, storeView.storeCode)
+  return router.resolve(productUrl).href
+}
 
 const mapProductToKlarna = (product) => {
-  return {
+  const image_url = getThumbnailPath(product.image, 600, 600) || ''
+  const klarnaProduct: any = {
+    image_url,
     reference: product.sku,
     name: product.totals.name,
     quantity: product.totals.qty,
@@ -15,6 +29,10 @@ const mapProductToKlarna = (product) => {
     total_discount_amount: (product.totals.discount_amount || 0) * 100,
     total_tax_amount: product.totals.tax_amount * 100
   }
+  if (config.klarna.productBaseUrl) {
+    klarnaProduct.product_url = config.klarna.productBaseUrl + getProductUrl(product)
+  }
+  return klarnaProduct
 }
 
 const mapRedirectUrl = (externalPaymentConfig) => {
