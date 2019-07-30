@@ -31,13 +31,17 @@ const getTaxAmount = (totalAmount: number, taxRate: number) => {
 }
 
 export const getters: GetterTree<CheckoutState, RootState> = {
-  checkout (state) {
+  checkout (state: CheckoutState) {
     return state.checkout
   },
-  confirmation (state) {
+  confirmation (state: CheckoutState) {
     return state.confirmation
   },
-  order (state, getters, rootState, rootGetters) {
+  hasTotals (state, getters, rootState) {
+    const {platformTotals: totals} = rootState.cart
+    return !!totals
+  },
+  order (state: CheckoutState, getters, rootState, rootGetters) {
     const storeView = currentStoreView()
     const shippingMethods = rootState.shipping.methods
     const cartItems = rootGetters['cart/items']

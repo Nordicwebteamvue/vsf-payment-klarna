@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken'
 module.exports = ({ config, db }) => {
   const api = Router()
   api.post('/create-or-update-order', (req, res) => {
-    const { order, storeCode, dataSourceStoreCode } = req.body
+    const { order, storeCode, dataSourceStoreCode, orderId } = req.body
     const { cartId } = req.query
     if (!order || !cartId) {
       return apiStatus(res, 'Bad Request: Missing order or cartId', 400)
@@ -16,11 +16,13 @@ module.exports = ({ config, db }) => {
     } else {
       order.merchant_reference2 = cartId
     }
+    const {auth, endpoints} = config.klarna
     order.merchant_urls = config.klarna.merchant_urls
     addStoreCode(order.merchant_urls, storeCode, dataSourceStoreCode)
+    const url = orderId ? endpoints.orders + '/' + orderId : endpoints.orders
     request.post({
-      url: config.klarna.endpoints.orders,
-      auth: config.klarna.auth,
+      url,
+      auth,
       body: order,
       json: true,
       headers: {
