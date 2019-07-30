@@ -16,8 +16,6 @@ import { mapGetters } from 'vuex'
 import { callApi } from '../helpers'
 import LoadingSpinner from './LoadingSpinner.vue'
 
-const storageTarget = '@vsf/klarna_order_id'
-
 export default {
   name: 'KlarnaCheckout',
   data () {
@@ -28,11 +26,13 @@ export default {
     }
   },
   async mounted () {
-    this.$bus.$on('cart-after-updatetotals', async () => {
-      this.saveOrderIdToLocalStorage()
-      await this.upsertOrder()
-      this.saveOrderIdToLocalStorage()
-    })
+    if (this.hasTotals) {
+      this.upsertOrder()
+    } else {
+      this.$bus.$on('cart-after-updatetotals', async () => {
+        this.upsertOrder()
+      })
+    }
   },
   beforeMount () {
     this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder())
@@ -42,7 +42,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      checkout: 'kco/checkout'
+      checkout: 'kco/checkout',
+      hasTotals: 'kco/hasTotals'
     })
   },
   methods: {
@@ -70,11 +71,6 @@ export default {
     },
     resumeCheckout () {
       return callApi(api => api.resume())
-    },
-    saveOrderIdToLocalStorage () {
-      this.createdOrder.id
-        ? localStorage.setItem(storageTarget, this.createdOrder.id)
-        : localStorage.removeItem(storageTarget)
     }
   }
 }

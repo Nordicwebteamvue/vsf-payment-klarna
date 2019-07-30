@@ -2,19 +2,37 @@ import { GetterTree } from 'vuex'
 import CheckoutState from '../types/CheckoutState'
 import RootState from '@vue-storefront/core/types/RootState'
 import config from 'config'
-import { currentStoreView } from '@vue-storefront/core/lib/multistore'
+import { currentStoreView, localizedRoute } from '@vue-storefront/core/lib/multistore'
+import { getThumbnailPath } from '@vue-storefront/core/helpers'
+import { router } from '@vue-storefront/core/app'
+
+const getProductUrl = product => {
+  const storeView = currentStoreView()
+  const productUrl = localizedRoute({
+    name: product.type_id + '-product',
+    fullPath: product.url_path,
+    params: { parentSku: product.parentSku ? product.parentSku : product.sku, slug: product.slug, childSku: product.sku }
+  }, storeView.storeCode)
+  return router.resolve(productUrl).href
+}
 
 const mapProductToKlarna = (product) => {
-  return {
+  const image_url = getThumbnailPath(product.image, 600, 600) || ''
+  const klarnaProduct: any = {
+    image_url,
     reference: product.sku,
     name: product.totals.name,
     quantity: product.totals.qty,
-    unit_price: product.totals.price_incl_tax * 100,
-    tax_rate: product.totals.tax_percent * 100,
-    total_amount: product.totals.row_total_incl_tax * 100,
-    total_discount_amount: (product.totals.discount_amount || 0) * 100,
-    total_tax_amount: product.totals.tax_amount * 100
+    unit_price: product.totals.price_incl_tax * 100 | 0, // Force int with '| 0'
+    tax_rate: product.totals.tax_percent * 100 | 0,
+    total_amount: product.totals.row_total_incl_tax * 100 | 0,
+    total_discount_amount: (product.totals.discount_amount || 0) * 100 | 0,
+    total_tax_amount: product.totals.tax_amount * 100 | 0
   }
+  if (config.klarna.productBaseUrl) {
+    klarnaProduct.product_url = config.klarna.productBaseUrl + getProductUrl(product)
+  }
+  return klarnaProduct
 }
 
 const mapRedirectUrl = (externalPaymentConfig) => {
@@ -31,13 +49,17 @@ const getTaxAmount = (totalAmount: number, taxRate: number) => {
 }
 
 export const getters: GetterTree<CheckoutState, RootState> = {
-  checkout (state) {
+  checkout (state: CheckoutState) {
     return state.checkout
   },
-  confirmation (state) {
+  confirmation (state: CheckoutState) {
     return state.confirmation
   },
-  order (state, getters, rootState, rootGetters) {
+  hasTotals (state, getters, rootState) {
+    const {platformTotals: totals} = rootState.cart
+    return !!totals
+  },
+  order (state: CheckoutState, getters, rootState, rootGetters) {
     const storeView = currentStoreView()
     const shippingMethods = rootState.shipping.methods
     const cartItems = rootGetters['cart/items']
@@ -55,8 +77,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       locale: storeView.i18n.defaultLocale,
       shipping_options: [],
       order_lines: cartItems.map(mapProductToKlarna),
-      order_amount: totals.base_grand_total * 100,
-      order_tax_amount: totals.base_tax_amount * 100,
+      order_amount: totals.base_grand_total * 100 | 0,
+      order_tax_amount: totals.base_tax_amount * 100 | 0,
       external_payment_methods,
       external_checkouts,
       options: config.klarna.options ? config.klarna.options : null,
@@ -75,9 +97,9 @@ export const getters: GetterTree<CheckoutState, RootState> = {
         return {
           id: method.code || `${method.carrier_code}_${method.method_code}`,
           name: `${method.carrier_title}`,
-          price: price ? price * 100 : 0,
-          tax_amount: taxAmount ? taxAmount * 100 : 0,
-          tax_rate: shippingTaxRate ? shippingTaxRate * 10000: 0,
+          price: price ? price * 100 | 0 : 0,
+          tax_amount: taxAmount ? taxAmount * 100 | 0 : 0,
+          tax_rate: shippingTaxRate ? shippingTaxRate * 10000 | 0 : 0,
           preselected: index === 0
         }
       })
