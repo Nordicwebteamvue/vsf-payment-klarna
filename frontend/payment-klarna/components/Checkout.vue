@@ -34,8 +34,8 @@ export default {
       })
     }
     // Event for reload kco component if needed
-    this.$bus.$on('kco-reload-component', async () => {
-      this.$bus.$on('cart-after-updatetotals', async () => {
+    this.$bus.$on('kco-reload-component', () => {
+      this.$bus.$on('cart-after-updatetotals', () => {
         this.upsertOrder()
       })
     })
