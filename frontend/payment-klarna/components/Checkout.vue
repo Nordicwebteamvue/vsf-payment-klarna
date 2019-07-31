@@ -33,6 +33,12 @@ export default {
         this.upsertOrder()
       })
     }
+    // Event for reload kco component if needed
+    this.$bus.$on('kco-reload-component', () => {
+      this.$bus.$on('cart-after-updatetotals', () => {
+        this.upsertOrder()
+      })
+    })
   },
   beforeMount () {
     this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder())
