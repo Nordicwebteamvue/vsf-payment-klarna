@@ -18,13 +18,6 @@ import LoadingSpinner from './LoadingSpinner.vue'
 
 export default {
   name: 'KlarnaCheckout',
-  data () {
-    return {
-      createdOrder: {
-        id: ''
-      }
-    }
-  },
   async mounted () {
     if (this.hasTotals) {
       this.upsertOrder()
@@ -35,7 +28,7 @@ export default {
     }
   },
   beforeMount () {
-    this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder())
+    this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder)
   },
   components: {
     LoadingSpinner
@@ -43,8 +36,14 @@ export default {
   computed: {
     ...mapGetters({
       checkout: 'kco/checkout',
-      hasTotals: 'kco/hasTotals'
+      hasTotals: 'kco/hasTotals',
+      coupon: 'cart/coupon'
     })
+  },
+  watch: {
+    coupon (newValue) {
+      this.$bus.$emit('updateKlarnaOrder')
+    }
   },
   methods: {
     async upsertOrder () {
@@ -55,11 +54,10 @@ export default {
           (() => {eval(tag.text)}).call(window) // eslint-disable-line
           this.$refs.scripts.appendChild(tag)
         })
-        this.createdOrder.id = this.checkout.orderId || null
       }, 1)
     },
     async configureUpdateOrder () {
-      if (!this.createdOrder.id) {
+      if (!this.checkout.orderId) {
         return
       }
       await this.suspendCheckout()
