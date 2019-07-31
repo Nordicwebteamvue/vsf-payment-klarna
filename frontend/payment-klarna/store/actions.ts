@@ -51,6 +51,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     }))
     commit('createdOrder', {
       snippet: snippet,
+      orderId: klarnaResult.orderId,
       scriptsTags: getScriptTagsFromSnippet(result.snippet)
     })
     return klarnaResult
