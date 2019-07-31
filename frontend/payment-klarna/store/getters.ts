@@ -25,7 +25,7 @@ const mapProductToKlarna = (product) => {
     quantity: product.totals.qty,
     unit_price: product.totals.price_incl_tax * 100 | 0, // Force int with '| 0'
     tax_rate: product.totals.tax_percent * 100 | 0,
-    total_amount: product.totals.row_total_incl_tax * 100 | 0,
+    total_amount: (product.totals.row_total_incl_tax * 100 | 0) - (product.totals.base_discount_amount * 100 | 0),
     total_discount_amount: (product.totals.discount_amount || 0) * 100 | 0,
     total_tax_amount: product.totals.tax_amount * 100 | 0
   }
