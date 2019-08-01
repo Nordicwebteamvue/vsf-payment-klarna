@@ -5,6 +5,8 @@ import config from 'config'
 import { currentStoreView, localizedRoute } from '@vue-storefront/core/lib/multistore'
 import { getThumbnailPath } from '@vue-storefront/core/helpers'
 import { router } from '@vue-storefront/core/app'
+import _ from 'lodash'
+import i18n from '@vue-storefront/i18n';
 
 const getProductUrl = product => {
   const storeView = currentStoreView()
@@ -70,6 +72,14 @@ export const getters: GetterTree<CheckoutState, RootState> = {
 
     const external_payment_methods = config.klarna.external_payment_methods ? config.klarna.external_payment_methods.map(mapRedirectUrl) : null;
     const external_checkouts = config.klarna.external_checkouts ? config.klarna.external_checkouts : null;
+
+    //translate
+    _.find(config.klarna.options.additional_checkboxes, function(o) {
+      if( o.id === 'newsletter_opt_in' ) {
+        o.text = i18n.t(o.text)
+      }
+      return o
+    })
 
     const checkoutOrder: any = {
       purchase_country: storeView.i18n.defaultCountry,
