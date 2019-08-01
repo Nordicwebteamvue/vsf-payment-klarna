@@ -42,6 +42,7 @@ export default {
   computed: {
     ...mapGetters({
       checkout: 'kco/checkout',
+      totals: 'kco/platformTotals',
       hasTotals: 'kco/hasTotals',
       coupon: 'cart/coupon'
     })
@@ -50,6 +51,13 @@ export default {
     coupon (newValue, oldValue) {
       if (!oldValue || newValue.code !== oldValue.code) {
         this.$bus.$emit('updateKlarnaOrder')
+      }
+    },
+    totals (newValue, oldValue) {
+      if (oldValue) {
+        if (newValue.qty !== oldValue.qty || newValue.base_grand_total !== oldValue.base_grand_total) {
+          this.$bus.$emit('updateKlarnaOrder')
+        }
       }
     }
   },

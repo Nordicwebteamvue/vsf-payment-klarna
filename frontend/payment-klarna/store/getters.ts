@@ -59,6 +59,10 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     const {platformTotals: totals} = rootState.cart
     return !!totals
   },
+  platformTotals (state, getters, rootState) {
+    const {platformTotals: totals} = rootState.cart
+    return totals || {}
+  },
   order (state: CheckoutState, getters, rootState, rootGetters) {
     const storeView = currentStoreView()
     const shippingMethods = rootState.shipping.methods
