@@ -8,7 +8,6 @@ const KEY = 'kco'
 
 const moduleConfig: VueStorefrontModuleConfig = {
   key: KEY,
-  afterRegistration,
   beforeRegistration,
   store: { modules: [{ key: KEY, module }] },
 }
