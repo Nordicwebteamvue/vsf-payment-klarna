@@ -47,8 +47,10 @@ export default {
     })
   },
   watch: {
-    coupon (newValue) {
-      this.$bus.$emit('updateKlarnaOrder')
+    coupon (newValue, oldValue) {
+      if (!oldValue || newValue.code !== oldValue.code) {
+        this.$bus.$emit('updateKlarnaOrder')
+      }
     }
   },
   methods: {
