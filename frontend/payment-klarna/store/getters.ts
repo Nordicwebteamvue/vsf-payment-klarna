@@ -5,7 +5,6 @@ import config from 'config'
 import { currentStoreView, localizedRoute } from '@vue-storefront/core/lib/multistore'
 import { getThumbnailPath } from '@vue-storefront/core/helpers'
 import { router } from '@vue-storefront/core/app'
-import _ from 'lodash'
 import i18n from '@vue-storefront/i18n';
 
 const getProductUrl = product => {
@@ -73,13 +72,15 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     const external_payment_methods = config.klarna.external_payment_methods ? config.klarna.external_payment_methods.map(mapRedirectUrl) : null;
     const external_checkouts = config.klarna.external_checkouts ? config.klarna.external_checkouts : null;
 
-    //translate
-    _.find(config.klarna.options.additional_checkboxes, function(additionalCheckbox) {
-      if( additionalCheckbox.id === 'newsletter_opt_in' ) {
-        additionalCheckbox.text = i18n.t(additionalCheckbox.text)
-      }
-      return additionalCheckbox
-    })
+    //update translate
+    const klarnaOptions = config.klarna.options
+    if (klarnaOptions && klarnaOptions.additional_checkboxes) {
+      klarnaOptions.additional_checkboxes.forEach(checkbox => {
+        if (checkbox.id === 'newsletter_opt_in') {
+          checkbox.text = i18n.t(checkbox.text)
+        }
+      })
+    }
 
     const checkoutOrder: any = {
       purchase_country: storeView.i18n.defaultCountry,
@@ -91,7 +92,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       order_tax_amount: totals.base_tax_amount * 100 | 0,
       external_payment_methods,
       external_checkouts,
-      options: config.klarna.options ? config.klarna.options : null,
+      options: klarnaOptions ? klarnaOptions : null,
       merchant_data: JSON.stringify(state.merchantData)
     }
     if (state.checkout.orderId) {
