@@ -74,11 +74,11 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     const external_checkouts = config.klarna.external_checkouts ? config.klarna.external_checkouts : null;
 
     //translate
-    _.find(config.klarna.options.additional_checkboxes, function(o) {
-      if( o.id === 'newsletter_opt_in' ) {
-        o.text = i18n.t(o.text)
+    _.find(config.klarna.options.additional_checkboxes, function(additionalCheckbox) {
+      if( additionalCheckbox.id === 'newsletter_opt_in' ) {
+        additionalCheckbox.text = i18n.t(additionalCheckbox.text)
       }
-      return o
+      return additionalCheckbox
     })
 
     const checkoutOrder: any = {
