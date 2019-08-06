@@ -48,19 +48,7 @@ export default {
     ...mapGetters({
       checkout: 'kco/checkout',
       isVirtualCart: 'cart/isVirtualCart'
-    })
-  },
-  methods: {
-    afterTotals () {
-      try {
-        this.pushOrder()
-        this.initPayPal()
-      } catch (e) {
-        this.$Progress.fail()
-        console.log(e)
-        window.location = this.PayPalCancelUrl()
-      }
-    },
+    }),
     PayPalReturnUrl () {
       return config.baseUrl + currentStoreView().storeCode + '/' + config.paypal.return_url
     },
@@ -90,6 +78,20 @@ export default {
     },
     shippingAddress () {
       return this.checkout.kcoPayPal.result.shipping_address
+    }
+  },
+  methods: {
+    afterTotals () {
+      try {
+        this.prepareOrder()
+        console.log('this.order', JSON.parse(JSON.stringify((this.order))))
+        this.pushOrder()
+        this.initPayPal()
+      } catch (e) {
+        this.$Progress.fail()
+        console.log(e)
+        // window.location = this.PayPalCancelUrl
+      }
     },
     prepareOrder () {
       this.order = {
@@ -100,15 +102,15 @@ export default {
           billingAddress: {
             region: null,
             region_id: null,
-            country_id: this.billingAddress().country.toUpperCase(),
-            street: [this.billingAddress().street_address],
+            country_id: this.billingAddress.country.toUpperCase(),
+            street: [this.billingAddress.street_address],
             company: 'NA',
-            telephone: this.billingAddress().phone,
-            postcode: this.billingAddress().postal_code,
-            city: this.billingAddress().city,
-            firstname: this.billingAddress().given_name,
-            lastname: this.billingAddress().family_name,
-            email: this.billingAddress().email,
+            telephone: this.billingAddress.phone,
+            postcode: this.billingAddress.postal_code,
+            city: this.billingAddress.city,
+            firstname: this.billingAddress.given_name,
+            lastname: this.billingAddress.family_name,
+            email: this.billingAddress.email,
             region_code: null,
             vat_id: null
           },
@@ -125,15 +127,15 @@ export default {
         this.order.addressInformation.shippingAddress = {
           region: null,
           region_id: null,
-          country_id: this.shippingAddress().country.toUpperCase(),
-          street: [this.shippingAddress().street_address],
+          country_id: this.shippingAddress.country.toUpperCase(),
+          street: [this.shippingAddress.street_address],
           company: 'NA', // TODO: Fix me! https://github.com/DivanteLtd/vue-storefront/issues/224
-          telephone: this.shippingAddress().phone,
-          postcode: this.shippingAddress().postal_code,
-          city: this.shippingAddress().city,
-          firstname: this.shippingAddress().given_name,
-          lastname: this.shippingAddress().family_name,
-          email: this.shippingAddress().email,
+          telephone: this.shippingAddress.phone,
+          postcode: this.shippingAddress.postal_code,
+          city: this.shippingAddress.city,
+          firstname: this.shippingAddress.given_name,
+          lastname: this.shippingAddress.family_name,
+          email: this.shippingAddress.email,
           region_code: null
         }
       }
@@ -148,47 +150,43 @@ export default {
         client_id: config.paypal.client,
         client_secret: config.paypal.secret
       })
-      let items = []
-      const cartItems = this.items()
-      cartItems.map((product) => {
-        items.push({
-          name: product.name,
-          sku: product.reference,
-          description: product.description ? product.description : product.name,
-          currency: this.currency(),
-          tax: 0,
-          price: product.unit_price / 100,
-          quantity: product.quantity
-        })
-      })
+      const items = this.items.map((product) => ({
+        name: product.name,
+        sku: product.reference,
+        description: product.description ? product.description : product.name,
+        currency: this.currency,
+        tax: 0,
+        price: product.unit_price / 100,
+        quantity: product.quantity
+      }))
 
-      let shippingAddress = {
-        recipient_name: this.shippingAddress().given_name,
-        line1: this.shippingAddress().street_address,
+      const shippingAddress = {
+        recipient_name: this.shippingAddress.given_name,
+        line1: this.shippingAddress.street_address,
         line2: null,
-        city: this.shippingAddress().city,
-        country_code: this.shippingAddress().country.toUpperCase(),
-        postal_code: this.shippingAddress().postal_code,
-        phone: this.shippingAddress().phone,
+        city: this.shippingAddress.city,
+        country_code: this.shippingAddress.country.toUpperCase(),
+        postal_code: this.shippingAddress.postal_code,
+        phone: this.shippingAddress.phone,
         state: null
       }
-      var payReq = JSON.stringify({
+      const payReq = {
         intent: 'sale',
         payer: {
           payment_method: 'paypal'
         },
         redirect_urls: {
-          return_url: this.PayPalReturnUrl(),
+          return_url: this.PayPalReturnUrl,
           cancel_url: this.PayPalCancelUrl
         },
         transactions: [{
           amount: {
-            total: this.grandTotal(),
-            currency: this.currency(),
+            total: this.grandTotal,
+            currency: this.currency,
             details: {
-              subtotal: this.subTotal(),
-              tax: this.tax(),
-              shipping: this.shipping()
+              subtotal: this.subTotal,
+              tax: this.tax,
+              shipping: this.shipping
             }
           },
           item_list: {
@@ -197,12 +195,12 @@ export default {
           },
           description: config.paypal.description
         }]
-      })
-      paypal.payment.create(payReq, (error, payment) => {
-        var links = {}
+      }
+      paypal.payment.create(JSON.stringify(payReq), (error, payment) => {
+        const links = {}
 
         if (error) {
-          console.error(JSON.stringify(error))
+          console.error('PayPal error', error)
         } else {
           // Capture HATEOAS links
           payment.links.forEach((linkObj) => {
@@ -220,7 +218,7 @@ export default {
           } else {
             this.$Progress.fail()
             console.error('no redirect URI present')
-            window.location = this.PayPalCancelUrl()
+            window.location = this.PayPalCancelUrl
           }
         }
       })
