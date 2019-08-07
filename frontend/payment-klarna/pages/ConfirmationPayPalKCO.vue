@@ -191,15 +191,18 @@ export default {
           this.order.image_url = config.paypal.image_url
           let items = payment.transactions[0].item_list.items.map((item) => {
             return {
-              label: item.name + ' x ' + item.quantity,
-              price: item.price + ' ' + payment.transactions[0].amount.currency
+              sku: item.sku,
+              qty: item.quantity,
+              name: item.name,
+              price: item.price
             }
           })
-          this.order.items = items
+          this.order.products = items
           this.order.shipping = payment.transactions[0].item_list.shipping_address
           this.showBlock = true
           this.message = i18n.t('Once your order has been processed, a payment confirmation will be sent to') + ' ' + payment.payer.payer_info.email
-          this.$bus.$emit('checkout-do-placeOrder', payment)
+          // this.$bus.$emit('checkout-do-placeOrder', payment)
+          // this.$store.dispatch('checkout/placeOrder', { order: this.order })
           this.$Progress.finish()
         }
       })
