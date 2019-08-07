@@ -67,7 +67,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     return totals || {}
   },
   order (state: CheckoutState, getters, rootState, rootGetters) {
-    const storeView = currentStoreView()
+    const storeView: any = currentStoreView()
     const shippingMethods = rootState.shipping.methods
     const cartItems = rootGetters['cart/items']
     const {platformTotals: totals} = rootState.cart
@@ -93,6 +93,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       purchase_currency: storeView.i18n.currencyCode,
       locale: storeView.i18n.defaultLocale,
       shipping_options: [],
+      shipping_countries: storeView.shipping_countries || [],
       order_lines: cartItems.map(mapProductToKlarna),
       order_amount: totals.base_grand_total * 100 | 0,
       order_tax_amount: totals.base_tax_amount * 100 | 0,
