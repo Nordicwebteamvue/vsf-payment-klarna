@@ -38,13 +38,12 @@ export default {
     afterTotals () {
       try {
         this.prepareOrder()
-        console.log('this.order', JSON.parse(JSON.stringify((this.order))))
         this.pushOrder()
         this.initPayPal()
       } catch (e) {
         this.$Progress.fail()
         console.log(e)
-        // window.location = this.PayPalCancelUrl
+        window.location = this.PayPalCancelUrl
       }
     },
     prepareOrder () {
