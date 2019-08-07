@@ -16,21 +16,11 @@
 </style>
 <script>
 import config from 'config'
-import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import paypal from 'paypal-rest-sdk-kodbruket-fixed'
-import { mapGetters } from 'vuex'
+import PaypalKCO from './HandlingPayPalKCO.ts'
 
 export default {
-  name: 'PaypalKCO',
-  data () {
-    const storeView = currentStoreView()
-    return {
-      loader: false,
-      commit: true,
-      order: {},
-      locale: storeView.i18n.defaultLocale.replace('-', '_') // Convert to PayPal format of locale
-    }
-  },
+  mixins: [PaypalKCO],
   beforeMount () {
     try {
       this.$store.dispatch('kco/retrievePayPalKco')
@@ -44,52 +34,17 @@ export default {
     this.$Progress.start()
     this.$bus.$on('cart-after-updatetotals', this.afterTotals)
   },
-  computed: {
-    ...mapGetters({
-      checkout: 'kco/checkout',
-      isVirtualCart: 'cart/isVirtualCart'
-    })
-  },
   methods: {
     afterTotals () {
       try {
+        this.prepareOrder()
         this.pushOrder()
         this.initPayPal()
       } catch (e) {
         this.$Progress.fail()
         console.log(e)
-        window.location = this.PayPalCancelUrl()
+        window.location = this.PayPalCancelUrl
       }
-    },
-    PayPalReturnUrl () {
-      return config.baseUrl + currentStoreView().storeCode + '/' + config.paypal.return_url
-    },
-    PayPalCancelUrl () {
-      return config.paypal.cancel_url.replace('{{storeCode}}', currentStoreView().storeCode).replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
-    },
-    grandTotal () {
-      return this.checkout.kcoPayPal.result.order_amount / 100
-    },
-    subTotal () {
-      return this.checkout.kcoPayPal.result.order_amount / 100
-    },
-    shipping () {
-      return 0
-    },
-    tax () {
-      return 0
-    },
-    currency () {
-      return this.checkout.kcoPayPal.result.purchase_currency
-    },
-    items () {
-      return this.checkout.kcoPayPal.result.order_lines
-    },
-    billingAddress () {
-      return this.checkout.kcoPayPal.result.billing_address
-    },
-    shippingAddress () {
-      return this.checkout.kcoPayPal.result.shipping_address
     },
     prepareOrder () {
       this.order = {
@@ -100,20 +55,20 @@ export default {
           billingAddress: {
             region: null,
             region_id: null,
-            country_id: this.billingAddress().country.toUpperCase(),
-            street: [this.billingAddress().street_address],
+            country_id: this.billingAddress.country.toUpperCase(),
+            street: [this.billingAddress.street_address],
             company: 'NA',
-            telephone: this.billingAddress().phone,
-            postcode: this.billingAddress().postal_code,
-            city: this.billingAddress().city,
-            firstname: this.billingAddress().given_name,
-            lastname: this.billingAddress().family_name,
-            email: this.billingAddress().email,
+            telephone: this.billingAddress.phone,
+            postcode: this.billingAddress.postal_code,
+            city: this.billingAddress.city,
+            firstname: this.billingAddress.given_name,
+            lastname: this.billingAddress.family_name,
+            email: this.billingAddress.email,
             region_code: null,
             vat_id: null
           },
-          shipping_method_code: 'flatrate',
-          shipping_carrier_code: 'flatrate',
+          shipping_method_code: 'brev',
+          shipping_carrier_code: 'brev',
           payment_method_code: 'vsfpaypal',
           payment_method_additional: {
             paymentMethod: 'kcopaypalvsf'
@@ -125,15 +80,15 @@ export default {
         this.order.addressInformation.shippingAddress = {
           region: null,
           region_id: null,
-          country_id: this.shippingAddress().country.toUpperCase(),
-          street: [this.shippingAddress().street_address],
+          country_id: this.shippingAddress.country.toUpperCase(),
+          street: [this.shippingAddress.street_address],
           company: 'NA', // TODO: Fix me! https://github.com/DivanteLtd/vue-storefront/issues/224
-          telephone: this.shippingAddress().phone,
-          postcode: this.shippingAddress().postal_code,
-          city: this.shippingAddress().city,
-          firstname: this.shippingAddress().given_name,
-          lastname: this.shippingAddress().family_name,
-          email: this.shippingAddress().email,
+          telephone: this.shippingAddress.phone,
+          postcode: this.shippingAddress.postal_code,
+          city: this.shippingAddress.city,
+          firstname: this.shippingAddress.given_name,
+          lastname: this.shippingAddress.family_name,
+          email: this.shippingAddress.email,
           region_code: null
         }
       }
@@ -148,47 +103,43 @@ export default {
         client_id: config.paypal.client,
         client_secret: config.paypal.secret
       })
-      let items = []
-      const cartItems = this.items()
-      cartItems.map((product) => {
-        items.push({
-          name: product.name,
-          sku: product.reference,
-          description: product.description ? product.description : product.name,
-          currency: this.currency(),
-          tax: 0,
-          price: product.unit_price / 100,
-          quantity: product.quantity
-        })
-      })
+      const items = this.items.map((product) => ({
+        name: product.name,
+        sku: product.reference,
+        description: product.description ? product.description : product.name,
+        currency: this.currency,
+        tax: 0,
+        price: product.unit_price / 100,
+        quantity: product.quantity
+      }))
 
-      let shippingAddress = {
-        recipient_name: this.shippingAddress().given_name,
-        line1: this.shippingAddress().street_address,
+      const shippingAddress = {
+        recipient_name: this.shippingAddress.given_name,
+        line1: this.shippingAddress.street_address,
         line2: null,
-        city: this.shippingAddress().city,
-        country_code: this.shippingAddress().country.toUpperCase(),
-        postal_code: this.shippingAddress().postal_code,
-        phone: this.shippingAddress().phone,
+        city: this.shippingAddress.city,
+        country_code: this.shippingAddress.country.toUpperCase(),
+        postal_code: this.shippingAddress.postal_code,
+        phone: this.shippingAddress.phone,
         state: null
       }
-      var payReq = JSON.stringify({
+      const payReq = {
         intent: 'sale',
         payer: {
           payment_method: 'paypal'
         },
         redirect_urls: {
-          return_url: this.PayPalReturnUrl(),
+          return_url: this.PayPalReturnUrl,
           cancel_url: this.PayPalCancelUrl
         },
         transactions: [{
           amount: {
-            total: this.grandTotal(),
-            currency: this.currency(),
+            total: this.grandTotal,
+            currency: this.currency,
             details: {
-              subtotal: this.subTotal(),
-              tax: this.tax(),
-              shipping: this.shipping()
+              subtotal: this.subTotal,
+              tax: this.tax,
+              shipping: this.shipping
             }
           },
           item_list: {
@@ -197,12 +148,12 @@ export default {
           },
           description: config.paypal.description
         }]
-      })
-      paypal.payment.create(payReq, (error, payment) => {
-        var links = {}
+      }
+      paypal.payment.create(JSON.stringify(payReq), (error, payment) => {
+        const links = {}
 
         if (error) {
-          console.error(JSON.stringify(error))
+          console.error('PayPal error', payReq, JSON.stringify(error, null, 4))
         } else {
           // Capture HATEOAS links
           payment.links.forEach((linkObj) => {
@@ -220,7 +171,7 @@ export default {
           } else {
             this.$Progress.fail()
             console.error('no redirect URI present')
-            window.location = this.PayPalCancelUrl()
+            window.location = this.PayPalCancelUrl
           }
         }
       })

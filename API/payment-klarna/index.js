@@ -3,6 +3,21 @@ import { Router } from 'express'
 import request from 'request'
 import jwt from 'jsonwebtoken'
 
+function addStoreCode (merchantUrls, storeCode = '', dataSourceStoreCode = '') {
+  Object.keys(merchantUrls).forEach(url => {
+    if (merchantUrls[url].includes('{{storeCode}}')) {
+      merchantUrls[url] = merchantUrls[url]
+        .replace('{{storeCode}}', storeCode)
+        .replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
+    }
+    if (merchantUrls[url].includes('{{dataSourceStoreCode}}')) {
+      merchantUrls[url] = merchantUrls[url]
+        .replace('{{dataSourceStoreCode}}', dataSourceStoreCode)
+        .replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
+    }
+  })
+}
+
 module.exports = ({ config, db }) => {
   const api = Router()
   api.post('/create-or-update-order', (req, res) => {
@@ -101,14 +116,5 @@ module.exports = ({ config, db }) => {
     })
   })
 
-  function addStoreCode (merchantUrls, storeCode = '', dataSourceStoreCode = '') {
-    Object.keys(merchantUrls).forEach(url => {
-      if (merchantUrls[url].includes('{{storeCode}}')) {
-        merchantUrls[url] = merchantUrls[url].replace('{{storeCode}}', storeCode).replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
-      } else {
-        merchantUrls[url] = merchantUrls[url].replace('{{dataSourceStoreCode}}', dataSourceStoreCode).replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
-      }
-    })
-  }
   return api
 }

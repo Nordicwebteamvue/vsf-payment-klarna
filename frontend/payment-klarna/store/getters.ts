@@ -40,7 +40,9 @@ const mapRedirectUrl = (externalPaymentConfig) => {
   if (externalPaymentConfig.name == 'PayPal')
   {
     let uri = externalPaymentConfig.redirect_url
-    externalPaymentConfig.redirect_url = config.baseUrl + currentStoreView().storeCode + '/' + uri;
+    const { storeCode } = currentStoreView()
+    const { productBaseUrl } = config.klarna
+    externalPaymentConfig.redirect_url = `${productBaseUrl}/${storeCode}/${uri}`
   }
   return externalPaymentConfig
 }
