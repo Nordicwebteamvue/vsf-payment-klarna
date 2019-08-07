@@ -43,7 +43,6 @@ const mapRedirectUrl = (externalPaymentConfig) => {
     const { storeCode } = currentStoreView()
     const { productBaseUrl } = config.klarna
     externalPaymentConfig.redirect_url = `${productBaseUrl}/${storeCode}/${uri}`
-    externalPaymentConfig.redirect_url = `http://localhost:3000/sv_se/${uri}`
   }
   return externalPaymentConfig
 }
