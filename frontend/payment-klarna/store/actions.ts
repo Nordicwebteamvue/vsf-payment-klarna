@@ -6,26 +6,20 @@ import RootState from '@vue-storefront/core/types/RootState'
 import { getScriptTagsFromSnippet } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
-const storageTarget = () => {
-  const {storeCode} = currentStoreView()
-  if (storeCode) {
-    return `${storeCode}-shop/klarna/order-id`
-  }
-  return 'shop/klarna/order-id'
-}
+const storageTarget = 'vsf/klarna_order_id'
 
 export const actions: ActionTree<CheckoutState, RootState> = {
   async createOrder ({ commit, state, getters }) {
     commit('createOrder')
     const { order } = getters
     // TODO: Move this localStorage stuff into helpers
-    let savedOrderId = localStorage.getItem(storageTarget())
+    let savedOrderId = localStorage.getItem(storageTarget)
     if (savedOrderId) {
       const json = JSON.parse(savedOrderId)
       if (json.expires > Date.now()) {
         savedOrderId = json.orderId
       } else {
-        localStorage.removeItem(storageTarget())
+        localStorage.removeItem(storageTarget)
         savedOrderId = ''
       }
     }
@@ -51,7 +45,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     // TODO: Move this localStorage stuff into helpers
     const klarnaOrderIdExpires = new Date();
     klarnaOrderIdExpires.setDate(klarnaOrderIdExpires.getDate() + 2);
-    localStorage.setItem(storageTarget(), JSON.stringify({
+    localStorage.setItem(storageTarget, JSON.stringify({
       orderId: klarnaResult.orderId,
       expires: klarnaOrderIdExpires.getTime()
     }))
@@ -74,7 +68,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       },
       silent: true
     })
-    localStorage.removeItem(storageTarget())
+    localStorage.removeItem(storageTarget)
     dispatch('cart/clear', null, {root:true})
     const {html_snippet: snippet, ...klarnaResult} = result
     commit('confirmation', {
