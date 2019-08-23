@@ -96,7 +96,7 @@ export default {
     onKcoAddressChange () {
       return callApi(api => api.on({
         'change': (data) => {
-          this.$bus.$emit('kcoAddressChange')
+          this.$bus.$emit('kcoAddressChange', data)
         }
       }))
     }
