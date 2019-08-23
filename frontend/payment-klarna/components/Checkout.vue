@@ -32,6 +32,12 @@ export default {
         this.upsertOrder()
       })
     })
+    // Todo: refactor
+    this.$bus.$on('kcoOrderLoaded', () => {
+      setTimeout(() => {
+        this.onKcoAddressChange()
+      }, 2000)
+    })
   },
   beforeMount () {
     this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder)
@@ -69,6 +75,7 @@ export default {
           // TODO: Make this work with <script> tag insertion
           (() => {eval(tag.text)}).call(window) // eslint-disable-line
           this.$refs.scripts.appendChild(tag)
+          this.$bus.$emit('kcoOrderLoaded')
         })
       }, 1)
     },
@@ -85,6 +92,13 @@ export default {
     },
     resumeCheckout () {
       return callApi(api => api.resume())
+    },
+    onKcoAddressChange () {
+      return callApi(api => api.on({
+        'change': (data) => {
+          this.$bus.$emit('kcoAddressChange')
+        }
+      }))
     }
   }
 }
