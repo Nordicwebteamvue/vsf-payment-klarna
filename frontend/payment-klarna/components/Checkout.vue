@@ -26,12 +26,6 @@ export default {
         this.upsertOrder()
       })
     }
-    // Event for reload kco component if needed
-    this.$bus.$on('kco-reload-component', () => {
-      this.$bus.$on('cart-after-updatetotals', () => {
-        this.upsertOrder()
-      })
-    })
     // Todo: refactor
     this.$bus.$on('kcoOrderLoaded', () => {
       setTimeout(() => {
@@ -41,6 +35,11 @@ export default {
   },
   beforeMount () {
     this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder)
+  },
+  beforeDestroy () {
+    this.$bus.$off('updateKlarnaOrder')
+    this.$bus.$off('cart-after-updatetotals')
+    this.$bus.$off('kco-reload-component')
   },
   components: {
     LoadingSpinner
