@@ -44,7 +44,7 @@ export default {
       checkout: 'kco/checkout',
       totals: 'kco/platformTotals',
       hasTotals: 'kco/hasTotals',
-      coupon: 'cart/coupon'
+      coupon: 'kco/coupon'
     })
   },
   watch: {
