@@ -127,9 +127,9 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       const shippingMethod = rootGetters['shipping/shippingMethods']
         .find(method => method.method_code === code)
       if (shippingMethod) {
-        const price = shippingMethod.price_incl_tax || shippingMethod.price || 0
+        const price = totals.shipping_incl_tax
         const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
-        const taxAmount = getTaxAmount(shippingMethod.price_incl_tax, shippingTaxRate)
+        const taxAmount = getTaxAmount(totals.shipping_incl_tax, shippingTaxRate)
         checkoutOrder.order_lines.push({
           type: 'shipping_fee',
           reference: code,

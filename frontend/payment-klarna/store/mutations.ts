@@ -9,11 +9,13 @@ export const mutations: MutationTree<any> = {
   createOrderError (state) {
     state.checkout.loading = false
     state.checkout.error = true
+    state.checkout.snippet = null
   },
   createdOrder (state, payload) {
     state.checkout = {
       ...payload,
-      loading: false
+      loading: false,
+      error: false
     }
   },
   getConfirmation (state, payload) {
