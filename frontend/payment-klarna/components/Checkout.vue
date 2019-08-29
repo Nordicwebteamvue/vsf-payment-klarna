@@ -15,6 +15,7 @@
 import { mapGetters } from 'vuex'
 import { callApi } from '../helpers'
 import LoadingSpinner from './LoadingSpinner.vue'
+import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
 export default {
   name: 'KlarnaCheckout',
@@ -61,6 +62,11 @@ export default {
     totals (newValue, oldValue) {
       if (oldValue) {
         if (newValue.qty !== oldValue.qty || newValue.base_grand_total !== oldValue.base_grand_total) {
+          const storeView = currentStoreView()
+          const countryId = this.$store.state.checkout.shippingDetails.country ? this.$store.state.checkout.shippingDetails.country : storeView.tax.defaultCountry
+          this.$store.dispatch('cart/getShippingMethods', {
+            country_id: countryId
+          })
           this.$bus.$emit('updateKlarnaOrder')
         }
       }
