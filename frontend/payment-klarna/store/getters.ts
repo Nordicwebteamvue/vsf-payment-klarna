@@ -71,6 +71,11 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     const {platformTotals: totals} = rootState.cart
     return totals || {}
   },
+  storageTarget () {
+    const storeView = currentStoreView()
+    const dbNamePrefix = storeView.storeCode ? storeView.storeCode + '-kco' : 'kco'
+    return `${dbNamePrefix}/id`
+  },
   order (state: CheckoutState, getters, rootState, rootGetters) {
     const storeView: any = currentStoreView()
     const shippingMethods = rootState.shipping.methods
