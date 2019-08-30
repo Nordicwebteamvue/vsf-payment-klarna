@@ -60,7 +60,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
   },
   hasTotals (state, getters, rootState) {
     const {platformTotals: totals} = rootState.cart
-    return !!totals
+    const productTotals = rootState.cart.cartItems.every(item => !!item.totals)
+    return !!totals && productTotals
   },
   platformTotals (state, getters, rootState) {
     const {platformTotals: totals} = rootState.cart
@@ -71,8 +72,11 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     const shippingMethods = rootState.shipping.methods
     const cartItems = rootGetters['cart/items']
     const {platformTotals: totals} = rootState.cart
-    if (!totals) {
-      return {}
+    if (!getters.hasTotals) {
+      return {
+        error: true,
+        reason: 'Missing totals'
+      }
     }
 
     const external_payment_methods = config.klarna.external_payment_methods ? config.klarna.external_payment_methods.map(mapRedirectUrl) : null;

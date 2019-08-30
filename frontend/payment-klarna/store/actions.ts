@@ -12,6 +12,9 @@ export const actions: ActionTree<CheckoutState, RootState> = {
   async createOrder ({ commit, state, getters }) {
     commit('createOrder')
     const { order } = getters
+    if (!order || order.error) {
+      return
+    }
     // TODO: Move this localStorage stuff into helpers
     let savedOrderId = localStorage.getItem(storageTarget)
     if (savedOrderId) {

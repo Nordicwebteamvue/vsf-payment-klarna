@@ -68,6 +68,9 @@ export default {
   },
   methods: {
     async upsertOrder () {
+      if (!this.hasTotals) {
+        return
+      }
       await this.$store.dispatch('kco/createOrder')
       setTimeout(() => {
         Array.from(this.checkout.scriptsTags).forEach(tag => {
