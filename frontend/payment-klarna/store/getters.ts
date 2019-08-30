@@ -58,6 +58,10 @@ export const getters: GetterTree<CheckoutState, RootState> = {
   confirmation (state: CheckoutState) {
     return state.confirmation
   },
+  coupon (state, getters, rootState, rootGetters) {
+    // renamed to getCoupon in VSF 1.10
+    return rootGetters['cart/getCoupon'] || rootGetters['cart/coupon']
+  },
   hasTotals (state, getters, rootState) {
     const {platformTotals: totals} = rootState.cart
     return !!totals
