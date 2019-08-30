@@ -6,8 +6,6 @@ import RootState from '@vue-storefront/core/types/RootState'
 import { getScriptTagsFromSnippet } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
-const storageTarget = 'vsf/klarna_order_id'
-
 export const actions: ActionTree<CheckoutState, RootState> = {
   async createOrder ({ commit, state, getters }) {
     commit('createOrder')
@@ -16,6 +14,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       return
     }
     // TODO: Move this localStorage stuff into helpers
+    const {storageTarget} = getters
     let savedOrderId = localStorage.getItem(storageTarget)
     if (savedOrderId) {
       const json = JSON.parse(savedOrderId)
@@ -60,7 +59,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     })
     return klarnaResult
   },
-  async confirmation ({ commit, state, dispatch }, { sid }) {
+  async confirmation ({ commit, state, dispatch, getters }, { sid }) {
     commit('getConfirmation')
     const url = config.klarna.confirmation.replace('{{sid}}', sid)
     const { result }: any = await TaskQueue.execute({
@@ -72,6 +71,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       },
       silent: true
     })
+    const {storageTarget} = getters
     localStorage.removeItem(storageTarget)
     dispatch('cart/clear', null, {root:true})
     const {html_snippet: snippet, ...klarnaResult} = result
