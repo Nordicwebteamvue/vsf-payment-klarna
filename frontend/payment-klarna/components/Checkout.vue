@@ -29,7 +29,7 @@ export default {
     // Todo: refactor
     this.$bus.$on('kcoOrderLoaded', () => {
       setTimeout(() => {
-        this.onKcoAddressChange()
+        this.onKcoAddressChange(this.checkout.shippingAddress)
       }, 2000)
     })
   },
@@ -92,9 +92,10 @@ export default {
     resumeCheckout () {
       return callApi(api => api.resume())
     },
-    onKcoAddressChange () {
+    onKcoAddressChange (shippingAddress) {
       return callApi(api => api.on({
         'change': (data) => {
+          data.shippingAddress = shippingAddress
           this.$bus.$emit('kcoAddressChange', data)
         }
       }))
