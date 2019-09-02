@@ -73,7 +73,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
   },
   async confirmation ({ commit, state, dispatch, getters }, { sid }) {
     commit('getConfirmation')
-    const { result }: any = await dispatch('kco/getOrder', sid)
+    const { result }: any = await dispatch('kco/fetchOrder', sid)
     const {storageTarget} = getters
     localStorage.removeItem(storageTarget)
     dispatch('cart/clear', null, {root:true})
