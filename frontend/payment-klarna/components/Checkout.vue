@@ -32,7 +32,7 @@ export default {
       setTimeout(async () => {
         const order = await this.$store.dispatch('kco/fetchOrder', this.checkout.orderId)
         this.onKcoAddressChange({
-          price: this.totals.subtotal_incl_tax,
+          totalSegments: this.totals.total_segments,
           shippingAddress: order.shipping_address
         })
       }, 2000)
