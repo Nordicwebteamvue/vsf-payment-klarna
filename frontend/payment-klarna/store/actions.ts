@@ -54,13 +54,11 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     commit('createdOrder', {
       snippet: snippet,
       orderId: klarnaResult.orderId,
-      shippingAddress: klarnaResult.shippingAddress,
       scriptsTags: getScriptTagsFromSnippet(result.snippet)
     })
     return klarnaResult
   },
-  async confirmation ({ commit, state, dispatch, getters }, { sid }) {
-    commit('getConfirmation')
+  async fetchOrder ({ commit, state, getters }, sid) {
     const url = config.klarna.confirmation.replace('{{sid}}', sid)
     const { result }: any = await TaskQueue.execute({
       url,
@@ -71,10 +69,15 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       },
       silent: true
     })
+    return result
+  },
+  async confirmation ({ commit, state, dispatch, getters }, { sid }) {
+    commit('getConfirmation')
+    const { result }: any = await dispatch('kco/fetchOrder', sid)
     const {storageTarget} = getters
     localStorage.removeItem(storageTarget)
     dispatch('cart/clear', null, {root:true})
-    const {html_snippet: snippet, ...klarnaResult} = result
+    const { html_snippet: snippet, ...klarnaResult } = result
     commit('confirmation', {
       snippet,
       scriptsTags: getScriptTagsFromSnippet(snippet)

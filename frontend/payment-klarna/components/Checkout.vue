@@ -29,8 +29,12 @@ export default {
     }
     // Todo: refactor
     this.$bus.$on('kcoOrderLoaded', () => {
-      setTimeout(() => {
-        this.onKcoAddressChange(this.checkout.shippingAddress)
+      setTimeout(async () => {
+        const order = await this.$store.dispatch('kco/getOrder', this.checkout.orderId)
+        this.onKcoAddressChange({
+          price: this.totals.subtotal_incl_tax,
+          shippingAddress: order.shipping_address
+        })
       }, 2000)
     })
   },
@@ -47,6 +51,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      order: 'kco/order',
       checkout: 'kco/checkout',
       totals: 'kco/platformTotals',
       hasTotals: 'kco/hasTotals',
@@ -101,11 +106,13 @@ export default {
     resumeCheckout () {
       return callApi(api => api.resume())
     },
-    onKcoAddressChange (shippingAddress) {
+    onKcoAddressChange (orderData) {
+      if (orderData.shippingAddress.postal_code) {
+        this.$bus.$emit('kcoAddressChange', orderData)
+      }
       return callApi(api => api.on({
-        'change': (data) => {
-          data.shippingAddress = shippingAddress
-          this.$bus.$emit('kcoAddressChange', data)
+        'billing_address_change': async (data) => {
+          this.$bus.$emit('kcoOrderLoaded')
         }
       }))
     }
