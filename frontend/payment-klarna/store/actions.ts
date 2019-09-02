@@ -59,7 +59,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     })
     return klarnaResult
   },
-  async getOrder ({ commit, state, getters }, sid) {
+  async fetchOrder ({ commit, state, getters }, sid) {
     const url = config.klarna.confirmation.replace('{{sid}}', sid)
     const { result }: any = await TaskQueue.execute({
       url,
