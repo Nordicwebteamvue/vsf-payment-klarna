@@ -30,7 +30,7 @@ export default {
     // Todo: refactor
     this.$bus.$on('kcoOrderLoaded', () => {
       setTimeout(async () => {
-        const order = await this.$store.dispatch('kco/getOrder', this.checkout.orderId)
+        const order = await this.$store.dispatch('kco/fetchOrder', this.checkout.orderId)
         this.onKcoAddressChange({
           price: this.totals.subtotal_incl_tax,
           shippingAddress: order.shipping_address
