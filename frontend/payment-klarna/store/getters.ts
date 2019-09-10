@@ -18,6 +18,7 @@ const getProductUrl = product => {
 }
 
 const mapProductToKlarna = (product) => {
+  console.log(product)
   const image_url = getThumbnailPath(product.image, 600, 600) || ''
   const klarnaProduct: any = {
     image_url,
@@ -29,6 +30,17 @@ const mapProductToKlarna = (product) => {
     total_amount: (product.totals.row_total_incl_tax * 100 | 0) - (product.totals.base_discount_amount * 100 | 0),
     total_discount_amount: (product.totals.discount_amount || 0) * 100 | 0,
     total_tax_amount: product.totals.tax_amount * 100 | 0
+  }
+  if (config.klarna.showShippingOptions) {
+    let weight = product[config.klarna.shipping_attributes.weight] | 0 //g
+    klarnaProduct.shipping_attributes = {
+        weight: weight,
+        dimensions: {
+            height: product[config.klarna.shipping_attributes.height] * 10 | 0,  //mm
+            width: product[config.klarna.shipping_attributes.width] * 10 | 0, //mm
+            length: product[config.klarna.shipping_attributes.length] * 10 | 0 //mmm
+        }
+    }
   }
   if (config.klarna.productBaseUrl) {
     klarnaProduct.product_url = config.klarna.productBaseUrl + getProductUrl(product)
@@ -126,8 +138,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
         const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
         const taxAmount = getTaxAmount(price, shippingTaxRate)
         return {
-          id: method.code || `${method.carrier_code}_${method.method_code}`,
-          name: `${method.carrier_title}`,
+          id: method.method_code,
+          name: `${method.method_title}`,
           price: price ? price * 100 | 0 : 0,
           tax_amount: taxAmount ? taxAmount * 100 | 0 : 0,
           tax_rate: shippingTaxRate ? shippingTaxRate * 10000 | 0 : 0,
