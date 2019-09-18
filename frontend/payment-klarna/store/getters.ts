@@ -18,7 +18,6 @@ const getProductUrl = product => {
 }
 
 const mapProductToKlarna = (product) => {
-  console.log(product)
   const image_url = getThumbnailPath(product.image, 600, 600) || ''
   const klarnaProduct: any = {
     image_url,
