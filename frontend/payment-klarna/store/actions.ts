@@ -76,7 +76,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     const result = await dispatch('fetchOrder', sid)
     const {storageTarget} = getters
     localStorage.removeItem(storageTarget)
-    dispatch('cart/clear', null, {root:true})
+    dispatch('cart/clear', undefined, {root:true})
     const { html_snippet: snippet, ...klarnaResult } = result
     commit('confirmation', {
       snippet,
