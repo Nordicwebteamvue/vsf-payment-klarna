@@ -13,6 +13,12 @@
         "notification": "https://example.com/api/ext/payment-klarna/notification"
       }
     },
+    "shipping_attributes": {
+      "weight": "weight",
+      "width": "width",
+      "height": "height",
+      "length": "length"
+    },
     "endpoint": "http://localhost:8080/api/ext/payment-klarna/create-or-update-order",
     "showShippingOptions": true
   },
