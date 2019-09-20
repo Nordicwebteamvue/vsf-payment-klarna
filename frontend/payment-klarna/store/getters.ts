@@ -130,8 +130,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       checkoutOrder.orderId = state.checkout.orderId
     }
     if (config.klarna.showShippingOptions && state.shippingOptions) {
-      checkoutOrder.order_amount = totals.subtotal_incl_tax * 100
-      checkoutOrder.order_tax_amount = (totals.subtotal_incl_tax - totals.subtotal) * 100
+      checkoutOrder.order_amount = (totals.base_grand_total - totals.base_shipping_incl_tax) * 100 | 0
+      checkoutOrder.order_tax_amount = (totals.base_tax_amount - totals.base_shipping_tax_amount) * 100 | 0
       checkoutOrder.shipping_options = shippingMethods.map((method, index: number) => {
         const price = method.price_incl_tax || method.price || 0
         const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount

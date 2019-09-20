@@ -69,7 +69,7 @@ export default {
         if (newValue.qty !== oldValue.qty || newValue.base_grand_total !== oldValue.base_grand_total) {
           const storeView = currentStoreView()
           const countryId = this.$store.state.checkout.shippingDetails.country ? this.$store.state.checkout.shippingDetails.country : storeView.tax.defaultCountry
-          this.$store.dispatch('cart/getShippingMethods', {
+          this.$store.dispatch('cart/syncShippingMethods', {
             country_id: countryId
           })
           this.$bus.$emit('updateKlarnaOrder')
