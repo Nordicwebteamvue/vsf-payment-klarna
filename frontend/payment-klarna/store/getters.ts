@@ -37,7 +37,7 @@ const mapProductToKlarna = (product) => {
         dimensions: {
             height: product[config.klarna.shipping_attributes.height] * 10 | 0,  //mm
             width: product[config.klarna.shipping_attributes.width] * 10 | 0, //mm
-            length: product[config.klarna.shipping_attributes.length] * 10 | 0 //mmm
+            length: product[config.klarna.shipping_attributes.length] * 10 | 0 //mm
         }
     }
   }
