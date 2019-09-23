@@ -33,12 +33,12 @@ const mapProductToKlarna = (product) => {
   if (config.klarna.addShippingAttributes) {
     let weight = product[config.klarna.shipping_attributes.weight] | 0 //g
     klarnaProduct.shipping_attributes = {
-        weight: weight,
-        dimensions: {
-            height: product[config.klarna.shipping_attributes.height] * 10 | 0,  //mm
-            width: product[config.klarna.shipping_attributes.width] * 10 | 0, //mm
-            length: product[config.klarna.shipping_attributes.length] * 10 | 0 //mm
-        }
+      weight: weight,
+      dimensions: {
+        height: product[config.klarna.shipping_attributes.height] * 10 | 0,  //mm
+        width: product[config.klarna.shipping_attributes.width] * 10 | 0, //mm
+        length: product[config.klarna.shipping_attributes.length] * 10 | 0 //mm
+      }
     }
   }
   if (config.klarna.productBaseUrl) {
