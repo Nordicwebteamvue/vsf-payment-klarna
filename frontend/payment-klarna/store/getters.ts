@@ -5,7 +5,7 @@ import config from 'config'
 import { currentStoreView, localizedRoute } from '@vue-storefront/core/lib/multistore'
 import { getThumbnailPath } from '@vue-storefront/core/helpers'
 import { router } from '@vue-storefront/core/app'
-import i18n from '@vue-storefront/i18n';
+import i18n from '@vue-storefront/i18n'
 
 const getProductUrl = product => {
   const storeView = currentStoreView()
@@ -18,17 +18,22 @@ const getProductUrl = product => {
 }
 
 const mapProductToKlarna = (product) => {
-  const image_url = getThumbnailPath(product.image, 600, 600) || ''
+  const vsfProduct = product.product
   const klarnaProduct: any = {
-    image_url,
-    reference: product.sku,
-    name: product.totals.name,
-    quantity: product.totals.qty,
-    unit_price: product.totals.price_incl_tax * 100 | 0, // Force int with '| 0'
-    tax_rate: product.totals.tax_percent * 100 | 0,
-    total_amount: (product.totals.row_total_incl_tax * 100 | 0) - (product.totals.base_discount_amount * 100 | 0),
-    total_discount_amount: (product.totals.discount_amount || 0) * 100 | 0,
-    total_tax_amount: product.totals.tax_amount * 100 | 0
+    name: product.name,
+    quantity: product.qty,
+    unit_price: product.price_incl_tax * 100 | 0, // Force int with '| 0'
+    tax_rate: product.tax_percent * 100 | 0,
+    total_amount: (product.row_total_incl_tax * 100 | 0) - (product.base_discount_amount * 100 | 0),
+    total_discount_amount: (product.discount_amount || 0) * 100 | 0,
+    total_tax_amount: product.tax_amount * 100 | 0
+  }
+  if (vsfProduct) {
+    klarnaProduct.image_url = getThumbnailPath(vsfProduct.image, 600, 600) || ''
+    klarnaProduct.reference = vsfProduct.sku
+    if (config.klarna.productBaseUrl) {
+      klarnaProduct.product_url = config.klarna.productBaseUrl + getProductUrl(vsfProduct)
+    }
   }
   if (config.klarna.addShippingAttributes) {
     let weight = product[config.klarna.shipping_attributes.weight] | 0 //g
@@ -40,9 +45,6 @@ const mapProductToKlarna = (product) => {
         length: product[config.klarna.shipping_attributes.length] * 10 | 0 //mm
       }
     }
-  }
-  if (config.klarna.productBaseUrl) {
-    klarnaProduct.product_url = config.klarna.productBaseUrl + getProductUrl(product)
   }
   return klarnaProduct
 }
@@ -99,6 +101,14 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       }
     }
 
+    const trueCartItems = totals.items.map(item => {
+      const newItem = {...item}
+      const vsfitem = cartItems.find(_item => _item.totals.item_id === item.item_id)
+      if (vsfitem) {
+        newItem.product = vsfitem
+      }
+      return newItem
+    })
     const external_payment_methods = config.klarna.external_payment_methods ? config.klarna.external_payment_methods.map(mapRedirectUrl) : null;
     const external_checkouts = config.klarna.external_checkouts ? config.klarna.external_checkouts : null;
 
@@ -118,7 +128,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       locale: storeView.i18n.defaultLocale,
       shipping_options: [],
       shipping_countries: storeView.shipping_countries || [],
-      order_lines: cartItems.map(mapProductToKlarna),
+      order_lines: trueCartItems.map(mapProductToKlarna),
       order_amount: totals.base_grand_total * 100 | 0,
       order_tax_amount: totals.base_tax_amount * 100 | 0,
       external_payment_methods,
