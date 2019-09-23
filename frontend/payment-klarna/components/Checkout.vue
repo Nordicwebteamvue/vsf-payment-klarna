@@ -1,9 +1,6 @@
 <template>
   <div class="klarna-checkout" id="klarna-checkout">
     <div ref="scripts" />
-    <div v-if="checkout.loading">
-      <loading-spinner />
-    </div>
     <div v-if="checkout.error">
       Loading Klarna failed
     </div>
@@ -14,7 +11,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import { callApi } from '../helpers'
-import LoadingSpinner from './LoadingSpinner.vue'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
 export default {
@@ -40,9 +36,6 @@ export default {
     this.$bus.$off('updateKlarnaOrder')
     this.$bus.$off('cart-after-updatetotals')
     this.$bus.$off('kco-reload-component')
-  },
-  components: {
-    LoadingSpinner
   },
   computed: {
     ...mapGetters({
