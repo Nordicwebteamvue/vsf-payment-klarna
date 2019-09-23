@@ -20,13 +20,8 @@ import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 export default {
   name: 'KlarnaCheckout',
   async mounted () {
-    if (this.hasTotals) {
-      this.upsertOrder()
-    } else {
-      this.$bus.$on('cart-after-updatetotals', async () => {
-        this.upsertOrder()
-      })
-    }
+    await this.$store.dispatch('cart/syncTotals')
+    await this.upsertOrder()
     // Todo: refactor
     this.$bus.$on('kcoOrderLoaded', () => {
       setTimeout(async () => {
@@ -83,14 +78,17 @@ export default {
         return
       }
       await this.$store.dispatch('kco/createOrder')
-      setTimeout(() => {
-        Array.from(this.checkout.scriptsTags).forEach(tag => {
-          // TODO: Make this work with <script> tag insertion
-          (() => {eval(tag.text)}).call(window) // eslint-disable-line
-          this.$refs.scripts.appendChild(tag)
-          this.$bus.$emit('kcoOrderLoaded')
-        })
-      }, 1)
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          Array.from(this.checkout.scriptsTags).forEach(tag => {
+            // TODO: Make this work with <script> tag insertion
+            (() => {eval(tag.text)}).call(window) // eslint-disable-line
+            this.$refs.scripts.appendChild(tag)
+            this.$bus.$emit('kcoOrderLoaded')
+          })
+          resolve()
+        }, 1)
+      })
     },
     async configureUpdateOrder () {
       if (!this.checkout.orderId) {
