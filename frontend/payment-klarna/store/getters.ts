@@ -30,7 +30,7 @@ const mapProductToKlarna = (product) => {
     total_discount_amount: (product.totals.discount_amount || 0) * 100 | 0,
     total_tax_amount: product.totals.tax_amount * 100 | 0
   }
-  if (config.klarna.showShippingOptions) {
+  if (config.klarna.addShippingAttributes) {
     let weight = product[config.klarna.shipping_attributes.weight] | 0 //g
     klarnaProduct.shipping_attributes = {
         weight: weight,
