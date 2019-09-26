@@ -16,7 +16,8 @@ export const actions: ActionTree<CheckoutState, RootState> = {
         window.location.reload()
         return
       }
-      await dispatch('cart/syncTotals', undefined, { root: true })
+      commit('retryCreateOrder')
+      await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
       await dispatch('createOrder')
       return
     }

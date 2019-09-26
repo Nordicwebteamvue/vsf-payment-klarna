@@ -7,6 +7,10 @@ export const mutations: MutationTree<any> = {
     state.checkout.loading = true
     state.checkout.error = false
   },
+  retryCreateOrder (state) {
+    state.checkout.loading = true
+    state.checkout.error = false
+  },
   createOrderError (state) {
     state.checkout.loading = false
     state.checkout.error = true

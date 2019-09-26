@@ -1,6 +1,9 @@
 <template>
   <div class="klarna-checkout" id="klarna-checkout">
     <div ref="scripts" />
+    <div v-if="checkout.loading">
+      <loading-spinner />
+    </div>
     <div v-if="checkout.error">
       Loading Klarna failed
     </div>
@@ -12,9 +15,13 @@
 import { mapGetters } from 'vuex'
 import { callApi } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
+import LoadingSpinner from 'theme/components/theme/blocks/AsyncSidebar/LoadingSpinner.vue'
 
 export default {
   name: 'KlarnaCheckout',
+  components: {
+    LoadingSpinner
+  },
   async mounted () {
     await this.$store.dispatch('cart/syncTotals')
     await this.upsertOrder()
@@ -70,7 +77,6 @@ export default {
       if (!this.hasTotals) {
         return
       }
-      await this.$store.dispatch('kco/createOrder')
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           Array.from(this.checkout.scriptsTags).forEach(tag => {
@@ -110,3 +116,11 @@ export default {
   }
 }
 </script>
+
+<style lang="css">
+  div.wrapper.wrapper {
+    height: 30vh;
+    max-width: 100%;
+    padding-left: 25px;
+  }
+</style>

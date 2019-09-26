@@ -9,7 +9,7 @@ import i18n from '@vue-storefront/i18n'
 
 const validateOrder = checkoutOrder => {
   let sum = checkoutOrder.order_lines.reduce((acc, line) => acc + line.total_amount, 0)
-  return checkoutOrder.order_amount !== sum
+  return checkoutOrder.order_amount === sum
 }
 
 const getProductUrl = product => {
