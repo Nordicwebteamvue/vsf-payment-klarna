@@ -7,6 +7,11 @@ import { getThumbnailPath } from '@vue-storefront/core/helpers'
 import { router } from '@vue-storefront/core/app'
 import i18n from '@vue-storefront/i18n'
 
+const validateOrder = checkoutOrder => {
+  let sum = checkoutOrder.order_lines.reduce((acc, line) => acc + line.total_amount, 0)
+  return checkoutOrder.order_amount !== sum
+}
+
 const getProductUrl = product => {
   const storeView = currentStoreView()
   const productUrl = localizedRoute({
@@ -174,6 +179,12 @@ export const getters: GetterTree<CheckoutState, RootState> = {
           total_tax_amount: taxAmount ? taxAmount * 100 : 0,
           tax_rate: shippingTaxRate ? shippingTaxRate * 10000: 0
         })
+      }
+    }
+    if (!validateOrder(checkoutOrder)) {
+      return {
+        error: true,
+        reason: 'Order amount incorrect'
       }
     }
     return checkoutOrder

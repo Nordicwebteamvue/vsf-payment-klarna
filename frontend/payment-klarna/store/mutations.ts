@@ -3,6 +3,7 @@ import * as types from './mutation-types'
 
 export const mutations: MutationTree<any> = {
   createOrder (state) {
+    state.checkout.attempts += 1
     state.checkout.loading = true
     state.checkout.error = false
   },
@@ -15,7 +16,8 @@ export const mutations: MutationTree<any> = {
     state.checkout = {
       ...payload,
       loading: false,
-      error: false
+      error: false,
+      attempts: 0
     }
   },
   getConfirmation (state, payload) {

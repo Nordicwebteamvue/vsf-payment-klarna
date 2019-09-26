@@ -7,10 +7,17 @@ import { getScriptTagsFromSnippet } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
 export const actions: ActionTree<CheckoutState, RootState> = {
-  async createOrder ({ commit, state, getters }) {
+  async createOrder ({ commit, dispatch, getters, state }) {
+    console.log('createOrder')
     commit('createOrder')
     const { order } = getters
     if (!order || order.error) {
+      if (state.checkout.attempts > 3) {
+        window.location.reload()
+        return
+      }
+      await dispatch('cart/syncTotals', undefined, { root: true })
+      await dispatch('createOrder')
       return
     }
     // TODO: Move this localStorage stuff into helpers
