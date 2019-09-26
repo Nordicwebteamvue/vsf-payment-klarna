@@ -17,7 +17,8 @@ export const module: Module<CheckoutState, any> = {
       loading: false,
       snippet: null,
       scriptsTags: null,
-      error: false
+      error: false,
+      attempts: 0
     },
     confirmation: {
       loading: false,

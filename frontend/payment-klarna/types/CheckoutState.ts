@@ -4,6 +4,7 @@ interface SubState {
   scriptsTags: any;
   orderId?: String;
   error: Boolean;
+  attempts?: Number;
 }
 
 export default interface CheckoutState {
