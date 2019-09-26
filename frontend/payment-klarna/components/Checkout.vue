@@ -73,9 +73,6 @@ export default {
   },
   methods: {
     async upsertOrder () {
-      if (!this.hasTotals) {
-        return
-      }
       await this.$store.dispatch('kco/createOrder')
       return new Promise((resolve, reject) => {
         setTimeout(() => {
