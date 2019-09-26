@@ -8,7 +8,6 @@ import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
 export const actions: ActionTree<CheckoutState, RootState> = {
   async createOrder ({ commit, dispatch, getters, state }) {
-    console.log('createOrder')
     commit('createOrder')
     const { order } = getters
     if (!order || order.error) {
