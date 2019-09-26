@@ -23,7 +23,6 @@ export default {
     LoadingSpinner
   },
   async mounted () {
-    await this.$store.dispatch('cart/syncTotals')
     await this.upsertOrder()
     // Todo: refactor
     this.$bus.$on('kcoOrderLoaded', () => {
@@ -77,6 +76,7 @@ export default {
       if (!this.hasTotals) {
         return
       }
+      await this.$store.dispatch('kco/createOrder')
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           Array.from(this.checkout.scriptsTags).forEach(tag => {
