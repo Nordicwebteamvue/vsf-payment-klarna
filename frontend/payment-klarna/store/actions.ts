@@ -12,8 +12,8 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     commit('createOrder')
     const { order } = getters
     if (!order || order.error) {
-      if (order.error) {
-        console.log('Error:', order.error)
+      if (order && order.reason) {
+        console.log('Error:', order.reason)
       }
       if (state.checkout.attempts > 3) {
         window.location.reload()
