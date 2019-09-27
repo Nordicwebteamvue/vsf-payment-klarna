@@ -27,11 +27,11 @@ const mapProductToKlarna = (product) => {
   const klarnaProduct: any = {
     name: product.name,
     quantity: product.qty,
-    unit_price: product.price_incl_tax * 100 | 0, // Force int with '| 0'
-    tax_rate: product.tax_percent * 100 | 0,
-    total_amount: (product.row_total_incl_tax * 100 | 0) - (product.base_discount_amount * 100 | 0),
-    total_discount_amount: (product.discount_amount || 0) * 100 | 0,
-    total_tax_amount: product.tax_amount * 100 | 0
+    unit_price: Math.round(product.price_incl_tax * 100),
+    tax_rate: Math.round(product.tax_percent * 100),
+    total_amount: Math.round(product.row_total_incl_tax * 100) - Math.round(product.base_discount_amount * 100),
+    total_discount_amount: Math.round((product.discount_amount || 0) * 100),
+    total_tax_amount: Math.round(product.tax_amount * 100)
   }
   if (vsfProduct) {
     klarnaProduct.image_url = getThumbnailPath(vsfProduct.image, 600, 600) || ''
@@ -134,8 +134,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       shipping_options: [],
       shipping_countries: storeView.shipping_countries || [],
       order_lines: trueCartItems.map(mapProductToKlarna),
-      order_amount: totals.base_grand_total * 100 | 0,
-      order_tax_amount: totals.base_tax_amount * 100 | 0,
+      order_amount: Math.round(totals.base_grand_total * 100),
+      order_tax_amount: Math.round(totals.base_tax_amount * 100),
       external_payment_methods,
       external_checkouts,
       options: klarnaOptions ? klarnaOptions : null,
@@ -145,8 +145,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       checkoutOrder.orderId = state.checkout.orderId
     }
     if (config.klarna.showShippingOptions && state.shippingOptions) {
-      checkoutOrder.order_amount = (totals.base_grand_total - totals.base_shipping_incl_tax) * 100 | 0
-      checkoutOrder.order_tax_amount = (totals.base_tax_amount - totals.base_shipping_tax_amount) * 100 | 0
+      checkoutOrder.order_amount = Math.round((totals.base_grand_total - totals.base_shipping_incl_tax) * 100)
+      checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount - totals.base_shipping_tax_amount) * 100)
       checkoutOrder.shipping_options = shippingMethods.map((method, index: number) => {
         const price = method.price_incl_tax || method.price || 0
         const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
@@ -154,9 +154,9 @@ export const getters: GetterTree<CheckoutState, RootState> = {
         return {
           id: method.method_code,
           name: `${method.method_title}`,
-          price: price ? price * 100 | 0 : 0,
-          tax_amount: taxAmount ? taxAmount * 100 | 0 : 0,
-          tax_rate: shippingTaxRate ? shippingTaxRate * 10000 | 0 : 0,
+          price: price ? Math.round(price * 100) : 0,
+          tax_amount: taxAmount ? Math.round(taxAmount * 100) : 0,
+          tax_rate: shippingTaxRate ? Math.round(shippingTaxRate * 10000) : 0,
           preselected: index === 0
         }
       })
