@@ -27,11 +27,11 @@ const mapProductToKlarna = (product) => {
   const klarnaProduct: any = {
     name: product.name,
     quantity: product.qty,
-    unit_price: product.price_incl_tax * 100 | 0, // Force int with '| 0'
-    tax_rate: product.tax_percent * 100 | 0,
-    total_amount: (product.row_total_incl_tax * 100 | 0) - (product.base_discount_amount * 100 | 0),
-    total_discount_amount: (product.discount_amount || 0) * 100 | 0,
-    total_tax_amount: product.tax_amount * 100 | 0
+    unit_price: Math.round(product.price_incl_tax * 100),
+    tax_rate: Math.round(product.tax_percent * 100),
+    total_amount: Math.round(product.row_total_incl_tax * 100) - Math.round(product.base_discount_amount * 100),
+    total_discount_amount: Math.round((product.discount_amount || 0) * 100),
+    total_tax_amount: Math.round(product.tax_amount * 100)
   }
   if (vsfProduct) {
     klarnaProduct.image_url = getThumbnailPath(vsfProduct.image, 600, 600) || ''
