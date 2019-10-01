@@ -49,6 +49,12 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       silent: true
     })
     if (result.error) {
+      if (result.error.body.error_code === 'READ_ONLY_ORDER') {
+        localStorage.removeItem(storageTarget)
+        savedOrderId = ''
+        await dispatch('createOrder')
+        return
+      }
       console.log('error', result)
       commit('createOrderError', result.error)
       return
