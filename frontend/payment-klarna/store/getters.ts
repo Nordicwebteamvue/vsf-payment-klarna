@@ -144,22 +144,24 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     if (state.checkout.orderId) {
       checkoutOrder.orderId = state.checkout.orderId
     }
-    if (config.klarna.showShippingOptions && state.shippingOptions) {
+    if (config.klarna.showShippingOptions) {
       checkoutOrder.order_amount = Math.round((totals.base_grand_total - totals.base_shipping_incl_tax) * 100)
       checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount - totals.base_shipping_tax_amount) * 100)
-      checkoutOrder.shipping_options = shippingMethods.map((method, index: number) => {
-        const price = method.price_incl_tax || method.price || 0
-        const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
-        const taxAmount = getTaxAmount(price, shippingTaxRate)
-        return {
-          id: method.method_code,
-          name: `${method.method_title}`,
-          price: price ? Math.round(price * 100) : 0,
-          tax_amount: taxAmount ? Math.round(taxAmount * 100) : 0,
-          tax_rate: shippingTaxRate ? Math.round(shippingTaxRate * 10000) : 0,
-          preselected: index === 0
-        }
-      })
+      if (!config.klarna.enableKSS && state.shippingOptions) {
+        checkoutOrder.shipping_options = shippingMethods.map((method, index: number) => {
+          const price = method.price_incl_tax || method.price || 0
+          const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
+          const taxAmount = getTaxAmount(price, shippingTaxRate)
+          return {
+            id: method.method_code,
+            name: `${method.method_title}`,
+            price: price ? Math.round(price * 100) : 0,
+            tax_amount: taxAmount ? Math.round(taxAmount * 100) : 0,
+            tax_rate: shippingTaxRate ? Math.round(shippingTaxRate * 10000) : 0,
+            preselected: index === 0
+          }
+        })
+      }
     }
     if (!config.klarna.showShippingOptions) {
       const { shippingMethod: code } = rootState.checkout.shippingDetails

@@ -20,7 +20,8 @@
       "length": "length"
     },
     "endpoint": "http://localhost:8080/api/ext/payment-klarna/create-or-update-order",
-    "showShippingOptions": true
+    "showShippingOptions": true,
+    "enableKSS": false
   },
   "server": {
     "host": "localhost",
