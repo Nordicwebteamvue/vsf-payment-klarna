@@ -3,6 +3,7 @@ import { ActionTree, ActionContext, Store } from 'vuex'
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
 import config from 'config'
 import RootState from '@vue-storefront/core/types/RootState'
+import Vue from 'vue'
 import { getScriptTagsFromSnippet } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
@@ -49,6 +50,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       silent: true
     })
     if (result.error) {
+      Vue.prototype.$bus.$emit('klarna-create-error', result)
       if (result.error.body.error_code === 'READ_ONLY_ORDER') {
         localStorage.removeItem(storageTarget)
         await dispatch('createOrder')
