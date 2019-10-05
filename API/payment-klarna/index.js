@@ -52,7 +52,8 @@ module.exports = ({ config, db }) => {
         }, 400)
         return
       }
-      apiStatus(res, {orderId: body.order_id, snippet: body.html_snippet})
+      body.snippet = body.html_snippet
+      apiStatus(res, body)
     })
   })
 
