@@ -17,6 +17,10 @@ import { callApi } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import LoadingSpinner from 'theme/components/theme/blocks/AsyncSidebar/LoadingSpinner.vue'
 
+const klarnaEvents = [
+  'load', 'customer', 'change', 'billing_address_change', 'shipping_address_change', 'shipping_option_change', 'order_total_change', 'can_not_complete_order', 'network_error'
+]
+
 export default {
   name: 'KlarnaCheckout',
   components: {
@@ -24,11 +28,11 @@ export default {
   },
   async mounted () {
     await this.upsertOrder()
-    callApi(api => api.on({
-      'shipping_option_change': data => {
-        this.$bus.$emit('klarna-shipping-option-change', data)
-      }
-    }))
+    const events = {}
+    klarnaEvents.forEach(event => {
+      events[event] = data => { this.$bus.$emit('klarna-event-' + event, data) }
+    })
+    callApi(api => api.on(events))
     // Todo: refactor
     this.$bus.$on('klarna-order-loaded', () => {
       setTimeout(async () => {
