@@ -24,6 +24,11 @@ export default {
   },
   async mounted () {
     await this.upsertOrder()
+    callApi(api => api.on({
+      'shipping_option_change': data => {
+        this.$bus.$emit('klarna-shipping-option-change', data)
+      }
+    }))
     // Todo: refactor
     this.$bus.$on('kcoOrderLoaded', () => {
       setTimeout(async () => {

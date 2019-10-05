@@ -145,8 +145,8 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       checkoutOrder.orderId = state.checkout.orderId
     }
     if (config.klarna.showShippingOptions && state.shippingOptions) {
-      checkoutOrder.order_amount = Math.round((totals.base_grand_total - totals.base_shipping_incl_tax) * 100)
-      checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount - totals.base_shipping_tax_amount) * 100)
+      // checkoutOrder.order_amount = Math.round((totals.base_grand_total - totals.base_shipping_incl_tax) * 100)
+      // checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount - totals.base_shipping_tax_amount) * 100)
       checkoutOrder.shipping_options = shippingMethods.map((method, index: number) => {
         const price = method.price_incl_tax || method.price || 0
         const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
@@ -161,25 +161,27 @@ export const getters: GetterTree<CheckoutState, RootState> = {
         }
       })
     }
-    if (!config.klarna.showShippingOptions) {
-      const { shippingMethod: code } = rootState.checkout.shippingDetails
-      const shippingMethod = rootGetters['shipping/shippingMethods']
-        .find(method => method.method_code === code)
-      if (shippingMethod) {
-        const price = totals.shipping_incl_tax
-        const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
-        const taxAmount = getTaxAmount(totals.shipping_incl_tax, shippingTaxRate)
-        checkoutOrder.order_lines.push({
-          type: 'shipping_fee',
-          reference: code,
-          quantity: 1,
-          name: `${shippingMethod.carrier_title} (${shippingMethod.method_title})`,
-          total_amount: price ? price * 100 : 0,
-          unit_price: price ? price * 100 : 0,
-          total_tax_amount: taxAmount ? taxAmount * 100 : 0,
-          tax_rate: shippingTaxRate ? shippingTaxRate * 10000: 0
-        })
-      }
+    const { shippingMethod: code } = rootState.checkout.shippingDetails
+    let shippingMethod = rootGetters['shipping/shippingMethods']
+      .find(method => method.method_code === code)
+    if (!shippingMethod) {
+      shippingMethod = rootGetters['shipping/shippingMethods']
+        .find(method => method.base_amount === totals.base_shipping_incl_tax)
+    }
+    if (shippingMethod) {
+      const price = totals.shipping_incl_tax
+      const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
+      const taxAmount = getTaxAmount(totals.shipping_incl_tax, shippingTaxRate)
+      checkoutOrder.order_lines.push({
+        type: 'shipping_fee',
+        reference: code,
+        quantity: 1,
+        name: `${shippingMethod.carrier_title} (${shippingMethod.method_title})`,
+        total_amount: price ? price * 100 : 0,
+        unit_price: price ? price * 100 : 0,
+        total_tax_amount: taxAmount ? taxAmount * 100 : 0,
+        tax_rate: shippingTaxRate ? shippingTaxRate * 10000: 0
+      })
     }
     if (!validateOrder(checkoutOrder)) {
       return {
