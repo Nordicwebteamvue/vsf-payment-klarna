@@ -30,10 +30,10 @@ export default {
       }
     }))
     // Todo: refactor
-    this.$bus.$on('kcoOrderLoaded', () => {
+    this.$bus.$on('klarna-order-loaded', () => {
       setTimeout(async () => {
         const order = await this.$store.dispatch('kco/fetchOrder', this.checkout.orderId)
-        this.onKcoAddressChange({
+        this.onKlarnaAddressChange({
           totalSegments: this.totals.total_segments,
           shippingAddress: order.shipping_address
         })
@@ -41,12 +41,11 @@ export default {
     })
   },
   beforeMount () {
-    this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder)
+    this.$bus.$on('klarna-update-order', this.configureUpdateOrder)
   },
   beforeDestroy () {
-    this.$bus.$off('updateKlarnaOrder')
+    this.$bus.$off('klarna-update-order')
     this.$bus.$off('cart-after-updatetotals')
-    this.$bus.$off('kco-reload-component')
   },
   computed: {
     ...mapGetters({
@@ -60,7 +59,7 @@ export default {
   watch: {
     coupon (newValue, oldValue) {
       if (!oldValue || newValue.code !== oldValue.code) {
-        this.$bus.$emit('updateKlarnaOrder')
+        this.$bus.$emit('klarna-update-order')
       }
     },
     totals (newValue, oldValue) {
@@ -71,7 +70,7 @@ export default {
           this.$store.dispatch('cart/syncShippingMethods', {
             country_id: countryId
           })
-          this.$bus.$emit('updateKlarnaOrder')
+          this.$bus.$emit('klarna-update-order')
         }
       }
     }
@@ -85,7 +84,7 @@ export default {
             // TODO: Make this work with <script> tag insertion
             (() => {eval(tag.text)}).call(window) // eslint-disable-line
             this.$refs.scripts.appendChild(tag)
-            this.$bus.$emit('kcoOrderLoaded')
+            this.$bus.$emit('klarna-order-loaded')
           })
           resolve()
         }, 1)
@@ -105,13 +104,13 @@ export default {
     resumeCheckout () {
       return callApi(api => api.resume())
     },
-    onKcoAddressChange (orderData) {
+    onKlarnaAddressChange (orderData) {
       if (orderData.shippingAddress.postal_code) {
-        this.$bus.$emit('kcoAddressChange', orderData)
+        this.$bus.$emit('klarna-address-change', orderData)
       }
       return callApi(api => api.on({
         'billing_address_change': async (data) => {
-          this.$bus.$emit('kcoOrderLoaded')
+          this.$bus.$emit('klarna-order-loaded')
         }
       }))
     }
