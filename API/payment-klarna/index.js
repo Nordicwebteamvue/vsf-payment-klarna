@@ -44,12 +44,13 @@ module.exports = ({ config, db }) => {
         'Content-Type': 'application/json'
       }
     }, (error, response, body) => {
-      if (error || body.error_code) {
+      if (error || body.error_code || response.statusCode !== 200) {
+        const statusCode = response.statusCode !== 200 ? response.statusCode : 400
         apiStatus(res, {
           error: 'Klarna error',
           body,
           order
-        }, 400)
+        }, statusCode)
         return
       }
       body.snippet = body.html_snippet
