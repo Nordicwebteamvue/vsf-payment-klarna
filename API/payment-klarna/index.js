@@ -33,6 +33,12 @@ module.exports = ({ config, db }) => {
     }
     const {auth, endpoints} = config.klarna
     order.merchant_urls = {...config.klarna.merchant_urls}
+    if (storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].merchant_urls) {
+      order.merchant_urls = {
+        ...order.merchant_urls,
+        ...config.storeViews[storeCode].merchant_urls
+      }
+    }
     addStoreCode(order.merchant_urls, storeCode, dataSourceStoreCode)
     const url = orderId ? endpoints.orders + '/' + orderId : endpoints.orders
     request.post({
