@@ -24,6 +24,11 @@ export default {
   },
   async mounted () {
     await this.upsertOrder()
+    callApi(api => api.on({
+      'shipping_option_change': (data) => {
+        if (!localStorage.setItem('shipping_method')) localStorage.setItem('shipping_method', JSON.stringify(data))
+      }
+    }))
     // Todo: refactor
     this.$bus.$on('kcoOrderLoaded', () => {
       setTimeout(async () => {

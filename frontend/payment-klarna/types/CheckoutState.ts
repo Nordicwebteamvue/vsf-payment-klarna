@@ -5,6 +5,7 @@ interface SubState {
   orderId?: String;
   error: Boolean;
   attempts?: Number;
+  order?: Object;
 }
 
 export default interface CheckoutState {

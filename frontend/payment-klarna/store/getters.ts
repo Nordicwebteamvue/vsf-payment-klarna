@@ -157,36 +157,52 @@ export const getters: GetterTree<CheckoutState, RootState> = {
           price: price ? Math.round(price * 100) : 0,
           tax_amount: taxAmount ? Math.round(taxAmount * 100) : 0,
           tax_rate: shippingTaxRate ? Math.round(shippingTaxRate * 10000) : 0,
-          preselected: index === 0
+          preselected: false
         }
       })
     }
-    if (!config.klarna.showShippingOptions) {
-      const { shippingMethod: code } = rootState.checkout.shippingDetails
-      const shippingMethod = rootGetters['shipping/shippingMethods']
-        .find(method => method.method_code === code)
-      if (shippingMethod) {
-        const price = totals.shipping_incl_tax
-        const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
-        const taxAmount = getTaxAmount(totals.shipping_incl_tax, shippingTaxRate)
+    const { shippingMethod: code } = rootState.checkout.shippingDetails
+    let shippingMethod = rootGetters['shipping/shippingMethods']
+      .find(method => method.method_code === code)
+    if (shippingMethod) {
+      const price = totals.shipping_incl_tax
+      const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
+      const taxAmount = getTaxAmount(totals.shipping_incl_tax, shippingTaxRate)
+      checkoutOrder.order_amount = Math.round((totals.base_grand_total) * 100)
+      checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount) * 100)
+      checkoutOrder.order_lines.push({
+        type: 'shipping_fee',
+        quantity: 1,
+        name: `${shippingMethod.carrier_title} (${shippingMethod.method_title})`,
+        total_amount: price ? price * 100 : 0,
+        unit_price: price ? price * 100 : 0,
+        total_tax_amount: taxAmount ? taxAmount * 100 : 0,
+        tax_rate: shippingTaxRate ? shippingTaxRate * 10000: 0
+      })
+    } else {
+      let selectedShippingMethod = localStorage.getItem('shipping_method')
+      if (selectedShippingMethod) {
+        checkoutOrder.order_amount = Math.round((totals.base_grand_total) * 100)
+        checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount) * 100)
+        let selectedOption = JSON.parse(selectedShippingMethod)
         checkoutOrder.order_lines.push({
           type: 'shipping_fee',
-          reference: code,
           quantity: 1,
-          name: `${shippingMethod.carrier_title} (${shippingMethod.method_title})`,
-          total_amount: price ? price * 100 : 0,
-          unit_price: price ? price * 100 : 0,
-          total_tax_amount: taxAmount ? taxAmount * 100 : 0,
-          tax_rate: shippingTaxRate ? shippingTaxRate * 10000: 0
+          name: selectedOption.name,
+          total_amount: selectedOption.price,
+          unit_price: selectedOption.price,
+          total_tax_amount: selectedOption.tax_amount,
+          tax_rate: selectedOption.tax_rate
         })
+        checkoutOrder.selected_shipping_option = selectedOption
       }
     }
-    if (!validateOrder(checkoutOrder)) {
-      return {
-        error: true,
-        reason: 'Order amount incorrect'
-      }
-    }
+    // if (!validateOrder(checkoutOrder)) {
+    //   return {
+    //     error: true,
+    //     reason: 'Order amount incorrect'
+    //   }
+    // }
     return checkoutOrder
   }
 }
