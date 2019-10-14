@@ -24,11 +24,15 @@ export default {
   },
   async mounted () {
     await this.upsertOrder()
-    callApi(api => api.on({
-      'shipping_option_change': (data) => {
-        if (!localStorage.setItem('shipping_method')) localStorage.setItem('shipping_method', JSON.stringify(data))
-      }
-    }))
+    /* Watch shipping option event from Klarna */
+    setInterval(() => {
+      callApi(api => api.on({
+        'shipping_option_change': (data) => {
+          localStorage.setItem('shipping_method', JSON.stringify(data))
+        }
+      }))
+    }, 200)
+
     // Todo: refactor
     this.$bus.$on('kcoOrderLoaded', () => {
       setTimeout(async () => {

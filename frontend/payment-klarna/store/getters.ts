@@ -182,8 +182,6 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     } else {
       let selectedShippingMethod = localStorage.getItem('shipping_method')
       if (selectedShippingMethod) {
-        checkoutOrder.order_amount = Math.round((totals.base_grand_total) * 100)
-        checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount) * 100)
         let selectedOption = JSON.parse(selectedShippingMethod)
         checkoutOrder.order_lines.push({
           type: 'shipping_fee',
@@ -195,14 +193,19 @@ export const getters: GetterTree<CheckoutState, RootState> = {
           tax_rate: selectedOption.tax_rate
         })
         checkoutOrder.selected_shipping_option = selectedOption
+
+        checkoutOrder.order_amount = Math.round((totals.base_grand_total) * 100) + Math.round(selectedOption.price)
+
+        checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount) * 100) + Math.round(selectedOption.tax_amount)
       }
     }
-    // if (!validateOrder(checkoutOrder)) {
-    //   return {
-    //     error: true,
-    //     reason: 'Order amount incorrect'
-    //   }
-    // }
+
+    if (!validateOrder(checkoutOrder)) {
+      return {
+        error: true,
+        reason: 'Order amount incorrect'
+      }
+    }
     return checkoutOrder
   }
 }
