@@ -161,6 +161,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
         }
       })
     }
+
     const { shippingMethod: code } = rootState.checkout.shippingDetails
     let shippingMethod = rootGetters['shipping/shippingMethods']
       .find(method => method.method_code === code)
@@ -183,6 +184,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       let selectedShippingMethod = localStorage.getItem('shipping_method')
       if (selectedShippingMethod) {
         let selectedOption = JSON.parse(selectedShippingMethod)
+
         checkoutOrder.order_lines.push({
           type: 'shipping_fee',
           quantity: 1,
@@ -194,9 +196,17 @@ export const getters: GetterTree<CheckoutState, RootState> = {
         })
         checkoutOrder.selected_shipping_option = selectedOption
 
-        checkoutOrder.order_amount = Math.round((totals.base_grand_total) * 100) + Math.round(selectedOption.price)
+        let orderAmount = 0
+        let orderTaxAmount =0
+        checkoutOrder.order_lines.forEach((orderLine) => {
+          orderAmount += orderLine.total_amount
+          orderTaxAmount += orderLine.total_tax_amount
+        })
 
-        checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount) * 100) + Math.round(selectedOption.tax_amount)
+        checkoutOrder.order_amount = Math.round(orderAmount)
+
+        checkoutOrder.order_tax_amount = Math.round(orderTaxAmount)
+
       }
     }
 

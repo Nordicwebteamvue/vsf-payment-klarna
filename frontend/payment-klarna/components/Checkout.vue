@@ -22,10 +22,13 @@ export default {
   components: {
     LoadingSpinner
   },
+  props: {
+    shippingOptionInterval: null
+  },
   async mounted () {
     await this.upsertOrder()
     /* Watch shipping option event from Klarna */
-    setInterval(() => {
+    this.shippingOptionInterval = setInterval(() => {
       callApi(api => api.on({
         'shipping_option_change': (data) => {
           localStorage.setItem('shipping_method', JSON.stringify(data))
@@ -51,6 +54,7 @@ export default {
     this.$bus.$off('updateKlarnaOrder')
     this.$bus.$off('cart-after-updatetotals')
     this.$bus.$off('kco-reload-component')
+    clearInterval(this.shippingOptionInterval)
   },
   computed: {
     ...mapGetters({
