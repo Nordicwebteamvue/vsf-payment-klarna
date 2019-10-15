@@ -157,7 +157,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
           price: price ? Math.round(price * 100) : 0,
           tax_amount: taxAmount ? Math.round(taxAmount * 100) : 0,
           tax_rate: shippingTaxRate ? Math.round(shippingTaxRate * 10000) : 0,
-          preselected: false
+          preselected: index === 0
         }
       })
     }
