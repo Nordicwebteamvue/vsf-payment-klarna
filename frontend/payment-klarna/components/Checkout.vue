@@ -17,27 +17,31 @@ import { callApi } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import LoadingSpinner from 'theme/components/theme/blocks/AsyncSidebar/LoadingSpinner.vue'
 
+const klarnaEvents = [
+  'load', 'customer', 'change', 'billing_address_change', 'shipping_address_change', 'shipping_option_change', 'order_total_change', 'can_not_complete_order', 'network_error'
+]
+
 export default {
   name: 'KlarnaCheckout',
   components: {
     LoadingSpinner
   },
-  props: {
-    shippingOptionInterval: null
-  },
   async mounted () {
     await this.upsertOrder()
-    /* Watch shipping option event from Klarna */
-    this.shippingOptionInterval = setInterval(() => {
-      callApi(api => api.on({
-        'shipping_option_change': (data) => {
-          localStorage.setItem('shipping_method', JSON.stringify(data))
-        }
-      }))
-    }, 200)
+    const events = {}
+    klarnaEvents.forEach(event => {
+      events[event] = data => {
+        this.$bus.$emit('klarna-event-' + event, data)
+      }
+    })
+    callApi(api => api.on(events))
+    this.$bus.$on('klarna-event-shipping_option_change', (data) => {
+      /* Watch shipping option event from Klarna */
+      localStorage.setItem('shipping_method', JSON.stringify(data))
+    })
 
     // Todo: refactor
-    this.$bus.$on('kcoOrderLoaded', () => {
+    this.$bus.$on('klarna-order-loaded', () => {
       setTimeout(async () => {
         const order = await this.$store.dispatch('kco/fetchOrder', this.checkout.orderId)
         this.onKcoAddressChange({
@@ -48,13 +52,12 @@ export default {
     })
   },
   beforeMount () {
-    this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder)
+    this.$bus.$on('klarna-update-order', this.configureUpdateOrder)
+    this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder) // legacy
   },
   beforeDestroy () {
-    this.$bus.$off('updateKlarnaOrder')
-    this.$bus.$off('cart-after-updatetotals')
-    this.$bus.$off('kco-reload-component')
-    clearInterval(this.shippingOptionInterval)
+    this.$bus.$off('klarna-update-order')
+    this.$bus.$off('updateKlarnaOrder') // legacy
   },
   computed: {
     ...mapGetters({
@@ -68,7 +71,7 @@ export default {
   watch: {
     coupon (newValue, oldValue) {
       if (!oldValue || newValue.code !== oldValue.code) {
-        this.$bus.$emit('updateKlarnaOrder')
+        this.$bus.$emit('klarna-update-order')
       }
     },
     totals (newValue, oldValue) {
@@ -79,7 +82,7 @@ export default {
           this.$store.dispatch('cart/syncShippingMethods', {
             country_id: countryId
           })
-          this.$bus.$emit('updateKlarnaOrder')
+          this.$bus.$emit('klarna-update-order')
         }
       }
     }
@@ -93,7 +96,7 @@ export default {
             // TODO: Make this work with <script> tag insertion
             (() => {eval(tag.text)}).call(window) // eslint-disable-line
             this.$refs.scripts.appendChild(tag)
-            this.$bus.$emit('kcoOrderLoaded')
+            this.$bus.$emit('klarna-order-loaded')
           })
           resolve()
         }, 1)
@@ -119,7 +122,7 @@ export default {
       }
       return callApi(api => api.on({
         'billing_address_change': async (data) => {
-          this.$bus.$emit('kcoOrderLoaded')
+          this.$bus.$emit('klarna-order-loaded')
         }
       }))
     }
