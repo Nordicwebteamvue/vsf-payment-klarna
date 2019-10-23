@@ -140,10 +140,14 @@ module.exports = ({ config, db }) => {
         body
       }, (error, response, body) => {
         if (error || body.error_code) {
-          apiStatus(res, `Error: ${body.error_code}`, 400)
+          apiStatus(res, `Error: ${error || body.error_code}`, 400)
           return
         }
-        apiStatus(res, 'Thanks!')
+        if (body.error) {
+          apiStatus(res, body, 400)
+          return
+        }
+        apiStatus(res, body)
       })
     } else {
       apiStatus(res, `error`, 400)
