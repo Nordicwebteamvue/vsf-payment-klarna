@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/kodbruket/vsf-payment-klarna.git",
-  "author": "Robin Nilsson <robin@kodbruket.se>",
+  "author": "Robin Nilsson <robin@robins.nu>",
   "license": "MIT",
   "scripts": {
     "lint": "eslint .",
