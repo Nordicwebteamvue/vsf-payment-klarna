@@ -1,5 +1,11 @@
 # vsf-payment-klarna
 
+## Usage
+
+### Prefill country
+
+`this.$store.dispatch('kco/setPurchaseCountry', 'SE')`
+
 ### Development
 
 `/etc/hosts`

@@ -12,6 +12,7 @@ export const module: Module<CheckoutState, any> = {
   state: {
     shippingOptions: true,
     merchantData: {},
+    purchaseCountry: '',
     checkout: {
       orderId: '',
       loading: false,

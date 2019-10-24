@@ -127,8 +127,17 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       })
     }
 
+    // Prefill purchaseCountry
+    let purchaseCountry = state.purchaseCountry || storeView.i18n.defaultCountry
+    if (storeView.shipping_countries && !storeView.shipping_countries.includes(purchaseCountry)) {
+      purchaseCountry = storeView.i18n.defaultCountry
+    }
+    if (!/^[A-Za-z]{2,2}$/.test(purchaseCountry)) {
+      purchaseCountry = storeView.i18n.defaultCountry
+    }
+
     const checkoutOrder: any = {
-      purchase_country: storeView.i18n.defaultCountry,
+      purchase_country: purchaseCountry,
       purchase_currency: storeView.i18n.currencyCode,
       locale: storeView.i18n.defaultLocale,
       shipping_options: [],
