@@ -8,6 +8,9 @@ import { getScriptTagsFromSnippet } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
 export const actions: ActionTree<CheckoutState, RootState> = {
+  setPurchaseCountry ({ commit }, country: String) {
+    commit('setPurchaseCountry', country)
+  },
   async createOrder ({ commit, dispatch, getters, state }) {
     commit('createOrder')
     const { order } = getters

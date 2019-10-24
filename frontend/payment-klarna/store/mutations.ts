@@ -2,6 +2,9 @@ import { MutationTree } from 'vuex'
 import * as types from './mutation-types'
 
 export const mutations: MutationTree<any> = {
+  setPurchaseCountry (state, country) {
+    state.purchaseCountry = country
+  },
   createOrder (state) {
     state.checkout.attempts += 1
     state.checkout.loading = true
