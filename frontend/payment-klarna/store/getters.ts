@@ -132,6 +132,9 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     if (storeView.shipping_countries && !storeView.shipping_countries.includes(purchaseCountry)) {
       purchaseCountry = storeView.i18n.defaultCountry
     }
+    if (!/^[A-Za-z]{2,2}$/.test(purchaseCountry)) {
+      purchaseCountry = storeView.i18n.defaultCountry
+    }
 
     const checkoutOrder: any = {
       purchase_country: purchaseCountry,
