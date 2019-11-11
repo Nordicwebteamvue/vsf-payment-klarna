@@ -54,7 +54,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     })
     if (result.error) {
       Vue.prototype.$bus.$emit('klarna-create-error', result)
-      if (result.error.body && result.error.body.error_code === 'READ_ONLY_ORDER') {
+      if (result.body && result.body.error_code === 'READ_ONLY_ORDER') {
         localStorage.removeItem(storageTarget)
         await dispatch('createOrder')
         return
