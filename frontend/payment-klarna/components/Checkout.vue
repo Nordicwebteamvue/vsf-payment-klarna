@@ -28,28 +28,6 @@ export default {
   },
   async mounted () {
     await this.upsertOrder()
-    const events = {}
-    klarnaEvents.forEach(event => {
-      events[event] = data => {
-        this.$bus.$emit('klarna-event-' + event, data)
-      }
-    })
-    callApi(api => api.on(events))
-    this.$bus.$on('klarna-event-shipping_option_change', (data) => {
-      /* Watch shipping option event from Klarna */
-      localStorage.setItem('shipping_method', JSON.stringify(data))
-    })
-
-    // Todo: refactor
-    this.$bus.$on('klarna-order-loaded', () => {
-      setTimeout(async () => {
-        const order = await this.$store.dispatch('kco/fetchOrder', this.checkout.orderId)
-        this.onKcoAddressChange({
-          totalSegments: this.totals.total_segments,
-          shippingAddress: order.shipping_address
-        })
-      }, 2000)
-    })
   },
   beforeMount () {
     this.$bus.$on('klarna-update-order', this.configureUpdateOrder)
@@ -88,9 +66,33 @@ export default {
     }
   },
   methods: {
+    setupKlarnaListeners () {
+      const events = {}
+      klarnaEvents.forEach(event => {
+        events[event] = data => {
+          this.$bus.$emit('klarna-event-' + event, data)
+        }
+      })
+      callApi(api => api.on(events))
+      this.$bus.$on('klarna-event-shipping_option_change', (data) => {
+        /* Watch shipping option event from Klarna */
+        localStorage.setItem('shipping_method', JSON.stringify(data))
+      })
+
+      // Todo: refactor
+      this.$bus.$on('klarna-order-loaded', () => {
+        setTimeout(async () => {
+          const order = await this.$store.dispatch('kco/fetchOrder', this.checkout.orderId)
+          this.onKcoAddressChange({
+            totalSegments: this.totals.total_segments,
+            shippingAddress: order.shipping_address
+          })
+        }, 2000)
+      })
+    },
     async upsertOrder () {
       await this.$store.dispatch('kco/createOrder')
-      return new Promise((resolve, reject) => {
+      await new Promise((resolve, reject) => {
         setTimeout(() => {
           Array.from(this.checkout.scriptsTags).forEach(tag => {
             // TODO: Make this work with <script> tag insertion
@@ -101,6 +103,7 @@ export default {
           resolve()
         }, 1)
       })
+      this.setupKlarnaListeners()
     },
     async configureUpdateOrder () {
       if (!this.checkout.orderId) {
