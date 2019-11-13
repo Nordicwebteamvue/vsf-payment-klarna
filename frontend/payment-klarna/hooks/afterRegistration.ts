@@ -1,7 +1,7 @@
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
 
 export function afterRegistration({ Vue, isServer, config, store }) {
-  if (!isServer) {
+  if (!isServer && config.klarna.validate_order) {
     const url = config.klarna.validate_order
     Vue.prototype.$bus.$on('klarna-event-order_total_change', () => {
       const {orderId} = store.state.kco.checkout
