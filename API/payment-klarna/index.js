@@ -133,7 +133,11 @@ module.exports = ({ config, db }) => {
           klarna_order_id: orderId
         }
       }
-      const klarnaApiUrl = config.klarna.endpoints.validate_order.replace('{{cartId}}', cartId)
+      const klarnaApiUrl = config.klarna.endpoints.validate_order && config.klarna.endpoints.validate_order.replace('{{cartId}}', cartId)
+      if (!klarnaApiUrl) {
+        apiStatus(res, 'Missing validate_order URL', 404)
+        return
+      }
       request.post({
         url: klarnaApiUrl,
         json: true,
