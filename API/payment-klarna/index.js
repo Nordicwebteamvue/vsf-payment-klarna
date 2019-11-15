@@ -124,5 +124,39 @@ module.exports = ({ config, db }) => {
     })
   })
 
+  api.post('/validate-kco-callback', (req, res) => {
+    const { cartId } = req.query
+    const { orderId } = req.body
+    if (cartId && orderId) {
+      const body = {
+        quote: {
+          klarna_order_id: orderId
+        }
+      }
+      const klarnaApiUrl = config.klarna.endpoints.validate_order && config.klarna.endpoints.validate_order.replace('{{cartId}}', cartId)
+      if (!klarnaApiUrl) {
+        apiStatus(res, 'Missing validate_order URL', 404)
+        return
+      }
+      request.post({
+        url: klarnaApiUrl,
+        json: true,
+        body
+      }, (error, response, body) => {
+        if (error || body.error_code) {
+          apiStatus(res, `Error: ${error || body.error_code}`, 400)
+          return
+        }
+        if (body.error) {
+          apiStatus(res, body, 400)
+          return
+        }
+        apiStatus(res, body)
+      })
+    } else {
+      apiStatus(res, `error`, 400)
+    }
+  })
+
   return api
 }
