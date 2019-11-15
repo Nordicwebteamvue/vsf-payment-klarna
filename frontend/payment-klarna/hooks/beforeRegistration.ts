@@ -1,10 +1,10 @@
 import { router } from '@vue-storefront/core/app'
-import { RouterManager } from '@vue-storefront/core/lib/router-manager'
+import { setupMultistoreRoutes } from '@vue-storefront/core/lib/multistore'
 const Confirmation = () => import(/* webpackChunkName: "vsf-klarna-confirmation" */ '../components/Confirmation.vue')
 
 export function beforeRegistration({ Vue, store, config }) {
-  const placeOrderOnConfirmation = config.klarna.placeOrderOnConfirmation || true
-  RouterManager.addRoutes([
+  const placeOrderOnConfirmation: boolean = !!config.klarna.placeOrderOnConfirmation || true
+  setupMultistoreRoutes(config, router, [
     {
       name: 'klarna-confirmation',
       path: '/confirmation',
@@ -13,5 +13,5 @@ export function beforeRegistration({ Vue, store, config }) {
         placeOrderOnConfirmation
       }
     }
-  ], router)
+  ])
 }
