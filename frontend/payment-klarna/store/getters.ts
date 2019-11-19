@@ -49,7 +49,7 @@ const mapProductToKlarna = (product) => {
     const maxHeight = config.klarna.limitation_shipping_attributes.height
     const maxWidth = config.klarna.limitation_shipping_attributes.width
     const maxLength = config.klarna.limitation_shipping_attributes.length
-    let varubrevIsAvailable = (weight > maxWeight  || height > maxHeight || width > maxWidth || length > maxLength ) ? true : false
+    let varubrevIsAvailable = (weight > maxWeight  || height > maxHeight || width > maxWidth || length > maxLength ) ? false : true
     klarnaProduct.shipping_attributes = {
       weight: weight,
       varubrev: varubrevIsAvailable,
