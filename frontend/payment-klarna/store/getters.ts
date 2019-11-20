@@ -41,18 +41,17 @@ const mapProductToKlarna = (product) => {
     }
   }
   if (config.klarna.addShippingAttributes) {
-    let weight = product[config.klarna.shipping_attributes.weight] | 0 //g
-    let height = product[config.klarna.shipping_attributes.height] * 10 | 0
-    let width = product[config.klarna.shipping_attributes.width] * 10 | 0
-    let length = product[config.klarna.shipping_attributes.length] * 10 | 0
+    let weight = product.product[config.klarna.shipping_attributes.weight] | 0 //g
+    let height = product.product[config.klarna.shipping_attributes.height] * 10 | 0
+    let width = product.product[config.klarna.shipping_attributes.width] * 10 | 0
+    let length = product.product[config.klarna.shipping_attributes.length] * 10 | 0
     const maxWeight = config.klarna.limitation_shipping_attributes.weight
     const maxHeight = config.klarna.limitation_shipping_attributes.height
     const maxWidth = config.klarna.limitation_shipping_attributes.width
     const maxLength = config.klarna.limitation_shipping_attributes.length
-    let varubrevIsAvailable = (weight > maxWeight  || height > maxHeight || width > maxWidth || length > maxLength ) ? false : true
+    let weightAttribute = (weight > maxWeight  || height > maxHeight || width > maxWidth || length > maxLength ) ? config.klarna.limitation_shipping_attributes.weight + 1: weight
     klarnaProduct.shipping_attributes = {
-      weight: weight,
-      varubrev: varubrevIsAvailable,
+      weight: weightAttribute,
       dimensions: {
         height: height,  //mm
         width: width, //mm
