@@ -22,7 +22,7 @@ const getProductUrl = product => {
   return router.resolve(productUrl).href
 }
 
-const mapProductToKlarna = (product) => {
+const mapProductToKlarna = (sumDimensionOrder) => (product) => {
   const vsfProduct = product.product
   const klarnaProduct: any = {
     name: product.name,
@@ -54,9 +54,11 @@ const mapProductToKlarna = (product) => {
       const maxWidth = shippingMethod.width
       const maxLength = shippingMethod.length
 
-      if (!(weight > maxWeight  || height > maxHeight || width > maxWidth || length > maxLength )) {
+      // Currently, Klarna only supports weight for order_lines, this should be updated after Klarna added "order_weight"
+      if (!(parseFloat(sumDimensionOrder.weight) > maxWeight  || sumDimensionOrder.height > maxHeight || sumDimensionOrder.width > maxWidth || sumDimensionOrder.length > maxLength )) {
         tags.push(shippingMethod.code)
       }
+
     })
 
     klarnaProduct.shipping_attributes = {
@@ -153,6 +155,24 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     if (!/^[A-Za-z]{2,2}$/.test(purchaseCountry)) {
       purchaseCountry = storeView.i18n.defaultCountry
     }
+    let weightOrder = 0
+    let lengthOrder = 0
+    let heightOrder= 0
+    let widthOrder = 0
+
+    trueCartItems.forEach((item) => {
+      weightOrder += parseFloat(item.product[config.klarna.shipping_attributes.weight])
+      lengthOrder += parseFloat(item.product[config.klarna.shipping_attributes.length]) * 10 | 0
+      heightOrder += parseFloat(item.product[config.klarna.shipping_attributes.height]) * 10 | 0
+      widthOrder += parseFloat(item.product[config.klarna.shipping_attributes.width]) * 10 | 0
+    })
+
+    let sumDimensionOrder = {
+      weight: weightOrder.toFixed(2),
+      height: heightOrder,
+      length: lengthOrder,
+      width: widthOrder
+    }
 
     const checkoutOrder: any = {
       purchase_country: purchaseCountry,
@@ -160,7 +180,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       locale: storeView.i18n.defaultLocale,
       shipping_options: [],
       shipping_countries: storeView.shipping_countries || [],
-      order_lines: trueCartItems.map(mapProductToKlarna),
+      order_lines: trueCartItems.map(mapProductToKlarna(sumDimensionOrder)),
       order_amount: Math.round(totals.base_grand_total * 100),
       order_tax_amount: Math.round(totals.base_tax_amount * 100),
       external_payment_methods,
