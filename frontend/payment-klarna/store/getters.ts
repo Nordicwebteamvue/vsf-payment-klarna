@@ -163,10 +163,10 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     let widthOrder = 0
 
     trueCartItems.forEach((item) => {
-      weightOrder += parseFloat(item.product[config.klarna.shipping_attributes.weight])
-      lengthOrder += parseFloat(item.product[config.klarna.shipping_attributes.length]) * 10 | 0
-      heightOrder += parseFloat(item.product[config.klarna.shipping_attributes.height]) * 10 | 0
-      widthOrder += parseFloat(item.product[config.klarna.shipping_attributes.width]) * 10 | 0
+      weightOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.weight, 0)) | 0
+      lengthOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.length, 0)) * 10 | 0
+      heightOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.height, 0)) * 10 | 0
+      widthOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.width, 0)) * 10 | 0
     })
 
     let sumDimensionOrder = {
