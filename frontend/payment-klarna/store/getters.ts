@@ -6,6 +6,7 @@ import { currentStoreView, localizedRoute } from '@vue-storefront/core/lib/multi
 import { getThumbnailPath } from '@vue-storefront/core/helpers'
 import { router } from '@vue-storefront/core/app'
 import i18n from '@vue-storefront/i18n'
+import get from 'lodash-es/get'
 
 const validateOrder = checkoutOrder => {
   let sum = checkoutOrder.order_lines.reduce((acc, line) => acc + line.total_amount, 0)
@@ -40,11 +41,12 @@ const mapProductToKlarna = (sumDimensionOrder) => (product) => {
       klarnaProduct.product_url = config.klarna.productBaseUrl + getProductUrl(vsfProduct)
     }
   }
+
   if (config.klarna.addShippingAttributes) {
-    let weight = product.product[config.klarna.shipping_attributes.weight] | 0 //g
-    let height = product.product[config.klarna.shipping_attributes.height] * 10 | 0
-    let width = product.product[config.klarna.shipping_attributes.width] * 10 | 0
-    let length = product.product[config.klarna.shipping_attributes.length] * 10 | 0
+    let weight = get(product.product, config.klarna.shipping_attributes.weight, 0) | 0 //g
+    let height = get(product.product, config.klarna.shipping_attributes.height * 10, 0) | 0
+    let width = get(product.product, config.klarna.shipping_attributes.width * 10, 0) | 0
+    let length = get(product.product, config.klarna.shipping_attributes.length * 10, 0) | 0
 
     let tags = []
 
