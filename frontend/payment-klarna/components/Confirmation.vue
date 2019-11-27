@@ -18,7 +18,8 @@ export default {
   name: 'KlarnaConfirmation',
   computed: {
     ...mapGetters({
-      confirmation: 'kco/confirmation'
+      confirmation: 'kco/confirmation',
+      storageTarget: 'kco/storageTarget'
     })
   },
   components: {
@@ -27,7 +28,8 @@ export default {
   async mounted () {
     if (!isServer) {
       const queryString = this.$route.fullPath.replace(this.$route.path, '')
-      const {sid} = qs.parse(queryString, { ignoreQueryPrefix: true })
+      let {sid} = qs.parse(queryString, { ignoreQueryPrefix: true })
+      const storageTarget = this.storageTarget.replace('/id', '/confirmation/' + sid)
       if (!sid) {
         return
       }
@@ -35,10 +37,13 @@ export default {
       this.$bus.$emit('checkout-do-placeOrder', result)
       this.$store.dispatch('cart/clear')
       if (result.merchant_data) {
-        this.$bus.$emit('kco-merchant-data', {
-          merchantData: JSON.parse(result.merchant_data),
-          result
-        })
+        if (!localStorage.getItem(storageTarget)) {
+          this.$bus.$emit('kco-merchant-data', {
+            merchantData: JSON.parse(result.merchant_data),
+            result
+          })
+          localStorage.setItem(storageTarget, 'sent')
+        }
         this.$store.dispatch('kco/resetMerchantData')
       }
       const checkboxes = result.merchant_requested && result.merchant_requested.additional_checkboxes
