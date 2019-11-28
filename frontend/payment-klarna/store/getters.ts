@@ -43,10 +43,10 @@ const mapProductToKlarna = (sumDimensionOrder) => (product) => {
   }
 
   if (config.klarna.addShippingAttributes) {
-    let weight = get(product.product, config.klarna.shipping_attributes.weight, 0) | 0 //g
-    let height = get(product.product, config.klarna.shipping_attributes.height * 10, 0) | 0
-    let width = get(product.product, config.klarna.shipping_attributes.width * 10, 0) | 0
-    let length = get(product.product, config.klarna.shipping_attributes.length * 10, 0) | 0
+    let weight = parseFloat(get(product.product, config.klarna.shipping_attributes.weight, 0)) | 0 //g
+    let height = parseFloat(get(product.product, config.klarna.shipping_attributes.height, 0)) * 10 * product.qty | 0
+    let width = parseFloat(get(product.product, config.klarna.shipping_attributes.width, 0)) * 10 * product.qty | 0
+    let length = parseFloat(get(product.product, config.klarna.shipping_attributes.length, 0)) * 10 * product.qty | 0
 
     let tags = []
 
@@ -163,10 +163,10 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     let widthOrder = 0
 
     trueCartItems.forEach((item) => {
-      weightOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.weight, 0)) | 0
-      lengthOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.length, 0)) * 10 | 0
-      heightOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.height, 0)) * 10 | 0
-      widthOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.width, 0)) * 10 | 0
+      weightOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.weight, 0)) * item.qty | 0
+      lengthOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.length, 0)) * 10 * item.qty | 0
+      heightOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.height, 0)) * 10 * item.qty | 0
+      widthOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.width, 0)) * 10 * item.qty | 0
     })
 
     let sumDimensionOrder = {
