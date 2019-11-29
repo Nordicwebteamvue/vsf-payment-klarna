@@ -33,6 +33,7 @@ export default {
       if (!sid) {
         return
       }
+      this.$bus.$emit('kco-order-confirmation', { orderId: sid })
       const result = await this.$store.dispatch('kco/confirmation', { sid })
       this.$bus.$emit('checkout-do-placeOrder', result)
       this.$store.dispatch('cart/clear')
