@@ -71,6 +71,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       orderId: klarnaResult.order_id,
       expires: klarnaOrderIdExpires.getTime()
     }))
+    localStorage.setItem('kco/last-order', JSON.stringify(order))
     commit('createdOrder', {
       snippet: snippet,
       orderId: klarnaResult.order_id,
@@ -97,7 +98,6 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     const result = await dispatch('fetchOrder', sid)
     const {storageTarget} = getters
     localStorage.removeItem(storageTarget)
-    dispatch('cart/clear', undefined, {root:true})
     const { html_snippet: snippet, ...klarnaResult } = result
     commit('confirmation', {
       snippet,
