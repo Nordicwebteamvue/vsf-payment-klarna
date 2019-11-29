@@ -13,6 +13,8 @@ const validateOrder = checkoutOrder => {
   return checkoutOrder.order_amount === sum
 }
 
+const getValue = (attribute, item) => parseFloat(get(item.product, config.klarna.shipping_attributes[attribute], 0)) * item.qty | 0
+
 const getProductUrl = product => {
   const storeView = currentStoreView()
   const productUrl = localizedRoute({
@@ -43,40 +45,44 @@ const mapProductToKlarna = (sumDimensionOrder) => (product) => {
   }
 
   if (config.klarna.addShippingAttributes) {
-    let weight = parseFloat(get(product.product, config.klarna.shipping_attributes.weight, 0)) | 0 //g
-    let height = parseFloat(get(product.product, config.klarna.shipping_attributes.height, 0)) * 10 * product.qty | 0
-    let width = parseFloat(get(product.product, config.klarna.shipping_attributes.width, 0)) * 10 * product.qty | 0
-    let length = parseFloat(get(product.product, config.klarna.shipping_attributes.length, 0)) * 10 * product.qty | 0
+    let weight = getValue('weight', product)
+    let height = getValue('height', product) * 10
+    let width = getValue('width', product) * 10
+    let length = getValue('length', product) * 10
 
     let tags = []
 
-    config.klarna.limitation_shipping_attributes.forEach((shippingMethod) => {
-      const maxWeight = shippingMethod.weight
-      const maxHeight = shippingMethod.height
-      const maxWidth = shippingMethod.width
-      const maxLength = shippingMethod.length
+    if (config.klarna.hasOwnProperty('limitation_shipping_attributes')) {
+        config.klarna.limitation_shipping_attributes.forEach((shippingMethod) => {
+        const maxWeight = shippingMethod.weight
+        const maxHeight = shippingMethod.height
+        const maxWidth = shippingMethod.width
+        const maxLength = shippingMethod.length
 
-      let checkWeightOnly = false
+        let checkWeightOnly = false
 
-      Object.keys(shippingMethod.check_products_weight_only)
-        .forEach(function eachKey(key) {
-          // Check if product only need to check weight only
-          if (shippingMethod.check_products_weight_only[key].indexOf(product.product[key]) !== -1) {
-            checkWeightOnly = true
+        if (shippingMethod.hasOwnProperty('check_products_weight_only')) {
+          Object.keys(shippingMethod.check_products_weight_only)
+            .forEach(function eachKey(key) {
+              // Check if product only need to check weight only
+              if (shippingMethod.check_products_weight_only[key].includes(product.product[key])) {
+                checkWeightOnly = true
+              }
+            })
+        }
+
+        // Currently, Klarna only supports weight for order_lines, this should be updated after Klarna added "order_weight"
+        if (checkWeightOnly) {
+          if ((parseFloat(sumDimensionOrder.weight) <= maxWeight)) {
+            tags.push(shippingMethod.code)
           }
-        })
-      // Currently, Klarna only supports weight for order_lines, this should be updated after Klarna added "order_weight"
-      if (checkWeightOnly) {
-        if (!(parseFloat(sumDimensionOrder.weight) > maxWeight)) {
-          tags.push(shippingMethod.code)
+        } else {
+          if ((parseFloat(sumDimensionOrder.weight) <= maxWeight  || sumDimensionOrder.height <= maxHeight || sumDimensionOrder.width <= maxWidth || sumDimensionOrder.length <= maxLength )) {
+            tags.push(shippingMethod.code)
+          }
         }
-      } else {
-        if (!(parseFloat(sumDimensionOrder.weight) > maxWeight  || sumDimensionOrder.height > maxHeight || sumDimensionOrder.width > maxWidth || sumDimensionOrder.length > maxLength )) {
-          tags.push(shippingMethod.code)
-        }
-      }
-
-    })
+      })
+    }
 
     klarnaProduct.shipping_attributes = {
       weight: weight,
@@ -178,10 +184,10 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     let widthOrder = 0
 
     trueCartItems.forEach((item) => {
-      weightOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.weight, 0)) * item.qty | 0
-      lengthOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.length, 0)) * 10 * item.qty | 0
-      heightOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.height, 0)) * 10 * item.qty | 0
-      widthOrder += parseFloat(get(item.product, config.klarna.shipping_attributes.width, 0)) * 10 * item.qty | 0
+      weightOrder += getValue('weight', item)
+      lengthOrder += getValue('length', item) * 10
+      heightOrder += getValue('height', item) * 10
+      widthOrder +=  getValue('width', item) * 10
     })
 
     let sumDimensionOrder = {
@@ -261,7 +267,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
         checkoutOrder.selected_shipping_option = selectedOption
 
         let orderAmount = 0
-        let orderTaxAmount =0
+        let orderTaxAmount = 0
         checkoutOrder.order_lines.forEach((orderLine) => {
           orderAmount += orderLine.total_amount
           orderTaxAmount += orderLine.total_tax_amount
