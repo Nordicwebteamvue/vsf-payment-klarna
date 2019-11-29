@@ -180,14 +180,14 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     }
     let weightOrder = 0
     let lengthOrder = 0
-    let heightOrder= 0
+    let heightOrder = 0
     let widthOrder = 0
 
     trueCartItems.forEach((item) => {
       weightOrder += getValue('weight', item)
       lengthOrder += getValue('length', item) * 10
       heightOrder += getValue('height', item) * 10
-      widthOrder +=  getValue('width', item) * 10
+      widthOrder += getValue('width', item) * 10
     })
 
     let sumDimensionOrder = {
