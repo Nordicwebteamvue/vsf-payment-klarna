@@ -56,9 +56,24 @@ const mapProductToKlarna = (sumDimensionOrder) => (product) => {
       const maxWidth = shippingMethod.width
       const maxLength = shippingMethod.length
 
+      let checkWeightOnly = false
+
+      Object.keys(shippingMethod.check_products_weight_only)
+        .forEach(function eachKey(key) {
+          // Check if product only need to check weight only
+          if (shippingMethod.check_products_weight_only[key].indexOf(product.product[key]) !== -1) {
+            checkWeightOnly = true
+          }
+        })
       // Currently, Klarna only supports weight for order_lines, this should be updated after Klarna added "order_weight"
-      if (!(parseFloat(sumDimensionOrder.weight) > maxWeight  || sumDimensionOrder.height > maxHeight || sumDimensionOrder.width > maxWidth || sumDimensionOrder.length > maxLength )) {
-        tags.push(shippingMethod.code)
+      if (checkWeightOnly) {
+        if (!(parseFloat(sumDimensionOrder.weight) > maxWeight)) {
+          tags.push(shippingMethod.code)
+        }
+      } else {
+        if (!(parseFloat(sumDimensionOrder.weight) > maxWeight  || sumDimensionOrder.height > maxHeight || sumDimensionOrder.width > maxWidth || sumDimensionOrder.length > maxLength )) {
+          tags.push(shippingMethod.code)
+        }
       }
 
     })
