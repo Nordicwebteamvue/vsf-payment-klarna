@@ -77,7 +77,12 @@ const mapProductToKlarna = (sumDimensionOrder) => (product) => {
             tags.push(shippingMethod.code)
           }
         } else {
-          if ((parseFloat(sumDimensionOrder.weight) <= maxWeight  || sumDimensionOrder.height <= maxHeight || sumDimensionOrder.width <= maxWidth || sumDimensionOrder.length <= maxLength )) {
+          if (
+            parseFloat(sumDimensionOrder.weight) <= maxWeight &&
+            sumDimensionOrder.height <= maxHeight &&
+            sumDimensionOrder.width <= maxWidth &&
+            sumDimensionOrder.length <= maxLength
+          ) {
             tags.push(shippingMethod.code)
           }
         }
