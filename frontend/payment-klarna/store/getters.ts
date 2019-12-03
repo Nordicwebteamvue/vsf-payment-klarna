@@ -65,7 +65,7 @@ const mapProductToKlarna = (sumDimensionOrder) => (product) => {
           Object.keys(shippingMethod.check_products_weight_only)
             .forEach(function eachKey(key) {
               // Check if product only need to check weight only
-              if (shippingMethod.check_products_weight_only[key].includes(product.product[key])) {
+              if (product.hasOwnProperty('product') && shippingMethod.check_products_weight_only[key].includes(product.product[key])) {
                 checkWeightOnly = true
               }
             })
