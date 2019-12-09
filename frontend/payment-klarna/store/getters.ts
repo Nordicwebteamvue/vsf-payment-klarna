@@ -25,7 +25,7 @@ const getProductUrl = product => {
   return router.resolve(productUrl).href
 }
 
-const mapProductToKlarna = (sumDimensionOrder) => (product) => {
+const mapProductToKlarna = (sumDimensionOrder, freeShipping) => (product) => {
   const vsfProduct = product.product
   const klarnaProduct: any = {
     name: product.name,
@@ -87,6 +87,13 @@ const mapProductToKlarna = (sumDimensionOrder) => (product) => {
           }
         }
       })
+    }
+
+    if (
+      config.klarna.hasOwnProperty('freeshipping_tag') &&
+      freeShipping
+    ) {
+      tags.push(config.klarna.freeshipping_tag)
     }
 
     klarnaProduct.shipping_attributes = {
@@ -201,6 +208,10 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       length: lengthOrder,
       width: widthOrder
     }
+    // Check if it freeshipping from coupon or not
+    const freeShipping = totals.total_segments.find((totalsSegment) => {
+      return totalsSegment.code === 'shipping' && parseInt(totalsSegment.value) === 0
+    })
 
     const checkoutOrder: any = {
       purchase_country: purchaseCountry,
@@ -208,7 +219,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       locale: storeView.i18n.defaultLocale,
       shipping_options: [],
       shipping_countries: storeView.shipping_countries || [],
-      order_lines: trueCartItems.map(mapProductToKlarna(sumDimensionOrder)),
+      order_lines: trueCartItems.map(mapProductToKlarna(sumDimensionOrder, freeShipping)),
       order_amount: Math.round(totals.base_grand_total * 100),
       order_tax_amount: Math.round(totals.base_tax_amount * 100),
       external_payment_methods,
