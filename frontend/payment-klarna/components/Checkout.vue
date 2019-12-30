@@ -1,6 +1,6 @@
 <template>
   <div class="klarna-checkout" id="klarna-checkout">
-    <div ref="scripts" />
+    <div id="klarna-render-checkout" />
     <div v-if="checkout.loading">
       <loading-spinner />
     </div>
@@ -16,6 +16,8 @@ import { mapGetters } from 'vuex'
 import { callApi } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import LoadingSpinner from 'theme/components/theme/blocks/AsyncSidebar/LoadingSpinner.vue'
+import postscribe from 'postscribe'
+import { isServer } from '@vue-storefront/core/helpers'
 
 const klarnaEvents = [
   'load', 'customer', 'change', 'billing_address_change', 'shipping_address_change', 'shipping_option_change', 'order_total_change', 'can_not_complete_order', 'network_error'
@@ -27,6 +29,9 @@ export default {
     LoadingSpinner
   },
   async mounted () {
+    if (isServer) {
+      return
+    }
     await this.upsertOrder()
   },
   beforeMount () {
@@ -92,17 +97,7 @@ export default {
     },
     async upsertOrder () {
       await this.$store.dispatch('kco/createOrder')
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          Array.from(this.checkout.scriptsTags).forEach(tag => {
-            // TODO: Make this work with <script> tag insertion
-            (() => {eval(tag.text)}).call(window) // eslint-disable-line
-            this.$refs.scripts.appendChild(tag)
-            this.$bus.$emit('klarna-order-loaded')
-          })
-          resolve()
-        }, 1)
-      })
+      postscribe('#klarna-render-checkout', this.checkout.snippet)
       this.setupKlarnaListeners()
     },
     async configureUpdateOrder () {

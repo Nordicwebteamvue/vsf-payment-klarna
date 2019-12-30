@@ -17,14 +17,12 @@ export const module: Module<CheckoutState, any> = {
       orderId: '',
       loading: false,
       snippet: null,
-      scriptsTags: null,
       error: false,
       attempts: 0
     },
     confirmation: {
       loading: false,
       snippet: null,
-      scriptsTags: null,
       error: false
     }
   }

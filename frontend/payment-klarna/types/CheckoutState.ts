@@ -1,7 +1,6 @@
 interface SubState {
   loading: Boolean;
   snippet?: String;
-  scriptsTags: any;
   orderId?: String;
   error: Boolean;
   attempts?: Number;

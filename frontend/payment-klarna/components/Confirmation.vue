@@ -1,6 +1,6 @@
 <template>
   <div class="confirmation">
-    <div ref="scripts" />
+    <div id="klarna-render-confirmation" />
     <div v-if="confirmation.loading">
       <loading-spinner />
     </div>
@@ -13,6 +13,7 @@ import { mapGetters } from 'vuex'
 import qs from 'qs'
 import { isServer } from '@vue-storefront/core/helpers'
 import LoadingSpinner from './LoadingSpinner.vue'
+import postscribe from 'postscribe'
 
 export default {
   name: 'KlarnaConfirmation',
@@ -56,13 +57,7 @@ export default {
           })
         }
       }
-      setTimeout(() => {
-        Array.from(this.confirmation.scriptsTags).forEach(tag => {
-          // TODO: Make this work with <script> tag insertion
-          (() => {eval(tag.text)}).call(window) // eslint-disable-line
-          this.$refs.scripts.appendChild(tag)
-        })
-      }, 1)
+      postscribe('#klarna-render-confirmation', this.confirmation.snippet)
     }
   }
 }

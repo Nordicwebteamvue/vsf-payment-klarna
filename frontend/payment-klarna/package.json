@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "paypal-rest-sdk-kodbruket-fixed": "^1.8.1",
+    "postscribe": "^2.0.8",
     "qs": "^6.7.0"
   }
 }
