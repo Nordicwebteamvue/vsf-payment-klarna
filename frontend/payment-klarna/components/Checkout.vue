@@ -28,10 +28,9 @@ export default {
     LoadingSpinner
   },
   async mounted () {
-    if (isServer) {
-      return
+    if (!isServer) {
+      this.upsertOrder()
     }
-    await this.upsertOrder()
   },
   beforeMount () {
     this.$bus.$on('klarna-update-order', this.configureUpdateOrder)
