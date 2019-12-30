@@ -97,6 +97,7 @@ export default {
       await this.$store.dispatch('kco/createOrder')
       const { default: postscribe } = await import('postscribe')
       postscribe('#klarna-render-checkout', this.checkout.snippet)
+      await Promise.resolve()
       this.setupKlarnaListeners()
     },
     async configureUpdateOrder () {
