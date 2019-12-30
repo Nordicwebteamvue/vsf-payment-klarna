@@ -71,7 +71,6 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       expires: klarnaOrderIdExpires.getTime()
     }))
     localStorage.setItem('kco/last-order', JSON.stringify(order))
-    console.log('result.snippet', result.snippet)
     commit('createdOrder', {
       snippet: snippet,
       orderId: klarnaResult.order_id,
