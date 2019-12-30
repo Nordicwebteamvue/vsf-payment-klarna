@@ -1,6 +1,6 @@
 <template>
   <div class="confirmation">
-    <div ref="scripts" />
+    <div id="klarna-render-confirmation" />
     <div v-if="confirmation.loading">
       <loading-spinner />
     </div>
@@ -56,13 +56,8 @@ export default {
           })
         }
       }
-      setTimeout(() => {
-        Array.from(this.confirmation.scriptsTags).forEach(tag => {
-          // TODO: Make this work with <script> tag insertion
-          (() => {eval(tag.text)}).call(window) // eslint-disable-line
-          this.$refs.scripts.appendChild(tag)
-        })
-      }, 1)
+      const { default: postscribe } = await import('postscribe')
+      postscribe('#klarna-render-confirmation', this.confirmation.snippet)
     }
   }
 }

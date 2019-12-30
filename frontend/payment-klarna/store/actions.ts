@@ -1,10 +1,9 @@
 import CheckoutState from '../types/CheckoutState'
-import { ActionTree, ActionContext, Store } from 'vuex'
+import { ActionTree } from 'vuex'
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
 import config from 'config'
 import RootState from '@vue-storefront/core/types/RootState'
 import Vue from 'vue'
-import { getScriptTagsFromSnippet } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
 export const actions: ActionTree<CheckoutState, RootState> = {
@@ -72,10 +71,10 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       expires: klarnaOrderIdExpires.getTime()
     }))
     localStorage.setItem('kco/last-order', JSON.stringify(order))
+    console.log('result.snippet', result.snippet)
     commit('createdOrder', {
       snippet: snippet,
       orderId: klarnaResult.order_id,
-      scriptsTags: getScriptTagsFromSnippet(result.snippet),
       order: result
     })
     return klarnaResult
@@ -100,8 +99,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     localStorage.removeItem(storageTarget)
     const { html_snippet: snippet, ...klarnaResult } = result
     commit('confirmation', {
-      snippet,
-      scriptsTags: getScriptTagsFromSnippet(snippet)
+      snippet
     })
     return klarnaResult
   },
