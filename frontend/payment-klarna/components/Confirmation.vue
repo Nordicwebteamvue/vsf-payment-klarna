@@ -13,7 +13,6 @@ import { mapGetters } from 'vuex'
 import qs from 'qs'
 import { isServer } from '@vue-storefront/core/helpers'
 import LoadingSpinner from './LoadingSpinner.vue'
-import postscribe from 'postscribe'
 
 export default {
   name: 'KlarnaConfirmation',
@@ -57,6 +56,7 @@ export default {
           })
         }
       }
+      const { default: postscribe } = await import('postscribe')
       postscribe('#klarna-render-confirmation', this.confirmation.snippet)
     }
   }

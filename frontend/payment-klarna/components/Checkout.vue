@@ -16,7 +16,6 @@ import { mapGetters } from 'vuex'
 import { callApi } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import LoadingSpinner from 'theme/components/theme/blocks/AsyncSidebar/LoadingSpinner.vue'
-import postscribe from 'postscribe'
 import { isServer } from '@vue-storefront/core/helpers'
 
 const klarnaEvents = [
@@ -97,6 +96,7 @@ export default {
     },
     async upsertOrder () {
       await this.$store.dispatch('kco/createOrder')
+      const { default: postscribe } = await import('postscribe')
       postscribe('#klarna-render-checkout', this.checkout.snippet)
       this.setupKlarnaListeners()
     },
