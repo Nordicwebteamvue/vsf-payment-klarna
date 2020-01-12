@@ -8,9 +8,21 @@
     "payment-klarna-bridge"
   ],
   "klarna": {
+    "merchant_urls": {
+      "id": "200",
+      "terms": "https://example.com/terms",
+      "checkout": "https://example.com/checkout?sid={checkout.order.id}",
+      "confirmation": "https://example.com/api/ext/payment-klarna-example/confirmation?sid={checkout.order.id}",
+      "push": "https://example.com/api/ext/payment-klarna-example/push?uri={checkout.order.id}",
+      "validation": "https://example.com/api/ext/payment-klarna/validation",
+      "shipping_option_update": "https://example.com/api/ext/payment-klarna-example/shipping_option_update",
+      "address_update": "https://example.com/api/ext/payment-klarna/address_update",
+      "notification": "https://example.com/api/ext/payment-klarna/notification"
+    },
+    "name": "VSF Payment Klarna",
     "auth": {
-      "user": "",
-      "pass": ""
+      "user": "PK05273_caa011a9eda3",
+      "pass": "TSL8CTtBVK9y8p76"
     },
     "endpoints": {
       "orders": "https://api.playground.klarna.com/checkout/v3/orders"
