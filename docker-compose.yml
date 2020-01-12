@@ -1,17 +1,12 @@
 version: '3.4'
 services:
   elasticsearch:
-    build: .docker/vue-storefront-api/docker/elasticsearch/
+    build: .docker/vue-storefront-api/docker/elasticsearch7/
     volumes:
-      - ./.docker/vue-storefront-api/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./.docker/vue-storefront-api/docker/elasticsearch7/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
       - '9200:9200'
       - '9300:9300'
-    environment:
-      - discovery.type=single-node
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xmx512m -Xms512m"
 
   redis:
     image: 'redis:4-alpine'

@@ -38,5 +38,18 @@ services:
       - './.docker/vue-storefront/packages:/var/www/packages'
       - '/var/www/dist'
 
+  elasticsearch:
+    volumes:
+      - esdat1:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xmx512m -Xms512m"
+
 volumes:
   esdat1:

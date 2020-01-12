@@ -18,6 +18,14 @@ function addStoreCode (merchantUrls, storeCode = '', dataSourceStoreCode = '') {
   })
 }
 
+const maybeDecodeCartId = cartId => {
+  if (/^\d+$/.test(cartId)) {
+    return cartId
+  } else {
+    return jwt.decode(cartId).cartId
+  }
+}
+
 module.exports = ({ config, db }) => {
   const api = Router()
   api.post('/create-or-update-order', (req, res) => {
@@ -26,11 +34,7 @@ module.exports = ({ config, db }) => {
     if (!order || !cartId) {
       return apiStatus(res, 'Bad Request: Missing order or cartId', 400)
     }
-    if (/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/.test(cartId)) {
-      order.merchant_reference2 = jwt.decode(req.query.cartId).cartId
-    } else {
-      order.merchant_reference2 = cartId
-    }
+    order.merchant_reference2 = maybeDecodeCartId(cartId)
     const {auth, endpoints} = config.klarna
     order.merchant_urls = {...config.klarna.merchant_urls}
     if (storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].merchant_urls) {

@@ -12,7 +12,7 @@
 import { mapGetters } from 'vuex'
 import qs from 'qs'
 import { isServer } from '@vue-storefront/core/helpers'
-import LoadingSpinner from './LoadingSpinner.vue'
+import LoadingSpinner from '../components/LoadingSpinner.vue'
 
 export default {
   name: 'KlarnaConfirmation',
