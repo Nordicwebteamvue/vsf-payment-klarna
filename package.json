@@ -16,6 +16,7 @@
   "devDependencies": {
     "babel-eslint": "^8.2.6",
     "cypress": "^3.2.0",
+    "elasticdump": "^6.16.2",
     "eslint": "^4.16.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-friendly-formatter": "^4.0.1",

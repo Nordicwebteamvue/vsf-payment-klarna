@@ -34,17 +34,11 @@ export {
 
 And then just `<klarna-checkout />` where you want to render it
 
-##### Confirmation
+##### Confirmation page
 
-In `YOUR_THEME/router/index.js`
+Will be found at `www.example.com/confirmation` and `www.example.com/STORECODE/confirmation`
 
-```
-const Confirmation = () => import(/* webpackChunkName: "kco-confirm" */ 'src/modules/payment-klarna/components/Confirmation')
-let routes = [
-  ...,
-  { name: 'confirmation', path: '/confirmation', component: Confirmation },
-]
-```
+See [beforeRegistration.ts](packages/payment-klarna/hooks/beforeRegistration.ts) for more info
 
 ### Backend
 
@@ -52,6 +46,15 @@ let routes = [
 * Add `payment-klarna-bridge` to `registeredExtensions` in `local.json`
 
 ## Development
+
+### Requirements
+
+* Node 10+ (https://nodejs.org/en/download/)
+* Yarn (https://yarnpkg.com/en/docs/install)
+* Docker (https://docs.docker.com/v17.09/engine/installation/)
+* `docker-compose` (https://docs.docker.com/compose/install/)
+
+> **Protip:** On Mac run, install Docker and Brew then run `brew install node && brew install yarn && brew install docker-compose`
 
 ```sh
 git clone --recurse-submodules https://github.com/kodbruket/vsf-payment-klarna
