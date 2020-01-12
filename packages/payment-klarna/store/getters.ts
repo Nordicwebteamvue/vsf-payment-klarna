@@ -7,9 +7,11 @@ import { getThumbnailPath } from '@vue-storefront/core/helpers'
 import { router } from '@vue-storefront/core/app'
 import i18n from '@vue-storefront/i18n'
 import get from 'lodash-es/get'
+import CartItem from '@vue-storefront/core/modules/cart/types/CartItem'
 
 const validateOrder = checkoutOrder => {
   let sum = checkoutOrder.order_lines.reduce((acc, line) => acc + line.total_amount, 0)
+  console.log('checkoutOrder.order_amount === sum', checkoutOrder.order_amount, sum)
   return checkoutOrder.order_amount === sum
 }
 
@@ -110,8 +112,7 @@ const mapProductToKlarna = (sumDimensionOrder, freeShipping) => (product) => {
 }
 
 const mapRedirectUrl = (externalPaymentConfig) => {
-  if (externalPaymentConfig.name == 'PayPal')
-  {
+  if (externalPaymentConfig.name == 'PayPal') {
     let uri = externalPaymentConfig.redirect_url
     const { storeCode } = currentStoreView()
     const { productBaseUrl } = config.klarna
@@ -151,9 +152,11 @@ export const getters: GetterTree<CheckoutState, RootState> = {
   },
   order (state: CheckoutState, getters, rootState, rootGetters) {
     const storeView: any = currentStoreView()
-    const shippingMethods = rootState.shipping.methods
-    const cartItems = rootGetters['cart/items']
-    const {platformTotals: totals} = rootState.cart
+    const cartItems: Array<CartItem> = Array.from(rootGetters['cart/getCartItems'])
+    const shippingMethods = rootGetters['shipping/getShippingMethods']
+    const totals = rootGetters['kco/platformTotals']
+    console.log('rootGetters', rootGetters)
+    console.log('totals TOTALS', totals)
     if (!getters.hasTotals) {
       return {
         error: true,

@@ -8,42 +8,51 @@ function addStoreCode (merchantUrls, storeCode = '', dataSourceStoreCode = '') {
     if (merchantUrls[url].includes('{{storeCode}}')) {
       merchantUrls[url] = merchantUrls[url]
         .replace('{{storeCode}}', storeCode)
-        .replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
+        .replace(/([^:]\/)\/+/g, '$1')
     }
     if (merchantUrls[url].includes('{{dataSourceStoreCode}}')) {
       merchantUrls[url] = merchantUrls[url]
         .replace('{{dataSourceStoreCode}}', dataSourceStoreCode)
-        .replace(/([^:]\/)\/+/g, '$1') // eslint-disable-line camelcase
+        .replace(/([^:]\/)\/+/g, '$1')
     }
   })
 }
 
 const maybeDecodeCartId = cartId => {
-  if (/^\d+$/.test(cartId)) {
-    return cartId
-  } else {
+  console.log('cartId', cartId)
+  if (/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/.test(cartId)) {
     return jwt.decode(cartId).cartId
+  } else {
+    return cartId
   }
 }
 
-module.exports = ({ config, db }) => {
+const middleware = config => function (req, res, next) {
+  const { order, storeCode, dataSourceStoreCode, orderId } = req.body
+  const { cartId } = req.query
+  if (!order || !cartId) {
+    throw new Error('Bad Request: Missing order or cartId')
+  }
+  order.merchant_urls = {...config.klarna.merchant_urls}
+  if (storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].merchant_urls) {
+    order.merchant_urls = {
+      ...order.merchant_urls,
+      ...config.storeViews[storeCode].merchant_urls
+    }
+  }
+  addStoreCode(order.merchant_urls, storeCode, dataSourceStoreCode)
+  console.log('config.klarna.merchant_urls', config.klarna.merchant_urls)
+  order.merchant_reference2 = maybeDecodeCartId(cartId)
+  res.locals.order = order
+  res.locals.orderId = orderId
+  next()
+}
+
+module.exports = ({ config }) => {
   const api = Router()
-  api.post('/create-or-update-order', (req, res) => {
-    const { order, storeCode, dataSourceStoreCode, orderId } = req.body
-    const { cartId } = req.query
-    if (!order || !cartId) {
-      return apiStatus(res, 'Bad Request: Missing order or cartId', 400)
-    }
-    order.merchant_reference2 = maybeDecodeCartId(cartId)
+  api.post('/create-or-update-order', middleware(config), (req, res) => {
+    const { order, orderId } = res.locals
     const {auth, endpoints} = config.klarna
-    order.merchant_urls = {...config.klarna.merchant_urls}
-    if (storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].merchant_urls) {
-      order.merchant_urls = {
-        ...order.merchant_urls,
-        ...config.storeViews[storeCode].merchant_urls
-      }
-    }
-    addStoreCode(order.merchant_urls, storeCode, dataSourceStoreCode)
     const url = orderId ? endpoints.orders + '/' + orderId : endpoints.orders
     request.post({
       url,
@@ -55,7 +64,7 @@ module.exports = ({ config, db }) => {
       }
     }, (error, response, body) => {
       if (error || body.error_code || response.statusCode >= 300) {
-        const statusCode = response.statusCode !== 200 ? response.statusCode : 400
+        const statusCode = response.statusCode >= 300 ? response.statusCode : 400
         apiStatus(res, {
           error: 'Klarna error',
           body,
@@ -83,7 +92,8 @@ module.exports = ({ config, db }) => {
       }
     }, (error, response, body) => {
       if (error) {
-        apiStatus(res, 'Klarna error', 400)
+        const statusCode = response.statusCode >= 300 ? response.statusCode : 400
+        apiStatus(res, 'Klarna error', statusCode)
         return
       }
       apiStatus(res, body)
@@ -99,8 +109,9 @@ module.exports = ({ config, db }) => {
       url: klarnaApiUrl,
       auth: config.klarna.auth
     }, (error, response, body) => {
+      const statusCode = response.statusCode >= 300 ? response.statusCode : 400
       if (error || body.error_code) {
-        apiStatus(res, `Klarna error: ${body.error_code}`, 400)
+        apiStatus(res, `Klarna error: ${body.error_code}`, statusCode)
         return
       }
       apiStatus(res, {snippet: body.html_snippet})
@@ -121,7 +132,8 @@ module.exports = ({ config, db }) => {
       auth: config.klarna.auth
     }, (error, response, body) => {
       if (error || body.error_code) {
-        apiStatus(res, `Klarna error: ${body.error_code}`, 400)
+        const statusCode = response.statusCode >= 300 ? response.statusCode : 400
+        apiStatus(res, `Klarna error: ${body.error_code}`, statusCode)
         return
       }
       apiStatus(res, {orderId: body.order_id, snippet: body.html_snippet})
@@ -148,7 +160,8 @@ module.exports = ({ config, db }) => {
         body
       }, (error, response, body) => {
         if (error || body.error_code) {
-          apiStatus(res, `Error: ${error || body.error_code}`, 400)
+          const statusCode = response.statusCode >= 300 ? response.statusCode : 400
+          apiStatus(res, `Error: ${error || body.error_code}`, statusCode)
           return
         }
         if (body.error) {

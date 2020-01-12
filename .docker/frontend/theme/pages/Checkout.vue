@@ -8,15 +8,7 @@
               {{ $t('Checkout') }}
             </h1>
           </div>
-          <personal-details
-            class="line relative"
-            :is-active="activeSection.personalDetails"
-            :focused-field="focusedField"
-          />
-          <shipping class="line relative" :is-active="activeSection.shipping" v-if="!isVirtualCart" />
-          <payment class="line relative" :is-active="activeSection.payment" />
-          <order-review class="line relative" :is-active="activeSection.orderReview" />
-          <div id="custom-steps" />
+          <klarna-checkout />
         </div>
         <div class="hidden-xs col-sm-5 bg-cl-secondary">
           <cart-summary />
@@ -38,6 +30,7 @@ import CartSummary from 'theme/components/core/blocks/Checkout/CartSummary'
 import ThankYouPage from 'theme/components/core/blocks/Checkout/ThankYouPage'
 import { registerModule } from '@vue-storefront/core/lib/modules'
 import { OrderModule } from '@vue-storefront/core/modules/order'
+import KCO from 'src/modules/payment-klarna/components/KlarnaCheckout'
 
 export default {
   components: {
@@ -46,7 +39,8 @@ export default {
     Payment,
     OrderReview,
     CartSummary,
-    ThankYouPage
+    ThankYouPage,
+    'klarna-checkout': KCO
   },
   mixins: [Checkout],
   beforeCreate () {
