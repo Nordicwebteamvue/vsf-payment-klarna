@@ -1,6 +1,6 @@
 version: '3.4'
 services:
-  storefront-api:
+  api:
     depends_on:
       - elasticsearch
       - redis
@@ -11,27 +11,32 @@ services:
       - './.docker/vue-storefront-api/ecosystem.json:/var/www/ecosystem.json'
       - './.docker/vue-storefront-api/migrations:/var/www/migrations'
       - './.docker/vue-storefront-api/package.json:/var/www/package.json'
+      - './.docker/vue-storefront-api/babel.config.js:/var/www/babel.config.js'
+      - './.docker/vue-storefront-api/tsconfig.json:/var/www/tsconfig.json'
+      - './.docker/vue-storefront-api/nodemon.json:/var/www/nodemon.json'
       - './.docker/vue-storefront-api/scripts:/var/www/scripts'
       - './.docker/vue-storefront-api/src:/var/www/src'
       - './.docker/vue-storefront-api/var:/var/www/var'
 
-  storefront-ui:
+  ui:
     tmpfs:
       - /var/www/dist
     volumes:
-      - './.docker/vue-storefront-api/.babelrc:/var/www/.babelrc'
-      - './.docker/vue-storefront-api/config:/var/www/config'
-      - './.docker/vue-storefront-api/core:/var/www/core'
-      - './.docker/vue-storefront-api/ecosystem.json:/var/www/ecosystem.json'
-      - './.docker/vue-storefront-api/.eslintignore:/var/www/.eslintignore'
-      - './.docker/vue-storefront-api/.eslintrc.js:/var/www/.eslintrc.js'
-      - './.docker/vue-storefront-api/lerna.json:/var/www/lerna.json'
-      - './.docker/vue-storefront-api/tsconfig.json:/var/www/tsconfig.json'
-      - './.docker/vue-storefront-api/tsconfig-build.json:/var/www/tsconfig-build.json'
-      - './.docker/vue-storefront-api/shims.d.ts:/var/www/shims.d.ts'
-      - './.docker/vue-storefront-api/package.json:/var/www/package.json'
-      - './.docker/vue-storefront-api/src:/var/www/src'
-      - './.docker/vue-storefront-api/var:/var/www/var'
+      - './.docker/vue-storefront/babel.config.js:/var/www/babel.config.js'
+      - './.docker/vue-storefront/config:/var/www/config'
+      - './.docker/vue-storefront/core:/var/www/core'
+      - './.docker/vue-storefront/ecosystem.json:/var/www/ecosystem.json'
+      - './.docker/vue-storefront/.eslintignore:/var/www/.eslintignore'
+      - './.docker/vue-storefront/.eslintrc.js:/var/www/.eslintrc.js'
+      - './.docker/vue-storefront/lerna.json:/var/www/lerna.json'
+      - './.docker/vue-storefront/tsconfig.json:/var/www/tsconfig.json'
+      - './.docker/vue-storefront/tsconfig-build.json:/var/www/tsconfig-build.json'
+      - './.docker/vue-storefront/shims.d.ts:/var/www/shims.d.ts'
+      - './.docker/vue-storefront/package.json:/var/www/package.json'
+      - './.docker/vue-storefront/src:/var/www/src'
+      - './.docker/vue-storefront/var:/var/www/var'
+      - './.docker/vue-storefront/packages:/var/www/packages'
+      - '/var/www/dist'
 
 volumes:
   esdat1:

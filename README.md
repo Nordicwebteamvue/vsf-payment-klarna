@@ -45,9 +45,9 @@ cp .docker/api/config.sample.json .docker/api/config.json
 yarn # set up git hooks
 docker-compose up
 # new tab
-docker-compose exec storefront-api yarn mage2vs import
-docker-compose exec storefront-api yarn restore
-docker-compose exec storefront-api yarn migrate
+docker-compose exec api yarn mage2vs import
+docker-compose exec api yarn restore
+docker-compose exec api yarn migrate
 ```
 
 Visit http://localhost:3000

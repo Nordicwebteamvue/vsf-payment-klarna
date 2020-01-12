@@ -3,7 +3,9 @@
     <header class="bg-cl-secondary py35 pl20">
       <div class="container">
         <div class="row middle-sm">
-          <h1 class="col-sm-9 category-title mb10"> {{ cmsPageContent.title }} </h1>
+          <h1 class="col-sm-9 category-title mb10">
+            {{ cmsPageContent.title }}
+          </h1>
         </div>
       </div>
     </header>
@@ -13,6 +15,7 @@
 
 <script>
 import CmsPage from '@vue-storefront/core/pages/CmsPage'
+
 export default {
   computed: {
     cmsPageContent () {

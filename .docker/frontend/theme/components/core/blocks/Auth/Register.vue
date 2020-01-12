@@ -1,20 +1,20 @@
 <template>
   <div>
     <header class="modal-header py25 px65 h1 serif weight-700 bg-cl-secondary">
+      {{ $t('Register') }}
       <i
         slot="close"
-        class="modal-close material-icons p15 cl-bg-tertiary"
+        class="modal-close material-icons cl-bg-tertiary"
         @click="close"
       >
         close
       </i>
-      {{ $t('Register') }}
     </header>
 
-    <div class="modal-content pt30 pb60 px65 cl-secondary">
+    <div class="modal-content bg-cl-primary pt30 pb60 px65 cl-secondary">
       <form @submit.prevent="register" novalidate>
         <base-input
-          class="mb35"
+          class="mb10"
           type="email"
           name="email"
           autocomplete="email"
@@ -33,11 +33,11 @@
             }
           ]"
         />
-        <div class="row mb35">
+        <div class="row mb10">
           <base-input
             class="col-xs-6"
             type="text"
-            name="fist-name"
+            name="first-name"
             autocomplete="given-name"
             v-model="firstName"
             @blur="$v.firstName.$touch()"
@@ -68,7 +68,7 @@
           />
         </div>
         <base-input
-          class="mb35"
+          class="mb10"
           type="password"
           name="password"
           ref="password"
@@ -88,7 +88,7 @@
           ]"
         />
         <base-input
-          class="mb35"
+          class="mb10"
           type="password"
           name="password-confirm"
           autocomplete="new-password"
@@ -107,10 +107,9 @@
           ]"
         />
         <base-checkbox
-          class="mb35"
+          class="mb10"
           id="terms"
           v-model="conditions"
-          @click="conditions = !conditions"
           @blur="$v.conditions.$reset()"
           @change="$v.conditions.$touch()"
           :validations="[{
@@ -196,7 +195,7 @@ export default {
     onFailure (result) {
       this.$store.dispatch('notification/spawnNotification', {
         type: 'error',
-        message: result.result,
+        message: this.$t(result.result),
         action1: { label: this.$t('OK') }
       })
     }
@@ -205,6 +204,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .modal-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-close{
+    cursor: pointer;
+  }
   .modal-content {
     @media (max-width: 400px) {
       padding-left: 20px;
