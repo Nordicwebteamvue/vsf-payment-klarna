@@ -4,19 +4,21 @@ services:
     build: .docker/vue-storefront-api/docker/elasticsearch/
     volumes:
       - ./.docker/vue-storefront-api/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - esdat1:/usr/share/elasticsearch/data
     ports:
       - '9200:9200'
       - '9300:9300'
     environment:
-      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xmx512m -Xms512m"
 
   redis:
     image: 'redis:4-alpine'
     ports:
       - '6379:6379'
 
-  storefront-api:
+  api:
     build:
       context: .docker/vue-storefront-api
       dockerfile: docker/vue-storefront-api/Dockerfile
@@ -29,7 +31,7 @@ services:
       - './.docker/api/config.json:/var/www/config/local.json'
       - './packages/payment-klarna-bridge:/var/www/src/api/extensions/payment-klarna-bridge'
 
-  storefront-ui:
+  ui:
     build:
       context: .docker/vue-storefront
       dockerfile: docker/vue-storefront/Dockerfile
@@ -42,5 +44,5 @@ services:
     volumes:
       - './.docker/frontend/config.json:/var/www/config/local.json'
       - './.docker/frontend/theme:/var/www/src/themes/default'
-      - './.docker/frontend/modules.ts:/var/www/src/modules/index.ts'
+      - './.docker/frontend/modules.ts:/var/www/src/modules/client.ts'
       - './packages/payment-klarna:/var/www/src/modules/payment-klarna'

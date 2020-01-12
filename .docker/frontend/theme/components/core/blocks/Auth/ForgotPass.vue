@@ -1,20 +1,20 @@
 <template>
   <div>
     <header class="modal-header py25 px65 h1 serif weight-700 bg-cl-secondary">
+      {{ $t('Reset password') }}
       <i
         slot="close"
-        class="modal-close material-icons p15 cl-bg-tertiary"
+        class="modal-close material-icons cl-bg-tertiary"
         @click="close"
       >
         close
       </i>
-      {{ $t('Reset password') }}
     </header>
 
-    <div class="modal-content pt30 pb60 px65 cl-secondary">
+    <div class="modal-content bg-cl-primary pt30 pb60 px65 cl-secondary">
       <template v-if="!passwordSent">
         <form @submit.prevent="sendEmail" novalidate>
-          <div class="mb35">
+          <div class="mb20">
             <p class="mb45">
               {{ $t('Enter your email to receive instructions on how to reset your password.') }}
             </p>
@@ -52,7 +52,7 @@
           <p class="py30 mb80">
             {{ $t("We've sent password reset instructions to your email. Check your inbox and follow the link.") }}
           </p>
-          <button-full class="mb35" type="submit">
+          <button-full class="mb35" type="link" @click.native="switchElem">
             {{ $t('Back to login') }}
           </button-full>
         </form>
@@ -128,6 +128,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .modal-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-close{
+    cursor: pointer;
+  }
   .modal-content {
     @media (max-width: 400px) {
       padding-left: 20px;

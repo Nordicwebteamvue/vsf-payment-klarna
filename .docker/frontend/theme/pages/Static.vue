@@ -2,8 +2,10 @@
   <div>
     <div class="bg-cl-secondary py35 pl20">
       <div class="container">
-        <breadcrumbs :routes="[{name: 'Homepage', route_link: '/'}]" :active-route="$props.title" />
-        <h2 class="fs-big"> {{ $props.title }}</h2>
+        <breadcrumbs :with-homepage="true" :routes="[]" :active-route="$props.title" />
+        <h2 class="fs-big">
+          {{ $props.title }}
+        </h2>
       </div>
     </div>
 
@@ -12,8 +14,10 @@
         <div class="col-sm-3">
           <nav class="static-menu serif h4 mb35">
             <ul class="m0 p0">
-              <li class="mb10" v-for="page in navigation" :key="page.id">
-                <router-link :to="localizedRoute(page.link)" class="cl-accent relative">{{ page.title }}</router-link>
+              <li class="mb10" v-for="element in navigation" :key="element.id">
+                <router-link :to="localizedRoute(element.link)" class="cl-accent relative">
+                  {{ element.title }}
+                </router-link>
               </li>
             </ul>
           </nav>
@@ -31,6 +35,8 @@ import i18n from '@vue-storefront/i18n'
 import Breadcrumbs from 'theme/components/core/Breadcrumbs'
 import StaticExample from 'theme/components/theme/blocks/Static/Example'
 import StaticShortExample from 'theme/components/theme/blocks/Static/Short'
+import { getPathForStaticPage } from 'theme/helpers'
+import { localizedRoute } from '@vue-storefront/core/lib/multistore'
 
 export default {
   components: {
@@ -54,16 +60,16 @@ export default {
   },
   computed: {
     activeComponent () {
-      const matchedNav = this.navigation.find(nav => nav.link === this.$route.path)
+      const matchedNav = this.navigation.find(nav => nav.link.includes(this.$route.path))
       return matchedNav ? matchedNav.component : null
     }
   },
   data () {
     return {
       navigation: [
-        { title: i18n.t('About us'), link: '/about-us', component: StaticExample },
-        { title: i18n.t('Customer service'), link: '/customer-service', component: StaticShortExample },
-        { title: i18n.t('Store locator'), link: '/store-locator', component: StaticExample },
+        { title: i18n.t('About us'), link: getPathForStaticPage('/about-us'), component: StaticExample },
+        { title: i18n.t('Customer service'), link: getPathForStaticPage('/customer-service'), component: StaticShortExample },
+        { title: i18n.t('Store locator'), link: localizedRoute('/store-locator'), component: StaticExample },
         { title: i18n.t('Delivery'), link: '/delivery', component: StaticShortExample },
         { title: i18n.t('Return policy'), link: '/returns', component: StaticExample },
         { title: i18n.t('Privacy policy'), link: '/privacy', component: StaticShortExample },

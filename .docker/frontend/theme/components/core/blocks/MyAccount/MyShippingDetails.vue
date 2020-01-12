@@ -23,7 +23,7 @@
     <div class="row" v-if="isEdited">
       <template>
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="first-name"
           autocomplete="given-name"
@@ -43,7 +43,7 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="last-name"
           autocomplete="family-name"
@@ -58,16 +58,15 @@
 
         <base-checkbox
           v-if="hasBillingAddress()"
-          class="col-xs-12 mb25"
+          class="col-xs-12 mb10"
           id="addCompanyFilled"
           v-model="useCompanyAddress"
-          @click="fillCompanyAddress"
         >
           {{ $t("Use my company's address details") }}
         </base-checkbox>
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="street-address"
           autocomplete="address-line1"
@@ -81,7 +80,7 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="apartment-number"
           autocomplete="address-line2"
@@ -95,21 +94,27 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="city"
           autocomplete="address-level2"
           :placeholder="`${$t('City')} *`"
           v-model.trim="shippingDetails.city"
           @input="$v.shippingDetails.city.$touch()"
-          :validations="[{
+          :validations="[
+          {
             condition: !$v.shippingDetails.city.required && $v.shippingDetails.city.$error,
             text: $t('Field is required')
-          }]"
+          },
+          {
+            condition: $v.shippingDetails.city.$error && $v.shippingDetails.city.required,
+            text: $t('Please provide valid city name')
+          }
+          ]"
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="state"
           autocomplete="address-level1"
@@ -118,7 +123,7 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="zip-code"
           autocomplete="postal-code"
@@ -138,7 +143,7 @@
         />
 
         <base-select
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           name="countries"
           :options="countryOptions"
           :selected="shippingDetails.country"
@@ -156,7 +161,7 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="phone-number"
           autocomplete="tel"
@@ -164,7 +169,7 @@
           v-model.trim="shippingDetails.phone"
         />
 
-        <div class="hidden-xs col-sm-6 mb25"/>
+        <div class="hidden-xs col-sm-6 mb25" />
 
         <div class="col-xs-12 col-sm-6">
           <button-full
@@ -225,6 +230,7 @@
 <script>
 import { required, minLength } from 'vuelidate/lib/validators'
 import MyShippingDetails from '@vue-storefront/core/compatibility/components/blocks/MyAccount/MyShippingDetails'
+import { unicodeAlpha, unicodeAlphaNum } from '@vue-storefront/core/helpers/validators'
 
 import ButtonFull from 'theme/components/theme/ButtonFull'
 import Tooltip from 'theme/components/core/Tooltip'
@@ -255,7 +261,8 @@ export default {
     shippingDetails: {
       firstName: {
         required,
-        minLength: minLength(2)
+        minLength: minLength(2),
+        unicodeAlpha
       },
       lastName: {
         required
@@ -264,17 +271,20 @@ export default {
         required
       },
       street: {
-        required
+        required,
+        unicodeAlphaNum
       },
       house: {
-        required
+        required,
+        unicodeAlphaNum
       },
       postcode: {
         required,
         minLength: minLength(3)
       },
       city: {
-        required
+        required,
+        unicodeAlpha
       }
     }
   }

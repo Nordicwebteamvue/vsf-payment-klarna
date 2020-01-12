@@ -22,7 +22,7 @@
     <!-- My profile body (edit mode) -->
     <div class="row" v-if="isEdited">
       <base-input
-        class="col-xs-12 col-md-6 mb25"
+        class="col-xs-12 col-md-6 mb10"
         type="text"
         name="first-name"
         autocomplete="given-name"
@@ -42,7 +42,7 @@
       />
 
       <base-input
-        class="col-xs-12 col-md-6 mb25"
+        class="col-xs-12 col-md-6 mb10"
         type="text"
         name="last-name"
         autocomplete="family-name"
@@ -56,7 +56,7 @@
       />
 
       <base-input
-        class="col-xs-12 col-md-6 mb25"
+        class="col-xs-12 col-md-6 mb10"
         type="email"
         name="email-address"
         autocomplete="email"
@@ -79,7 +79,6 @@
         class="col-xs-12 mb15"
         id="changePassword"
         v-model="changePassword"
-        @click="changePassword = !changePassword"
       >
         {{ $t('Change my password') }}
       </base-checkbox>
@@ -99,7 +98,7 @@
           }]"
         />
 
-        <div class="hidden-xs hidden-sm col-md-6 mb15 mt10"/>
+        <div class="hidden-xs hidden-sm col-md-6 mb15 mt10" />
 
         <base-input
           class="col-xs-12 col-md-6 mb15 mt10"
@@ -141,14 +140,13 @@
         class="col-xs-12 mb15 mt10"
         id="addCompany"
         v-model="addCompany"
-        @click="addCompany = !addCompany"
       >
         {{ $t('I have a company and want to receive an invoice for every order') }}
       </base-checkbox>
 
       <template v-if="addCompany">
         <base-input
-          class="col-xs-12 mb25"
+          class="col-xs-12 mb10"
           type="text"
           name="company-name"
           autocomplete="organization"
@@ -162,7 +160,7 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="street-address"
           autocomplete="address-line1"
@@ -176,7 +174,7 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="apartment-number"
           autocomplete="address-line2"
@@ -190,21 +188,27 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="city"
           autocomplete="address-level2"
           :placeholder="$t('City *')"
           v-model.trim="userCompany.city"
           @input="$v.userCompany.city.$touch()"
-          :validations="[{
+          :validations="[
+          {
             condition: !$v.userCompany.city.required && $v.userCompany.city.$error,
             text: $t('Field is required')
-          }]"
+          },
+          {
+            condition: $v.userCompany.city.$error && $v.userCompany.city.required,
+            text: $t('Please provide valid city name')
+          }
+          ]"
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="state"
           autocomplete="address-level1"
@@ -213,7 +217,7 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="zip-code"
           autocomplete="postal-code"
@@ -233,7 +237,7 @@
         />
 
         <base-select
-          class="col-xs-12 col-md-6 mb25"
+          class="col-xs-12 col-md-6 mb10"
           name="countries"
           :options="countryOptions"
           :selected="userCompany.country"
@@ -251,7 +255,7 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="taxId"
           autocomplete="tax-id"
@@ -271,14 +275,13 @@
         />
 
         <base-input
-          class="col-xs-12 col-sm-6 mb25"
+          class="col-xs-12 col-sm-6 mb10"
           type="text"
           name="phone-number"
           autocomplete="tel"
           :placeholder="$t('Phone Number')"
           v-model.trim="userCompany.phone"
         />
-
       </template>
 
       <div class="col-xs-12 col-sm-6">
@@ -351,6 +354,7 @@
 <script>
 import { required, minLength, email, sameAs } from 'vuelidate/lib/validators'
 import MyProfile from '@vue-storefront/core/compatibility/components/blocks/MyAccount/MyProfile'
+import { unicodeAlpha, unicodeAlphaNum } from '@vue-storefront/core/helpers/validators'
 
 import BaseCheckbox from 'theme/components/core/blocks/Form/BaseCheckbox'
 import BaseSelect from 'theme/components/core/blocks/Form/BaseSelect'
@@ -394,10 +398,12 @@ export default {
     currentUser: {
       firstname: {
         required,
-        minLength: minLength(2)
+        minLength: minLength(2),
+        unicodeAlpha
       },
       lastname: {
-        required
+        required,
+        unicodeAlpha
       },
       email: {
         required,
@@ -422,17 +428,20 @@ export default {
         required
       },
       street: {
-        required
+        required,
+        unicodeAlphaNum
       },
       house: {
-        required
+        required,
+        unicodeAlphaNum
       },
       postcode: {
         required,
         minLength: minLength(3)
       },
       city: {
-        required
+        required,
+        unicodeAlpha
       },
       taxId: {
         required,

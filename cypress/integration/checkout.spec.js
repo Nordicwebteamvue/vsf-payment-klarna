@@ -2,7 +2,7 @@
 
 context('Actions', () => {
   it('can render checkout', () => {
-    cy.visit('http://localhost:3000/p/24-WB07/overnight-duffle')
+    cy.visit('/training/training-9/luma-yoga-for-life-51.html')
     cy.wait(100)
     cy.get(`[data-testid="closeCookieButton"]`).click()
     cy.wait(100)
