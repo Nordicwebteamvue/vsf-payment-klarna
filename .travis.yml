@@ -8,6 +8,11 @@ services:
 git:
   submodules: false
 
+addons:
+  apt:
+    packages:
+      - libgconf-2-4
+
 env:
   - DOCKER_COMPOSE_VERSION=1.4.2
 
@@ -26,9 +31,9 @@ install: yarn
 script:
   - yarn lint
   - docker-compose up -d elasticsearch redis
-  - make bundle
-  - make build-api build-ui
-  - make start-api es-restore start-ui
+  - make fs bundle fe
+  - make fs build-api build-ui fe
+  - make fs start-api es-restore start-ui fe
   - sleep 5
-  - make ci
+  - make fs ci fe
   - docker-compose down -v elasticsearch redis
