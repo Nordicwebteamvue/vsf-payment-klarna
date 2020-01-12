@@ -11,12 +11,18 @@ prebundle: submodules
 
 bundle: prebundle
 	node .docker/bundle/index.js
-	ex +g/mage2vuestorefront/d -cwq ./.output/vue-storefront-api/package.json
+	# ex +g/mage2vuestorefront/d -cwq ./.output/vue-storefront-api/package.json
 
 import:
 	docker-compose exec api yarn mage2vs import
 	docker-compose exec api yarn restore
 	docker-compose exec api yarn migrate
+
+ci-import:
+	cd .output/vue-storefront-api && yarn
+	cd .output/vue-storefront-api && yarn mage2vs import
+	cd .output/vue-storefront-api && yarn restore
+	cd .output/vue-storefront-api && yarn migrate
 
 build-ui:
 	cd .output/vue-storefront && yarn && yarn build
