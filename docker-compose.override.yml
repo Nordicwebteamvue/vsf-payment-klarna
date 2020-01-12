@@ -40,6 +40,7 @@ services:
       - './.docker/vue-storefront/src:/var/www/src'
       - './.docker/vue-storefront/var:/var/www/var'
       - './.docker/vue-storefront/packages:/var/www/packages'
+      - './.docker/frontend/proxy.ts:/var/www/src/modules/api-proxy/server.ts'
 
   elasticsearch:
     volumes:
