@@ -18,12 +18,6 @@ import:
 	docker-compose exec api yarn restore
 	docker-compose exec api yarn migrate
 
-ci-import:
-	cd .output/vue-storefront-api && yarn
-	cd .output/vue-storefront-api && yarn mage2vs import
-	cd .output/vue-storefront-api && yarn restore
-	cd .output/vue-storefront-api && yarn migrate
-
 build-ui:
 	cd .output/vue-storefront && yarn && yarn build
 
@@ -38,3 +32,15 @@ start-api:
 
 ci:
 	yarn cypress:ci
+
+es-backup:
+	yarn elasticdump \
+		--all=true \
+		--input=http://localhost:9200/vue_storefront_catalog \
+		--output=.docker/api/catalog.json 
+
+es-restore:
+	yarn elasticdump \
+		--bulk=true \
+		--input=.docker/api/catalog.json \
+		--output=http://localhost:9200/vue_storefront_catalog

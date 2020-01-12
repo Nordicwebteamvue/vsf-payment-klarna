@@ -5,15 +5,11 @@ const PayPalKcoPage = () => import(/* webpackChunkName: "vsf-payment-klarna" */ 
 const PaypalConfirmationKCO = () => import(/* webpackChunkName: "vsf-payment-klarna" */ '../pages/ConfirmationPayPalKCO.vue')
 
 export function beforeRegistration({ config }) {
-  const placeOrderOnConfirmation = config.klarna.placeOrderOnConfirmation || true
   const routes = [
     {
       name: 'klarna-confirmation',
       path: '/confirmation',
-      component: Confirmation,
-      props: {
-        placeOrderOnConfirmation
-      }
+      component: Confirmation
     },
     {
       name: 'kco-paypal-handling-order',

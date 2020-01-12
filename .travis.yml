@@ -28,7 +28,7 @@ script:
   - docker-compose up -d elasticsearch redis
   - make bundle
   - make build-api build-ui
-  - make start-api ci-import start-ui
+  - make start-api es-restore start-ui
   - sleep 5
   - make ci
   - docker-compose down -v elasticsearch redis
