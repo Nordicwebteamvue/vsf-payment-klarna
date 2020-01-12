@@ -44,9 +44,3 @@ es-restore:
 		--bulk=true \
 		--input=.docker/api/catalog.json \
 		--output=http://localhost:9200/vue_storefront_catalog
-
-fs:
-  echo -e "travis_fold:start:$1\033[33;1m$2\033[0m"
-
-fe:
-  echo -e "\ntravis_fold:end:$1\r"
