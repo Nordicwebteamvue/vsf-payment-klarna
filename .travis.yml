@@ -26,6 +26,7 @@ install: yarn
 script:
   - yarn lint
   - docker-compose up -d elasticsearch redis
+  - make bundle
   - make build-api build-ui
   - make start-api import start-ui
   - sleep 5
