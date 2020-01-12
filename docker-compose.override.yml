@@ -1,6 +1,8 @@
 version: '3.4'
 services:
   api:
+    labels:
+      bundle: "vue-storefront-api"
     depends_on:
       - elasticsearch
       - redis
@@ -19,6 +21,8 @@ services:
       - './.docker/vue-storefront-api/var:/var/www/var'
 
   ui:
+    labels:
+      bundle: "vue-storefront"
     tmpfs:
       - /var/www/dist
     volumes:
@@ -36,7 +40,7 @@ services:
       - './.docker/vue-storefront/src:/var/www/src'
       - './.docker/vue-storefront/var:/var/www/var'
       - './.docker/vue-storefront/packages:/var/www/packages'
-      - '/var/www/dist'
+      - './.docker/vue-storefront/dist:/var/www/dist'
 
   elasticsearch:
     volumes:

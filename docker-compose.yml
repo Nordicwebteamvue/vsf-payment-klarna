@@ -1,18 +1,5 @@
 version: '3.4'
 services:
-  elasticsearch:
-    build: .docker/vue-storefront-api/docker/elasticsearch7/
-    volumes:
-      - ./.docker/vue-storefront-api/docker/elasticsearch7/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    ports:
-      - '9200:9200'
-      - '9300:9300'
-
-  redis:
-    image: 'redis:4-alpine'
-    ports:
-      - '6379:6379'
-
   api:
     build:
       context: .docker/vue-storefront-api
@@ -41,3 +28,16 @@ services:
       - './.docker/frontend/theme:/var/www/src/themes/default'
       - './.docker/frontend/modules.ts:/var/www/src/modules/client.ts'
       - './packages/payment-klarna:/var/www/src/modules/payment-klarna'
+
+  elasticsearch:
+    build: .docker/vue-storefront-api/docker/elasticsearch7/
+    volumes:
+      - ./.docker/vue-storefront-api/docker/elasticsearch7/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+
+  redis:
+    image: 'redis:4-alpine'
+    ports:
+      - '6379:6379'
