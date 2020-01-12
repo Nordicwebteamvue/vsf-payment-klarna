@@ -6,12 +6,12 @@
       "height": "height",
       "length": "length"
     },
-    "endpoint": "http://api:8080/api/ext/payment-klarna-bridge/create-or-update-order?cartId={{cartId}}",
-    "confirmation": "http://api:8080/api/ext/payment-klarna-bridge/order-id?sid={{sid}}",
-    "validate_order": "http://api:8080/api/ext/payment-klarna-bridge/validate-kco-callback?cartId={{cartId}}",
+    "endpoint": "http://localhost:8080/api/ext/payment-klarna-bridge/create-or-update-order?cartId={{cartId}}",
+    "confirmation": "http://localhost:8080/api/ext/payment-klarna-bridge/order-id?sid={{sid}}",
+    "validate_order": "http://localhost:8080/api/ext/payment-klarna-bridge/validate-kco-callback?cartId={{cartId}}",
     "showShippingOptions": true
   },
   "api": {
-    "url": "http://api:8080"
+    "url": "http://localhost:8080"
   }
 }
