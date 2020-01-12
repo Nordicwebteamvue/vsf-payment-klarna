@@ -29,7 +29,7 @@ services:
       - './.docker/vue-storefront/babel.config.js:/var/www/babel.config.js'
       - './.docker/vue-storefront/config:/var/www/config'
       - './.docker/vue-storefront/core:/var/www/core'
-      - './.docker/vue-storefront/ecosystem.json:/var/www/ecosystem.json'
+      - './.docker/frontend/ecosystem.json:/var/www/ecosystem.json'
       - './.docker/vue-storefront/.eslintignore:/var/www/.eslintignore'
       - './.docker/vue-storefront/.eslintrc.js:/var/www/.eslintrc.js'
       - './.docker/vue-storefront/lerna.json:/var/www/lerna.json'
