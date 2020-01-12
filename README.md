@@ -1,11 +1,11 @@
-# vsf-payment-klarna
+# vsf-payment-klarna ![for VSF 1.11](https://img.shields.io/static/v1?label=vsf&message=1.11&color=brightgreen)
 
 ## Installation
 
 ### Frontend
 
 * Copy `packages/payment-klarna` to `src/modules/payment-klarna`
-* Update `modules/index.ts` with the following:
+* Update `modules/client.ts` with the following:
   ```
   import { KlarnaCheckout } from './payment-klarna'
   ...
@@ -18,6 +18,21 @@
 #### Usage
 
 ##### Checkout
+
+In `theme/pages/Checkout.vue`
+
+```
+import KCO from 'src/modules/payment-klarna/components/KlarnaCheckout'
+
+export {
+  ...,
+  components: {
+    klarna-checkout: KCO
+  }
+}
+```
+
+And then just `<klarna-checkout />` where you want to render it
 
 ##### Confirmation
 
