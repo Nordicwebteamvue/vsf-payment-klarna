@@ -21,6 +21,7 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
+  - export -f travis_fold
   
 before_install:
   - git submodule update --init
@@ -31,9 +32,13 @@ install: yarn
 script:
   - yarn lint
   - docker-compose up -d elasticsearch redis
+  - travis_fold start "bundle and build"
   - make bundle
   - make build-api build-ui
+  - travis_fold end "bundle and build"
+  - travis_fold start "start services"
   - make start-api es-restore start-ui
   - sleep 5
+  - travis_fold end "start services"
   - make ci
   - docker-compose down -v elasticsearch redis
