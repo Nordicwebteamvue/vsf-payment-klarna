@@ -31,9 +31,9 @@ install: yarn
 script:
   - yarn lint
   - docker-compose up -d elasticsearch redis
-  - make fs bundle fe
-  - make fs build-api build-ui fe
-  - make fs start-api es-restore start-ui fe
+  - make bundle
+  - make build-api build-ui
+  - make start-api es-restore start-ui
   - sleep 5
-  - make fs ci fe
+  - make ci
   - docker-compose down -v elasticsearch redis
