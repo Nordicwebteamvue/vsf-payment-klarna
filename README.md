@@ -17,6 +17,8 @@
 
 #### Usage
 
+> See [config.json](.docker/frontend/config.json) for example config
+
 ##### Checkout
 
 In `theme/pages/Checkout.vue`
@@ -44,6 +46,8 @@ See [beforeRegistration.ts](packages/payment-klarna/hooks/beforeRegistration.ts)
 
 * Copy `packages/payment-klarna-bridge` to `src/api/extensions/payment-klarna-bridge`
 * Add `payment-klarna-bridge` to `registeredExtensions` in `local.json`
+
+See [config.json](.docker/api/config.json) for example config
 
 ## Development
 
