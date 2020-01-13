@@ -1,5 +1,6 @@
-phony:
-	echo "https://github.com/kodbruket/vsf-payment-klarna"
+.PHONY: list
+list:
+	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
 
 submodules:
 	git submodule update --init
@@ -8,13 +9,13 @@ prebundle: submodules
 	mkdir -p .docker/vue-storefront/var
 	mkdir -p .docker/vue-storefront/dist
 	cd .docker/bundle && yarn
+	rm -rf .output
 
 bundle: prebundle
 	node .docker/bundle/index.js
-	# ex +g/mage2vuestorefront/d -cwq ./.output/vue-storefront-api/package.json
 
 bundle-to-localhost:
-	sed -i.bak 's/api:8080/localhost:8080/g' .output/vue-storefront-api/config/local.json
+	sed -i.bak 's/api:8080/localhost:8080/g' .output/vue-storefront/config/local.json
 
 import:
 	docker-compose exec api yarn mage2vs import
