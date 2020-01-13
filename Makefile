@@ -36,6 +36,12 @@ start-api:
 ci:
 	yarn cypress:ci
 
+full-ci:
+	docker-compose up -d elasticsearch redis
+	make bundle bundle-to-localhost build-api build-ui
+	make start-api es-restore start-ui
+	make ci
+
 es-backup:
 	yarn elasticdump \
 		--all=true \
