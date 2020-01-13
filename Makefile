@@ -13,6 +13,9 @@ bundle: prebundle
 	node .docker/bundle/index.js
 	# ex +g/mage2vuestorefront/d -cwq ./.output/vue-storefront-api/package.json
 
+bundle-to-localhost:
+	sed -i.bak 's/api:8080/localhost:8080/g' .output/vue-storefront-api/config/local.json
+
 import:
 	docker-compose exec api yarn mage2vs import
 	docker-compose exec api yarn restore
