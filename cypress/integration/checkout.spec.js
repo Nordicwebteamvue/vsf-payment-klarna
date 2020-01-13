@@ -13,7 +13,7 @@ context('Actions', () => {
     cy.get(`[data-testid="minicartCount"]`).parent().click()
     cy.wait(250)
     cy.get(`[data-testid="subscribeSubmit"]`).first().click()
-    cy.wait(1000)
+    cy.wait(2000)
     cy.url().should('include', '/checkout')
     cy.get('#klarna-checkout-iframe').iframe().should('contain', 'TEST DRIVE')
   })
