@@ -99,6 +99,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     if (!/^[A-Za-z]{2,2}$/.test(purchaseCountry)) {
       purchaseCountry = storeView.i18n.defaultCountry
     }
+    return purchaseCountry
   },
   isFreeShipping(state: CheckoutState, getters) {
     // Check if it freeshipping from coupon or not
