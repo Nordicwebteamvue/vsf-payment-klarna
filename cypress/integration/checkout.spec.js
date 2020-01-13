@@ -2,17 +2,14 @@
 
 context('Actions', () => {
   it('can render checkout', () => {
-    cy.visit('/training/training-9/luma-yoga-for-life-51.html')
+    cy.visit('/gear/gear-3/joust-duffle-bag-1.html')
     cy.wait(100)
     cy.get(`[data-testid="closeCookieButton"]`).click()
+    // cy.get(`[data-testid="productLink"]`).first().click()
     cy.wait(100)
-    cy.get(`[data-testid="addToCart"]`).click()
-    cy.get(`[data-testid="notificationAction1"]`).click()
-    cy.scrollTo(0, 0)
-    cy.get(`[data-testid="minicartCount"]`).contains('1')
-    cy.get(`[data-testid="minicartCount"]`).parent().click()
-    cy.wait(250)
-    cy.get(`[data-testid="subscribeSubmit"]`).first().click()
+    cy.addToCart()
+    cy.itemsInCart(1)
+    cy.goToCart()
     cy.wait(2000)
     cy.url().should('include', '/checkout')
     cy.get('#klarna-checkout-iframe').iframe().should('contain', 'TEST DRIVE')
