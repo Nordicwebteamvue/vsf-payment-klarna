@@ -19,7 +19,7 @@ const execute = (url, method = 'GET', body = null) => TaskQueue.execute({
 
 export const actions: ActionTree<CheckoutState, RootState> = {
   addPlugin ({ commit }, plugin: KlarnaPlugin) {
-    console.log('Add plugin')
+    console.log('Added plugin', plugin.name)
     commit('addPlugin', plugin)
   },
   setPurchaseCountry ({ commit }, country: String) {

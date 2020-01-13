@@ -1,56 +1,9 @@
-import { currentStoreView } from '@vue-storefront/core/lib/multistore'
-import i18n from '@vue-storefront/i18n'
 import get from 'lodash-es/get'
-import { KlarnaOrder } from './types/CheckoutState'
+import { KlarnaOrder, KlarnaPlugin } from '../types/CheckoutState'
 
-const test = {
-  fn: ({ getters }): KlarnaOrder => {
-    const order: KlarnaOrder = getters.order
-    order.options = {
-      ...order.options,
-      color_button: '#F5D04C'
-    }
-    return order
-  }
-}
-
-const externals = {
+const plugin: KlarnaPlugin = {
+  name: 'shippingAttributes',
   fn: ({ config, getters }): KlarnaOrder => {
-    const order: KlarnaOrder = getters.order
-    const mapRedirectUrl = (externalPaymentConfig) => {
-      if (externalPaymentConfig.name == 'PayPal') {
-        let uri = externalPaymentConfig.redirect_url
-        const { storeCode } = currentStoreView()
-        const { productBaseUrl } = config.klarna
-        externalPaymentConfig.redirect_url = `${productBaseUrl}/${storeCode}/${uri}`
-      }
-      return externalPaymentConfig
-    }
-    order.external_payment_methods = config.klarna.external_payment_methods ? config.klarna.external_payment_methods.map(mapRedirectUrl) : null;
-    order.external_checkouts = config.klarna.external_checkouts ? config.klarna.external_checkouts : null;
-    return order
-  }
-}
-
-const newsletterTranslate = {
-  fn: ({ getters }): KlarnaOrder => {
-    const order: KlarnaOrder = getters.order
-    const options = order.options
-    if (options && options.additional_checkboxes) {
-      options.additional_checkboxes.forEach(checkbox => {
-        if (checkbox.id === 'newsletter_opt_in') {
-          checkbox.text = i18n.t(checkbox.text)
-        }
-      })
-    }
-    order.options = options
-    return order
-  }
-}
-
-const addShippingAttributes = {
-  fn: ({ config, getters }): KlarnaOrder => {
-    // Plugin: addShippingAttributes
     const getValue = (attribute, item) => parseFloat(get(item.product, config.klarna.shipping_attributes[attribute], 0)) * item.qty | 0
     const order: KlarnaOrder = getters.order
     if (config.klarna.addShippingAttributes) {
@@ -142,11 +95,4 @@ const addShippingAttributes = {
   }
 }
 
-const plugins = [
-  test,
-  externals,
-  newsletterTranslate,
-  addShippingAttributes,
-]
-
-export default plugins
+export default plugin

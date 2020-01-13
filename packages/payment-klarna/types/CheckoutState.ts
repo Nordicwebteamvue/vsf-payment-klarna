@@ -2,6 +2,7 @@ type GenericObject = { [key: string]: any };
 
 export interface KlarnaPlugin {
   fn: (any) => KlarnaOrder
+  name: string
 }
 
 interface SubState {
