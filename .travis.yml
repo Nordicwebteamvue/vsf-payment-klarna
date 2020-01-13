@@ -32,12 +32,14 @@ install: yarn
 script:
   - yarn lint
   - docker-compose up -d elasticsearch redis
-  - travis_fold start "bundle and build"
-  - make bundle bundle-to-localhost build-api build-ui
-  - travis_fold end "bundle and build"
+  - make fold bundle bundle-to-localhost end
+  - travis_fold start "build"
+  - make bundle build-api build-ui
+  - travis_fold end "build"
   - travis_fold start "start services"
   - make start-api es-restore start-ui
   - sleep 5
   - travis_fold end "start services"
+  - pm2 logs server --err --nostream
   - make ci
   - docker-compose down -v elasticsearch redis
