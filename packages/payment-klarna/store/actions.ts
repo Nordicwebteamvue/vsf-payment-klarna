@@ -5,6 +5,7 @@ import config from 'config'
 import RootState from '@vue-storefront/core/types/RootState'
 import Vue from 'vue'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
+import plugins from '../plugins'
 
 const execute = (url, method = 'GET', body = null) => TaskQueue.execute({
   url,
@@ -74,10 +75,11 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
     await dispatch('createOrder')
   },
-  async createOrder ({ commit, dispatch, getters }) {
+  async createOrder (context) {
+    const { commit, dispatch, getters } = context
     commit('createOrder')
     await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
-    const { order } = getters
+    const order = plugins.reduce(({fn}, _order) => fn({...context, config}), getters.order)
     if (!order || order.error) {
       await dispatch('orderError')
       return
@@ -109,12 +111,12 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     })
     return klarnaResult
   },
-  async fetchOrder ({ commit, state, getters }, sid) {
+  async fetchOrder ({}, sid) {
     const url = config.klarna.confirmation.replace('{{sid}}', sid)
     const { result } : any = await execute(url)
     return result
   },
-  async confirmation ({ commit, state, dispatch, getters }, { sid }) {
+  async confirmation ({ commit, dispatch, getters }, { sid }) {
     commit('getConfirmation')
     const result = await dispatch('fetchOrder', sid)
     localStorage.removeItem(getters.storageTarget)
@@ -124,7 +126,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     })
     return klarnaResult
   },
-  async retrievePayPalKco ({ commit, state, dispatch },) {
+  async retrievePayPalKco ({ commit },) {
     commit('getKcoPayPal')
     let klarnaSidArray = JSON.parse(localStorage.getItem('_klarna_sdid_ch'))
     // last sid of order
