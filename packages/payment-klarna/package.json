@@ -8,7 +8,5 @@
     "postscribe": "^2.0.8",
     "qs": "^6.7.0"
   },
-  "devDependencies": {
-    "http-proxy-middleware": "^0.20.0"
-  }
+  "devDependencies": {}
 }
