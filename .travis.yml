@@ -33,7 +33,7 @@ script:
   - yarn lint
   - docker-compose up -d elasticsearch redis
   - travis_fold start "bundle and build"
-  - make bundle build-api build-ui
+  - make bundle bundle-to-localhost build-api build-ui
   - travis_fold end "bundle and build"
   - travis_fold start "start services"
   - make start-api es-restore start-ui
