@@ -63,11 +63,10 @@ See [config.json](.docker/api/config.json) for example config
 ```sh
 git clone --recurse-submodules https://github.com/kodbruket/vsf-payment-klarna
 cd vsf-payment-klarna
-cp .docker/api/config.sample.json .docker/api/config.json
 yarn # set up git hooks
 docker-compose up
 # new tab
-make import
+make es-restore # seed Magento catalog data
 ```
 
 Visit http://localhost:3000
