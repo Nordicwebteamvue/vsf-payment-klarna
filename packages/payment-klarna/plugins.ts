@@ -149,4 +149,4 @@ const plugins = [
   addShippingAttributes,
 ]
 
-export = plugins
+export default plugins

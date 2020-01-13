@@ -1,5 +1,9 @@
 type GenericObject = { [key: string]: any };
 
+export interface KlarnaPlugin {
+  fn: (any) => KlarnaOrder
+}
+
 interface SubState {
   loading: boolean;
   snippet?: string;
@@ -15,6 +19,7 @@ export default interface CheckoutState {
   shippingOptions: boolean;
   merchantData: Object;
   purchaseCountry: string;
+  plugins: Array<KlarnaPlugin>
 }
 
 export interface KlarnaProduct {
@@ -28,7 +33,7 @@ export interface KlarnaProduct {
   total_amount: number
   total_discount_amount?: number
   total_tax_amount: number
-  merchant_data: string
+  merchant_data?: string
   product_url?: string
   image_url?: string
   product_identifiers?: GenericObject
@@ -63,5 +68,5 @@ export interface KlarnaOrder {
   shipping_options: Array<any>
   merchant_data: string
   selected_shipping_option?: string
-  tags: Array<string>
+  tags?: Array<string>
 }

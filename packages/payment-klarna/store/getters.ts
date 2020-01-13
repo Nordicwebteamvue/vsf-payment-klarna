@@ -191,10 +191,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     }
 
     if (!validateOrder(checkoutOrder)) {
-      return {
-        error: true,
-        reason: 'Order amount incorrect'
-      }
+      throw new Error('Order amount incorrect')
     }
     return checkoutOrder
   }

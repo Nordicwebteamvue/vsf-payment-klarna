@@ -24,6 +24,7 @@ export const module: Module<CheckoutState, any> = {
       loading: false,
       snippet: null,
       error: false
-    }
+    },
+    plugins: []
   }
 }

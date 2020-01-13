@@ -1,11 +1,10 @@
-import CheckoutState from '../types/CheckoutState'
+import CheckoutState, { KlarnaPlugin } from '../types/CheckoutState'
 import { ActionTree } from 'vuex'
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
 import config from 'config'
 import RootState from '@vue-storefront/core/types/RootState'
 import Vue from 'vue'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
-import plugins from '../plugins'
 
 const execute = (url, method = 'GET', body = null) => TaskQueue.execute({
   url,
@@ -19,6 +18,10 @@ const execute = (url, method = 'GET', body = null) => TaskQueue.execute({
 })
 
 export const actions: ActionTree<CheckoutState, RootState> = {
+  addPlugin ({ commit }, plugin: KlarnaPlugin) {
+    console.log('Add plugin')
+    commit('addPlugin', plugin)
+  },
   setPurchaseCountry ({ commit }, country: String) {
     commit('setPurchaseCountry', country)
   },
@@ -47,7 +50,6 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     localStorage.removeItem(getters.storageTarget)
   },
   async klarnaCreateOrder({ commit, dispatch }, {url, body}) {
-    console.log('url', url, body)
     const { result } : any = await execute(url, 'POST', body)
     if (result.error) {
       Vue.prototype.$bus.$emit('klarna-create-error', result)
@@ -56,9 +58,8 @@ export const actions: ActionTree<CheckoutState, RootState> = {
         await dispatch('createOrder')
         return false
       }
-      console.log('error', result)
       commit('createOrderError', result.error)
-      return false
+      throw new Error('Klarna error')
     }
     return result
   },
@@ -76,40 +77,36 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     await dispatch('createOrder')
   },
   async createOrder (context) {
-    const { commit, dispatch, getters } = context
+    const { commit, dispatch, getters, state } = context
     commit('createOrder')
-    await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
-    const order = plugins.reduce(({fn}, _order) => fn({...context, config}), getters.order)
-    if (!order || order.error) {
-      await dispatch('orderError')
-      return
+    try {
+      await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
+      const order = state.plugins.reduce(({fn}, _order) => fn({...context, config}), getters.order)
+      const savedOrderId = await dispatch('getSavedOrderId')
+      const storeCode = currentStoreView().storeCode
+      const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
+      const result: any = await dispatch('klarnaCreateOrder', {
+        url: config.klarna.endpoint,
+        body: {
+          orderId: savedOrderId,
+          order,
+          storeCode,
+          dataSourceStoreCode,
+        }
+      })
+      Vue.prototype.$bus.$emit('klarna-created-order', {result, order})
+      const {snippet, ...klarnaResult} = result
+      dispatch('saveOrderIdToLocalStorage', result.order_id)
+      localStorage.setItem('kco/last-order', JSON.stringify(order))
+      commit('createdOrder', {
+        snippet: snippet,
+        orderId: result.order_id,
+        order: result
+      })
+      return klarnaResult
+    } catch (error) {
+      dispatch('orderError')
     }
-    const savedOrderId = await dispatch('getSavedOrderId')
-    console.log('savedOrderId', savedOrderId)
-    const storeCode = currentStoreView().storeCode
-    const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
-    const result: any = await dispatch('klarnaCreateOrder', {
-      url: config.klarna.endpoint,
-      body: {
-        orderId: savedOrderId,
-        order,
-        storeCode,
-        dataSourceStoreCode,
-      }
-    })
-    if (!result) {
-      return
-    }
-    Vue.prototype.$bus.$emit('klarna-created-order', {result, order})
-    const {snippet, ...klarnaResult} = result
-    dispatch('saveOrderIdToLocalStorage', result.order_id)
-    localStorage.setItem('kco/last-order', JSON.stringify(order))
-    commit('createdOrder', {
-      snippet: snippet,
-      orderId: result.order_id,
-      order: result
-    })
-    return klarnaResult
   },
   async fetchOrder ({}, sid) {
     const url = config.klarna.confirmation.replace('{{sid}}', sid)
