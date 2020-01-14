@@ -3,7 +3,7 @@ import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
 
 const plugin: KlarnaPlugin = {
   name: 'shippingAttributes',
-  fn: ({ config, getters }): KlarnaOrder => {
+  beforeCreate: ({ config, getters }): KlarnaOrder => {
     const getValue = (attribute, item) => parseFloat(get(item.product, config.klarna.shipping_attributes[attribute], 0)) * item.qty | 0
     const order: KlarnaOrder = getters.order
     if (config.klarna.addShippingAttributes) {

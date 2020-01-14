@@ -2,7 +2,7 @@ import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
 
 const plugin: KlarnaPlugin = {
   name: 'validateOrderAmount',
-  fn: ({ getters }): KlarnaOrder => {
+  beforeCreate: ({ getters }): KlarnaOrder => {
     const order: KlarnaOrder = getters.order
     const sum = order.order_lines.reduce((acc, line) => acc + line.total_amount, 0)
     if (order.order_amount !== sum) {

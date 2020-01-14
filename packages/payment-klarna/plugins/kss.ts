@@ -3,7 +3,7 @@ import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
 
 const plugin: KlarnaPlugin = {
   name: 'kss',
-  fn: ({ config, getters }): KlarnaOrder => {
+  beforeCreate: ({ config, getters }): KlarnaOrder => {
     const order: KlarnaOrder = getters.order
     const mapRedirectUrl = (externalPaymentConfig) => {
       if (externalPaymentConfig.name == 'PayPal') {

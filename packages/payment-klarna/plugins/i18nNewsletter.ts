@@ -3,7 +3,7 @@ import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
 
 const plugin: KlarnaPlugin = {
   name: 'i18nNewsletter',
-  fn: ({ getters }): KlarnaOrder => {
+  beforeCreate: ({ getters }): KlarnaOrder => {
     const order: KlarnaOrder = getters.order
     const options = order.options
     if (options && options.additional_checkboxes) {

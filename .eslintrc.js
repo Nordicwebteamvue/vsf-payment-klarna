@@ -21,6 +21,7 @@ module.exports = {
     /* max attributes-per-line and order-in-components
     ** we should use this later, when eslint-plugin-vue will support auto fixing this
     */
+    'object-curly-spacing': ['error', 'always'],
     'vue/max-attributes-per-line': 0,
     'vue/order-in-components': 0,
     'vue/attributes-order': 0,

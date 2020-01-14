@@ -2,7 +2,7 @@ import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
 
 const plugin: KlarnaPlugin = {
   name: 'buttonColor',
-  fn: ({ getters }): KlarnaOrder => {
+  beforeCreate: ({ getters }): KlarnaOrder => {
     const order: KlarnaOrder = getters.order
     order.options = {
       ...order.options,

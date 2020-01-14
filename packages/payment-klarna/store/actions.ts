@@ -1,4 +1,4 @@
-import KlarnaState from '../types/KlarnaState'
+import KlarnaState, { KlarnaOrder } from '../types/KlarnaState'
 import { ActionTree } from 'vuex'
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
 import config from 'config'
@@ -32,19 +32,6 @@ export const actions: ActionTree<KlarnaState, RootState> = {
       orderId,
       expires: klarnaOrderIdExpires.getTime()
     }))
-  },
-  getSavedOrderId({ getters }) {
-    const maybeJson = localStorage.getItem(getters.storageTarget)
-    let savedOrderId = ''
-    if (maybeJson) {
-      const json = JSON.parse(maybeJson)
-      if (json.expires > Date.now()) {
-        savedOrderId = json.orderId
-      } else {
-        localStorage.removeItem(getters.storageTarget)
-      }
-    }
-    return savedOrderId
   },
   removeLocalStorage({ getters }) {
     localStorage.removeItem(getters.storageTarget)
@@ -83,19 +70,23 @@ export const actions: ActionTree<KlarnaState, RootState> = {
     commit('createOrder')
     try {
       await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
-      const order = plugins.reduce((_order, { fn }) => fn({getters, state, config}), getters.order)
-      const savedOrderId = await dispatch('getSavedOrderId')
+      const order: KlarnaOrder = plugins
+        .filter(plugin => plugin.beforeCreate)
+        .reduce((_order, { beforeCreate }) => beforeCreate({getters, state, config}), getters.order)
       const storeCode = currentStoreView().storeCode
       const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
       const result: any = await dispatch('klarnaCreateOrder', {
         url: config.klarna.endpoint,
         body: {
-          orderId: savedOrderId,
           order,
           storeCode,
           dataSourceStoreCode,
         }
       })
+      // Plugins: afterCreate
+      plugins
+        .filter(plugin => plugin.afterCreate)
+        .forEach(({ afterCreate }) => afterCreate({ result, order }))
       Vue.prototype.$bus.$emit('klarna-created-order', {result, order})
       const {snippet, ...klarnaResult} = result
       dispatch('saveOrderIdToLocalStorage', result.order_id)
