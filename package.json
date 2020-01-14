@@ -9,7 +9,7 @@
   ],
   "license": "MIT",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint packages",
     "cypress": "cypress open -p 6129",
     "cypress:ci": "cypress run"
   },

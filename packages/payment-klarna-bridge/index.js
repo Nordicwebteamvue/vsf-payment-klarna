@@ -19,7 +19,6 @@ function addStoreCode (merchantUrls, storeCode = '', dataSourceStoreCode = '') {
 }
 
 const maybeDecodeCartId = cartId => {
-  console.log('cartId', cartId)
   if (/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/.test(cartId)) {
     return jwt.decode(cartId).cartId
   } else {
@@ -41,7 +40,6 @@ const middleware = config => function (req, res, next) {
     }
   }
   addStoreCode(order.merchant_urls, storeCode, dataSourceStoreCode)
-  console.log('config.klarna.merchant_urls', config.klarna.merchant_urls)
   order.merchant_reference2 = maybeDecodeCartId(cartId)
   res.locals.order = order
   res.locals.orderId = orderId
