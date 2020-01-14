@@ -25,14 +25,6 @@ export const actions: ActionTree<KlarnaState, RootState> = {
   setPurchaseCountry ({ commit }, country: String) {
     commit('setPurchaseCountry', country)
   },
-  saveOrderIdToLocalStorage({ getters }, orderId) {
-    const klarnaOrderIdExpires = new Date();
-    klarnaOrderIdExpires.setDate(klarnaOrderIdExpires.getDate() + 2);
-    localStorage.setItem(getters.storageTarget, JSON.stringify({
-      orderId,
-      expires: klarnaOrderIdExpires.getTime()
-    }))
-  },
   removeLocalStorage({ getters }) {
     localStorage.removeItem(getters.storageTarget)
   },
@@ -50,7 +42,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
     }
     return result
   },
-  async orderError({ getters, commit, dispatch, state }, error) {
+  async orderErrorCatch({ getters, commit, dispatch, state }, error) {
     const { order } = getters
     if (order && order.reason) {
       console.log('Error:', order.reason)
@@ -62,8 +54,6 @@ export const actions: ActionTree<KlarnaState, RootState> = {
       window.location.reload()
       return
     }
-    commit('retryCreateOrder')
-    await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
     await dispatch('createOrder')
   },
   async createOrder ({ commit, dispatch, getters, state }) {
@@ -75,7 +65,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
         .reduce((_order, { beforeCreate }) => beforeCreate({getters, state, config}), getters.order)
       const storeCode = currentStoreView().storeCode
       const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
-      const result: any = await dispatch('klarnaCreateOrder', {
+      const {snippet, ...result}: any = await dispatch('klarnaCreateOrder', {
         url: config.klarna.endpoint,
         body: {
           order,
@@ -88,17 +78,13 @@ export const actions: ActionTree<KlarnaState, RootState> = {
         .filter(plugin => plugin.afterCreate)
         .forEach(({ afterCreate }) => afterCreate({ result, order }))
       Vue.prototype.$bus.$emit('klarna-created-order', {result, order})
-      const {snippet, ...klarnaResult} = result
-      dispatch('saveOrderIdToLocalStorage', result.order_id)
-      localStorage.setItem('kco/last-order', JSON.stringify(order))
       commit('createdOrder', {
         snippet: snippet,
-        orderId: result.order_id,
         order: result
       })
-      return klarnaResult
+      return result
     } catch (error) {
-      dispatch('orderError', error)
+      dispatch('orderErrorCatch', error)
     }
   },
   async fetchOrder ({}, sid) {
@@ -107,14 +93,13 @@ export const actions: ActionTree<KlarnaState, RootState> = {
     return result
   },
   async confirmation ({ commit, dispatch, getters }, { sid }) {
-    commit('getConfirmation')
-    const result = await dispatch('fetchOrder', sid)
+    commit('confirmationLoading')
+    const { html_snippet, ...result } = await dispatch('fetchOrder', sid)
     localStorage.removeItem(getters.storageTarget)
-    const { html_snippet: snippet, ...klarnaResult } = result
-    commit('confirmation', {
-      snippet
+    commit('confirmationDone', {
+      snippet: html_snippet
     })
-    return klarnaResult
+    return result
   },
   async retrievePayPalKco ({ commit },) {
     commit('getKcoPayPal')
@@ -129,7 +114,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
     return result;
   },
   setMerchantData ({ commit }, merchantData) {
-    commit('merchantData', merchantData)
+    commit('setMerchantData', merchantData)
   },
   resetMerchantData ({ commit }) {
     commit('resetMerchantData')
