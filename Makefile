@@ -22,6 +22,13 @@ import:
 	docker-compose exec api yarn restore
 	docker-compose exec api yarn migrate
 
+import-ci:
+	cd .output/vue-storefront-api && \
+	rm -rf var/magento2-sample-data && \
+	yarn restore && \
+	yarn migrate && \
+	git clone https://github.com/magento/magento2-sample-data.git var/magento2-sample-data
+
 build-ui:
 	cd .output/vue-storefront && yarn && yarn build
 
@@ -40,7 +47,7 @@ ci:
 full-ci:
 	docker-compose up -d elasticsearch redis
 	make bundle bundle-to-localhost build-api build-ui
-	make start-api es-restore start-ui
+	make start-api import-ci start-ui
 	make ci
 
 es-backup:

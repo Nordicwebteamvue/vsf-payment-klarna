@@ -8,12 +8,13 @@ Cypress.Commands.add('iframe', { prevSubject: 'element' }, $iframe => {
 })
 
 Cypress.Commands.add('addToCart', () => {
-  cy.get('[data-testid="addToCart"]').scrollIntoView().click()
+  cy.get('[data-testid="addToCart"]').click()
+  cy.get('[data-testid=notificationMessage]').contains('Product has been added to the cart!')
   cy.wait(2000)
 })
 
 Cypress.Commands.add('itemsInCart', (items) => {
-  cy.get(`[data-testid="minicartCount"]`).contains(String(items))
+  cy.get(`[data-testid="minicartCount"]`).scrollIntoView().contains(String(items))
 })
 
 Cypress.Commands.add('goToCart', () => {
