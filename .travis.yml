@@ -40,6 +40,6 @@ script:
   - make start-api es-restore start-ui
   - sleep 5
   - travis_fold end "start services"
-  - pm2 logs server --err --nostream
+  - yarn pm2 logs server --err --nostream
   - make ci
   - docker-compose down -v elasticsearch redis
