@@ -189,7 +189,7 @@ export default {
         } else {
           this.order.total = payment.transactions[0].amount.total + ' ' + payment.transactions[0].amount.currency
           this.order.image_url = config.paypal.image_url
-          let items = payment.transactions[0].item_list.items.map((item) => {
+          const items = payment.transactions[0].item_list.items.map((item) => {
             return {
               sku: item.sku,
               qty: item.quantity,

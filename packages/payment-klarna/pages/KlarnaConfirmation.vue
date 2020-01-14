@@ -28,7 +28,7 @@ export default {
   async mounted () {
     if (!isServer) {
       const queryString = this.$route.fullPath.replace(this.$route.path, '')
-      let { sid } = qs.parse(queryString, { ignoreQueryPrefix: true })
+      const { sid } = qs.parse(queryString, { ignoreQueryPrefix: true })
       const storageTarget = this.storageTarget.replace('/id', '/confirmation/' + sid)
       if (!sid) {
         return
