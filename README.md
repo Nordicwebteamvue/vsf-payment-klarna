@@ -42,6 +42,10 @@ Will be found at `www.example.com/confirmation` and `www.example.com/STORECODE/c
 
 See [beforeRegistration.ts](packages/payment-klarna/hooks/beforeRegistration.ts) for more info
 
+##### Plugins
+
+There's a few default plugins already made. See [plugins](packages/payment-klarna/plugins).
+
 ### Backend
 
 * Copy `packages/payment-klarna-bridge` to `src/api/extensions/payment-klarna-bridge`
