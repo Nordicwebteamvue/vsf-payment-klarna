@@ -1,5 +1,5 @@
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
-import { KlarnaOrder, KlarnaPlugin } from '../types/CheckoutState'
+import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
 
 const plugin: KlarnaPlugin = {
   name: 'kss',

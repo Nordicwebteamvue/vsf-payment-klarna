@@ -1,10 +1,11 @@
-import CheckoutState, { KlarnaPlugin } from '../types/CheckoutState'
+import KlarnaState from '../types/KlarnaState'
 import { ActionTree } from 'vuex'
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
 import config from 'config'
 import RootState from '@vue-storefront/core/types/RootState'
 import Vue from 'vue'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
+import { plugins, addPlugin } from '../plugins'
 
 const execute = (url, method = 'GET', body = null) => TaskQueue.execute({
   url,
@@ -17,10 +18,9 @@ const execute = (url, method = 'GET', body = null) => TaskQueue.execute({
   silent: true
 })
 
-export const actions: ActionTree<CheckoutState, RootState> = {
-  addPlugin ({ commit }, plugin: KlarnaPlugin) {
-    console.log('Added plugin', plugin.name)
-    commit('addPlugin', plugin)
+export const actions: ActionTree<KlarnaState, RootState> = {
+  addPlugin({}, plugin) {
+    addPlugin(plugin)
   },
   setPurchaseCountry ({ commit }, country: String) {
     commit('setPurchaseCountry', country)
@@ -63,10 +63,13 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     }
     return result
   },
-  async orderError({ getters, commit, dispatch, state }) {
+  async orderError({ getters, commit, dispatch, state }, error) {
     const { order } = getters
     if (order && order.reason) {
       console.log('Error:', order.reason)
+    }
+    if (error) {
+      console.log('Error:', error)
     }
     if (state.checkout.attempts > 3) {
       window.location.reload()
@@ -76,12 +79,11 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
     await dispatch('createOrder')
   },
-  async createOrder (context) {
-    const { commit, dispatch, getters, state } = context
+  async createOrder ({ commit, dispatch, getters, state }) {
     commit('createOrder')
     try {
       await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
-      const order = state.plugins.reduce(({fn}, _order) => fn({...context, config}), getters.order)
+      const order = plugins.reduce((_order, { fn }) => fn({getters, state, config}), getters.order)
       const savedOrderId = await dispatch('getSavedOrderId')
       const storeCode = currentStoreView().storeCode
       const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
@@ -105,7 +107,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
       })
       return klarnaResult
     } catch (error) {
-      dispatch('orderError')
+      dispatch('orderError', error)
     }
   },
   async fetchOrder ({}, sid) {

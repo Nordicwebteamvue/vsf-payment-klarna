@@ -1,5 +1,5 @@
 import i18n from '@vue-storefront/i18n'
-import { KlarnaOrder, KlarnaPlugin } from '../types/CheckoutState'
+import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
 
 const plugin: KlarnaPlugin = {
   name: 'i18nNewsletter',

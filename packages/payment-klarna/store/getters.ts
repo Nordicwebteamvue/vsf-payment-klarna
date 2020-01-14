@@ -1,20 +1,11 @@
 import { GetterTree } from 'vuex'
-import CheckoutState, { KlarnaOrder } from '../types/CheckoutState'
+import KlarnaState, { KlarnaOrder } from '../types/KlarnaState'
 import RootState from '@vue-storefront/core/types/RootState'
 import config from 'config'
 import { currentStoreView, localizedRoute } from '@vue-storefront/core/lib/multistore'
 import { getThumbnailPath } from '@vue-storefront/core/helpers'
 import { router } from '@vue-storefront/core/app'
-import get from 'lodash-es/get'
 import CartItem from '@vue-storefront/core/modules/cart/types/CartItem'
-
-const validateOrder = checkoutOrder => {
-  let sum = checkoutOrder.order_lines.reduce((acc, line) => acc + line.total_amount, 0)
-  console.log('checkoutOrder.order_amount === sum', checkoutOrder.order_amount, sum)
-  return checkoutOrder.order_amount === sum
-}
-
-const getValue = (attribute, item) => parseFloat(get(item.product, config.klarna.shipping_attributes[attribute], 0)) * item.qty | 0
 
 const getProductUrl = product => {
   const storeView = currentStoreView()
@@ -51,11 +42,11 @@ const getTaxAmount = (totalAmount: number, taxRate: number) => {
   return totalAmount / (1 + (1 / taxRate))
 }
 
-export const getters: GetterTree<CheckoutState, RootState> = {
-  checkout (state: CheckoutState) {
+export const getters: GetterTree<KlarnaState, RootState> = {
+  checkout (state: KlarnaState) {
     return state.checkout
   },
-  confirmation (state: CheckoutState) {
+  confirmation (state: KlarnaState) {
     return state.confirmation
   },
   coupon (state, getters, rootState, rootGetters) {
@@ -76,7 +67,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     const dbNamePrefix = storeView.storeCode ? storeView.storeCode + '-kco' : 'kco'
     return `${dbNamePrefix}/id`
   },
-  getTrueCartItems(state: CheckoutState, getters, rootState, rootGetters) {
+  getTrueCartItems(state: KlarnaState, getters, rootState, rootGetters) {
     const cartItems: Array<CartItem> = Array.from(rootGetters['cart/getCartItems'])
     const totals = getters.platformTotals
     const trueCartItems = totals.items.map(item => {
@@ -89,7 +80,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     })
     return trueCartItems
   },
-  getPurchaseCountry (state: CheckoutState) {
+  getPurchaseCountry (state: KlarnaState) {
     const storeView: any = currentStoreView()
     let purchaseCountry = state.purchaseCountry || storeView.i18n.defaultCountry
     if (storeView.shipping_countries && !storeView.shipping_countries.includes(purchaseCountry)) {
@@ -101,13 +92,13 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     }
     return purchaseCountry
   },
-  isFreeShipping(state: CheckoutState, getters) {
+  isFreeShipping(state: KlarnaState, getters) {
     // Check if it freeshipping from coupon or not
     return getters.platformTotals.total_segments.find((totalsSegment) => {
       return totalsSegment.code === 'shipping' && parseInt(totalsSegment.value) === 0
     })
   },
-  order (state: CheckoutState, getters, rootState, rootGetters): KlarnaOrder {
+  order (state: KlarnaState, getters, rootState, rootGetters): KlarnaOrder {
     const storeView: any = currentStoreView()
     const cartItems = getters.getTrueCartItems
     const shippingMethods = rootGetters['shipping/getShippingMethods']
@@ -189,10 +180,6 @@ export const getters: GetterTree<CheckoutState, RootState> = {
         checkoutOrder.order_amount = Math.round(orderAmount)
         checkoutOrder.order_tax_amount = Math.round(orderTaxAmount)
       }
-    }
-
-    if (!validateOrder(checkoutOrder)) {
-      throw new Error('Order amount incorrect')
     }
     return checkoutOrder
   }

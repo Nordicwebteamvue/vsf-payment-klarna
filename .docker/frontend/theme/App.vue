@@ -8,6 +8,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import buttonColor from 'src/modules/payment-klarna/plugins/buttonColor'
 const DefaultLayout = () => import(/* webpackChunkName: "vsf-layout-default" */ './layouts/Default')
 const EmptyLayout = () => import(/* webpackChunkName: "vsf-layout-empty" */ './layouts/Empty')
 const MinimalLayout = () => import(/* webpackChunkName: "vsf-layout-minimal" */ './layouts/Minimal')
@@ -30,6 +31,10 @@ export default {
     DefaultLayout,
     EmptyLayout,
     MinimalLayout
+  },
+  mounted () {
+    // Add buttonColor plugin
+    this.$store.dispatch('kco/addPlugin', buttonColor)
   }
 }
 </script>

@@ -1,5 +1,5 @@
 import get from 'lodash-es/get'
-import { KlarnaOrder, KlarnaPlugin } from '../types/CheckoutState'
+import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
 
 const plugin: KlarnaPlugin = {
   name: 'shippingAttributes',
