@@ -29,7 +29,7 @@
             {{ order.total }}
           </div>
         </div>
-        <div class="line"/>
+        <div class="line" />
         <div class="payment my10 py10">
           <div>
             {{ i18n.t('Paid By') }}

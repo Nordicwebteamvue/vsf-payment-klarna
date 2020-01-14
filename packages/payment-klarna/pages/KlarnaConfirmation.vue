@@ -28,7 +28,7 @@ export default {
   async mounted () {
     if (!isServer) {
       const queryString = this.$route.fullPath.replace(this.$route.path, '')
-      let {sid} = qs.parse(queryString, { ignoreQueryPrefix: true })
+      let { sid } = qs.parse(queryString, { ignoreQueryPrefix: true })
       const storageTarget = this.storageTarget.replace('/id', '/confirmation/' + sid)
       if (!sid) {
         return
@@ -49,7 +49,7 @@ export default {
       }
       const checkboxes = result.merchant_requested && result.merchant_requested.additional_checkboxes
       if (checkboxes) {
-        const newsletter = checkboxes.find(({id}) => id === 'newsletter_opt_in')
+        const newsletter = checkboxes.find(({ id }) => id === 'newsletter_opt_in')
         if (newsletter && newsletter.checked) {
           this.$bus.$emit('newsletter-signup', {
             email: result.billing_address.email
