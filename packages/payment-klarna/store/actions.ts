@@ -95,7 +95,10 @@ export const actions: ActionTree<KlarnaState, RootState> = {
   async confirmation ({ commit, dispatch, getters }, { sid }) {
     commit('confirmationLoading')
     const { html_snippet, ...result } = await dispatch('fetchOrder', sid)
-    localStorage.removeItem(getters.storageTarget)
+    // Plugins: onConfirmation
+    plugins
+      .filter(plugin => plugin.onConfirmation)
+      .forEach(({ onConfirmation }) => onConfirmation({ result, dispatch, getters }))
     commit('confirmationDone', {
       snippet: html_snippet
     })

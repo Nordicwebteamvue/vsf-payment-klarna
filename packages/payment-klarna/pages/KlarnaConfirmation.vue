@@ -18,8 +18,7 @@ export default {
   name: 'KlarnaConfirmation',
   computed: {
     ...mapGetters({
-      confirmation: 'kco/confirmation',
-      storageTarget: 'kco/storageTarget'
+      confirmation: 'kco/confirmation'
     })
   },
   components: {
@@ -29,33 +28,12 @@ export default {
     if (!isServer) {
       const queryString = this.$route.fullPath.replace(this.$route.path, '')
       const { sid } = qs.parse(queryString, { ignoreQueryPrefix: true })
-      const storageTarget = this.storageTarget.replace('/id', '/confirmation/' + sid)
       if (!sid) {
         return
       }
       this.$bus.$emit('kco-order-confirmation', { orderId: sid })
-      const result = await this.$store.dispatch('kco/confirmation', { sid })
-      this.$bus.$emit('checkout-do-placeOrder', result)
+      await this.$store.dispatch('kco/confirmation', { sid })
       this.$store.dispatch('cart/clear')
-      if (result.merchant_data) {
-        if (!localStorage.getItem(storageTarget)) {
-          this.$bus.$emit('kco-merchant-data', {
-            merchantData: JSON.parse(result.merchant_data),
-            result
-          })
-          localStorage.setItem(storageTarget, 'sent')
-        }
-        this.$store.dispatch('kco/resetMerchantData')
-      }
-      const checkboxes = result.merchant_requested && result.merchant_requested.additional_checkboxes
-      if (checkboxes) {
-        const newsletter = checkboxes.find(({ id }) => id === 'newsletter_opt_in')
-        if (newsletter && newsletter.checked) {
-          this.$bus.$emit('newsletter-signup', {
-            email: result.billing_address.email
-          })
-        }
-      }
       const { default: postscribe } = await import('postscribe')
       postscribe('#klarna-render-confirmation', this.confirmation.snippet)
     }

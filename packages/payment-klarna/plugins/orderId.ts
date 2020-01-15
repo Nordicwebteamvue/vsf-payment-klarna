@@ -24,6 +24,9 @@ const plugin: KlarnaPlugin = {
       orderId: result.order_id,
       expires: klarnaOrderIdExpires.getTime()
     }))
+  },
+  onConfirmation: () => {
+    localStorage.removeItem(target)
   }
 }
 

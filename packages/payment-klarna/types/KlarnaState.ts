@@ -3,6 +3,7 @@ type GenericObject = { [key: string]: any }
 export interface KlarnaPlugin {
   beforeCreate?: (any) => KlarnaOrder
   afterCreate?: (any) => void
+  onConfirmation?: (any) => void
   name: string
 }
 
