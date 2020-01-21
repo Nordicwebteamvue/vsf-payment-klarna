@@ -1,5 +1,5 @@
 {
-  "name": "payment-klarna",
+  "name": "payment-klarna-bridge",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

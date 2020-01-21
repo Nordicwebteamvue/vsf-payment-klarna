@@ -34,11 +34,9 @@ export default {
   },
   beforeMount () {
     this.$bus.$on('klarna-update-order', this.configureUpdateOrder)
-    this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder) // legacy
   },
   beforeDestroy () {
     this.$bus.$off('klarna-update-order')
-    this.$bus.$off('updateKlarnaOrder') // legacy
   },
   computed: {
     ...mapGetters({
@@ -128,10 +126,13 @@ export default {
 }
 </script>
 
-<style lang="css">
-  div.wrapper.wrapper {
-    height: 30vh;
-    max-width: 100%;
-    padding-left: 25px;
-  }
+<style lang="scss">
+div.wrapper.wrapper {
+  height: 30vh;
+  max-width: 100%;
+  padding-left: 25px;
+}
+#klarna-unsupported-page {
+  display: none;
+}
 </style>

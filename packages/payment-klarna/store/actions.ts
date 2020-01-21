@@ -1,10 +1,11 @@
-import CheckoutState from '../types/CheckoutState'
+import KlarnaState, { KlarnaOrder } from '../types/KlarnaState'
 import { ActionTree } from 'vuex'
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
 import config from 'config'
 import RootState from '@vue-storefront/core/types/RootState'
 import Vue from 'vue'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
+import { plugins, addPlugin } from '../plugins'
 
 const execute = (url, method = 'GET', body = null) => TaskQueue.execute({
   url,
@@ -17,36 +18,17 @@ const execute = (url, method = 'GET', body = null) => TaskQueue.execute({
   silent: true
 })
 
-export const actions: ActionTree<CheckoutState, RootState> = {
+export const actions: ActionTree<KlarnaState, RootState> = {
+  addPlugin({}, plugin) {
+    addPlugin(plugin)
+  },
   setPurchaseCountry ({ commit }, country: String) {
     commit('setPurchaseCountry', country)
-  },
-  saveOrderIdToLocalStorage({ getters }, orderId) {
-    const klarnaOrderIdExpires = new Date();
-    klarnaOrderIdExpires.setDate(klarnaOrderIdExpires.getDate() + 2);
-    localStorage.setItem(getters.storageTarget, JSON.stringify({
-      orderId,
-      expires: klarnaOrderIdExpires.getTime()
-    }))
-  },
-  getSavedOrderId({ getters }) {
-    const maybeJson = localStorage.getItem(getters.storageTarget)
-    let savedOrderId = ''
-    if (maybeJson) {
-      const json = JSON.parse(maybeJson)
-      if (json.expires > Date.now()) {
-        savedOrderId = json.orderId
-      } else {
-        localStorage.removeItem(getters.storageTarget)
-      }
-    }
-    return savedOrderId
   },
   removeLocalStorage({ getters }) {
     localStorage.removeItem(getters.storageTarget)
   },
   async klarnaCreateOrder({ commit, dispatch }, {url, body}) {
-    console.log('url', url, body)
     const { result } : any = await execute(url, 'POST', body)
     if (result.error) {
       Vue.prototype.$bus.$emit('klarna-create-error', result)
@@ -55,76 +37,74 @@ export const actions: ActionTree<CheckoutState, RootState> = {
         await dispatch('createOrder')
         return false
       }
-      console.log('error', result)
       commit('createOrderError', result.error)
-      return false
+      throw new Error('Klarna error')
     }
     return result
   },
-  async orderError({ getters, commit, dispatch, state }) {
+  async orderErrorCatch({ getters, commit, dispatch, state }, error) {
     const { order } = getters
     if (order && order.reason) {
       console.log('Error:', order.reason)
+    }
+    if (error) {
+      console.log('Error:', error)
     }
     if (state.checkout.attempts > 3) {
       window.location.reload()
       return
     }
-    commit('retryCreateOrder')
-    await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
     await dispatch('createOrder')
   },
-  async createOrder ({ commit, dispatch, getters }) {
+  async createOrder ({ commit, dispatch, getters, state }) {
     commit('createOrder')
-    await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
-    const { order } = getters
-    if (!order || order.error) {
-      await dispatch('orderError')
-      return
+    try {
+      await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
+      const order: KlarnaOrder = plugins
+        .filter(plugin => plugin.beforeCreate)
+        .reduce((_order, { beforeCreate }) => beforeCreate({getters, state, config}), getters.order)
+      const storeCode = currentStoreView().storeCode
+      const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
+      const {snippet, ...result}: any = await dispatch('klarnaCreateOrder', {
+        url: config.klarna.endpoint,
+        body: {
+          order,
+          storeCode,
+          dataSourceStoreCode,
+        }
+      })
+      // Plugins: afterCreate
+      plugins
+        .filter(plugin => plugin.afterCreate)
+        .forEach(({ afterCreate }) => afterCreate({ result, order }))
+      Vue.prototype.$bus.$emit('klarna-created-order', {result, order})
+      commit('createdOrder', {
+        snippet: snippet,
+        order: result
+      })
+      return result
+    } catch (error) {
+      dispatch('orderErrorCatch', error)
     }
-    const savedOrderId = await dispatch('getSavedOrderId')
-    console.log('savedOrderId', savedOrderId)
-    const storeCode = currentStoreView().storeCode
-    const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
-    const result: any = await dispatch('klarnaCreateOrder', {
-      url: config.klarna.endpoint,
-      body: {
-        orderId: savedOrderId,
-        order,
-        storeCode,
-        dataSourceStoreCode,
-      }
-    })
-    if (!result) {
-      return
-    }
-    Vue.prototype.$bus.$emit('klarna-created-order', {result, order})
-    const {snippet, ...klarnaResult} = result
-    dispatch('saveOrderIdToLocalStorage', result.order_id)
-    localStorage.setItem('kco/last-order', JSON.stringify(order))
-    commit('createdOrder', {
-      snippet: snippet,
-      orderId: result.order_id,
-      order: result
-    })
-    return klarnaResult
   },
-  async fetchOrder ({ commit, state, getters }, sid) {
+  async fetchOrder ({}, sid) {
     const url = config.klarna.confirmation.replace('{{sid}}', sid)
     const { result } : any = await execute(url)
     return result
   },
-  async confirmation ({ commit, state, dispatch, getters }, { sid }) {
-    commit('getConfirmation')
-    const result = await dispatch('fetchOrder', sid)
-    localStorage.removeItem(getters.storageTarget)
-    const { html_snippet: snippet, ...klarnaResult } = result
-    commit('confirmation', {
-      snippet
+  async confirmation ({ commit, dispatch, getters }, { sid }) {
+    commit('confirmationLoading')
+    const { html_snippet, ...result } = await dispatch('fetchOrder', sid)
+    // Plugins: onConfirmation
+    plugins
+      .filter(plugin => plugin.onConfirmation)
+      .forEach(({ onConfirmation }) => onConfirmation({ result, dispatch, getters }))
+    commit('confirmationDone', {
+      snippet: html_snippet
     })
-    return klarnaResult
+    return result
   },
-  async retrievePayPalKco ({ commit, state, dispatch },) {
+  async retrievePayPalKco ({ commit },) {
     commit('getKcoPayPal')
     let klarnaSidArray = JSON.parse(localStorage.getItem('_klarna_sdid_ch'))
     // last sid of order
@@ -137,7 +117,7 @@ export const actions: ActionTree<CheckoutState, RootState> = {
     return result;
   },
   setMerchantData ({ commit }, merchantData) {
-    commit('merchantData', merchantData)
+    commit('setMerchantData', merchantData)
   },
   resetMerchantData ({ commit }) {
     commit('resetMerchantData')

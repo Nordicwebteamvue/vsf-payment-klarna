@@ -19,7 +19,6 @@ function addStoreCode (merchantUrls, storeCode = '', dataSourceStoreCode = '') {
 }
 
 const maybeDecodeCartId = cartId => {
-  console.log('cartId', cartId)
   if (/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/.test(cartId)) {
     return jwt.decode(cartId).cartId
   } else {
@@ -28,12 +27,12 @@ const maybeDecodeCartId = cartId => {
 }
 
 const middleware = config => function (req, res, next) {
-  const { order, storeCode, dataSourceStoreCode, orderId } = req.body
+  const { order, storeCode, dataSourceStoreCode } = req.body
   const { cartId } = req.query
   if (!order || !cartId) {
     throw new Error('Bad Request: Missing order or cartId')
   }
-  order.merchant_urls = {...config.klarna.merchant_urls}
+  order.merchant_urls = { ...config.klarna.merchant_urls }
   if (storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].merchant_urls) {
     order.merchant_urls = {
       ...order.merchant_urls,
@@ -41,19 +40,17 @@ const middleware = config => function (req, res, next) {
     }
   }
   addStoreCode(order.merchant_urls, storeCode, dataSourceStoreCode)
-  console.log('config.klarna.merchant_urls', config.klarna.merchant_urls)
   order.merchant_reference2 = maybeDecodeCartId(cartId)
   res.locals.order = order
-  res.locals.orderId = orderId
   next()
 }
 
 module.exports = ({ config }) => {
   const api = Router()
   api.post('/create-or-update-order', middleware(config), (req, res) => {
-    const { order, orderId } = res.locals
-    const {auth, endpoints} = config.klarna
-    const url = orderId ? endpoints.orders + '/' + orderId : endpoints.orders
+    const { order } = res.locals
+    const { auth, endpoints } = config.klarna
+    const url = order.orderId ? endpoints.orders + '/' + order.orderId : endpoints.orders
     request.post({
       url,
       auth,
@@ -78,7 +75,7 @@ module.exports = ({ config }) => {
   })
 
   api.get('/order-id', (req, res) => {
-    const {sid} = req.query
+    const { sid } = req.query
     if (!sid) {
       apiStatus(res, 'Missing sid', 400)
       return
@@ -114,7 +111,7 @@ module.exports = ({ config }) => {
         apiStatus(res, `Klarna error: ${body.error_code}`, statusCode)
         return
       }
-      apiStatus(res, {snippet: body.html_snippet})
+      apiStatus(res, { snippet: body.html_snippet })
     })
   })
 
@@ -136,7 +133,7 @@ module.exports = ({ config }) => {
         apiStatus(res, `Klarna error: ${body.error_code}`, statusCode)
         return
       }
-      apiStatus(res, {orderId: body.order_id, snippet: body.html_snippet})
+      apiStatus(res, { orderId: body.order_id, snippet: body.html_snippet })
     })
   })
 

@@ -1,10 +1,10 @@
 import { Module } from 'vuex'
-import CheckoutState from '../types/CheckoutState'
+import KlarnaState from '../types/KlarnaState'
 import { actions } from './actions'
 import { getters } from './getters'
 import { mutations } from './mutations'
 
-export const module: Module<CheckoutState, any> = {
+export const module: Module<KlarnaState, any> = {
   namespaced: true,
   actions,
   getters,

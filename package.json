@@ -9,7 +9,7 @@
   ],
   "license": "MIT",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint packages",
     "cypress": "cypress open -p 6129",
     "cypress:ci": "cypress run"
   },
@@ -28,7 +28,8 @@
     "eslint-plugin-vue": "^5.2.2",
     "eslint-plugin-vue-storefront": "^0.0.1",
     "husky": ">=1",
-    "lint-staged": ">=8"
+    "lint-staged": ">=8",
+    "pm2": "^4.2.1"
   },
   "husky": {
     "hooks": {

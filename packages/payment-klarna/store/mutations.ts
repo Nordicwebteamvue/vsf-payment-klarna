@@ -1,5 +1,4 @@
 import { MutationTree } from 'vuex'
-import * as types from './mutation-types'
 
 export const mutations: MutationTree<any> = {
   setPurchaseCountry (state, country) {
@@ -7,10 +6,6 @@ export const mutations: MutationTree<any> = {
   },
   createOrder (state) {
     state.checkout.attempts += 1
-    state.checkout.loading = true
-    state.checkout.error = false
-  },
-  retryCreateOrder (state) {
     state.checkout.loading = true
     state.checkout.error = false
   },
@@ -22,27 +17,28 @@ export const mutations: MutationTree<any> = {
   createdOrder (state, payload) {
     state.checkout = {
       ...payload,
+      orderId: payload.order.orderId,
       loading: false,
       error: false,
       attempts: 0
     }
   },
-  getConfirmation (state, payload) {
+  confirmationLoading (state) {
     state.confirmation.loading = true
   },
-  confirmation (state, payload) {
+  confirmationDone (state, payload) {
     state.confirmation = {
       ...payload,
       loading: false
     }
   },
-  getKcoPayPal (state, payload) {
+  getKcoPayPal (state) {
     state.checkout.loading = true
   },
   setKcoPayPal (state, payload) {
     state.checkout.kcoPayPal = payload
   },
-  merchantData (state, payload) {
+  setMerchantData (state, payload) {
     state.merchantData = payload
   },
   resetMerchantData (state) {
