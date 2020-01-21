@@ -36,4 +36,5 @@ script:
   - sleep 5
   - make ci
   - docker-compose ps
+  - yarn pm2 logs all --err --nostream --lines 100
   - docker-compose down -v
