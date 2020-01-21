@@ -34,12 +34,12 @@ script:
   - docker-compose up -d elasticsearch redis
   - make bundle bundle-to-localhost
   - travis_fold start "build"
-  - make bundle build-api build-ui
+  - make build-api build-ui
   - travis_fold end "build"
-#  - travis_fold start "start services"
-#  - make start-api es-restore start-ui
-#  - sleep 5
-#  - travis_fold end "start services"
-#  - yarn pm2 logs server --err --nostream
-#  - make ci
-#  - docker-compose down -v elasticsearch redis
+  - travis_fold start "start services"
+  - make start-api es-restore start-ui
+  - sleep 5
+  - travis_fold end "start services"
+  - yarn pm2 logs server --err --nostream
+  - make ci
+  - docker-compose down -v elasticsearch redis
