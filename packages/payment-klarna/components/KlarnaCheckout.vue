@@ -99,7 +99,7 @@ export default {
       this.setupKlarnaListeners()
     },
     async configureUpdateOrder () {
-      if (!this.checkout.orderId) {
+      if (!this.checkout.order || !this.checkout.order.orderId) {
         return
       }
       await this.suspendCheckout()

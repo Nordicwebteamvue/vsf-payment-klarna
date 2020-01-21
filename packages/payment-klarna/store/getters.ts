@@ -72,7 +72,7 @@ export const getters: GetterTree<KlarnaState, RootState> = {
     const totals = getters.platformTotals
     const trueCartItems = totals.items.map(item => {
       const newItem = {...item}
-      const vsfitem = cartItems.find(_item => _item.totals.item_id === item.item_id)
+      const vsfitem = cartItems.find(_item => _item.totals && _item.totals.item_id === item.item_id)
       if (vsfitem) {
         newItem.product = vsfitem
       }
@@ -101,7 +101,7 @@ export const getters: GetterTree<KlarnaState, RootState> = {
   order (state: KlarnaState, getters, rootState, rootGetters): KlarnaOrder {
     const storeView: any = currentStoreView()
     const cartItems = getters.getTrueCartItems
-    const shippingMethods = rootGetters['shipping/getShippingMethods']
+    const shippingMethods = rootState.shipping.methods
     const totals = getters.platformTotals
 
     const checkoutOrder: KlarnaOrder = {
