@@ -32,7 +32,7 @@ install: yarn
 script:
   - yarn lint
   - docker-compose up -d elasticsearch redis
-  - make bundle bundle-to-localhost build-api build-ui start-api es-restore start-ui
+  - make bundle bundle-to-localhost build-api build-ui start-api import-ci start-ui
   - sleep 5
   - make ci
   - docker-compose ps
