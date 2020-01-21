@@ -35,4 +35,5 @@ script:
   - make bundle bundle-to-localhost build-api build-ui start-api es-restore start-ui
   - sleep 5
   - make ci
-  - docker-compose down -v elasticsearch redis
+  - docker-compose ps
+  - docker-compose down -v
