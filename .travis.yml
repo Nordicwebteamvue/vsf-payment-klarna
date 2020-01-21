@@ -32,7 +32,7 @@ install: yarn
 script:
   - yarn lint
   - docker-compose up -d elasticsearch redis
-  - make bundle bundle-to-localhost end
+  - make bundle bundle-to-localhost
   - travis_fold start "build"
   - make bundle build-api build-ui
   - travis_fold end "build"
