@@ -50,7 +50,7 @@ module.exports = ({ config }) => {
   api.post('/create-or-update-order', middleware(config), (req, res) => {
     const { order } = res.locals
     const { auth, endpoints } = config.klarna
-    const url = order.orderId ? endpoints.orders + '/' + order.orderId : endpoints.orders
+    const url = order.orderId ? `${endpoints.orders}/${order.orderId}` : endpoints.orders
     request.post({
       url,
       auth,

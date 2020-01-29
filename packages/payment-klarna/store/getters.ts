@@ -116,9 +116,6 @@ export const getters: GetterTree<KlarnaState, RootState> = {
       options: config.klarna.options ? config.klarna.options : null,
       merchant_data: JSON.stringify(state.merchantData)
     }
-    if (state.checkout.orderId) {
-      checkoutOrder.orderId = state.checkout.orderId
-    }
     if (config.klarna.showShippingOptions && state.shippingOptions) {
       checkoutOrder.order_amount = Math.round((totals.base_grand_total - totals.base_shipping_incl_tax) * 100)
       checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount - totals.base_shipping_tax_amount) * 100)

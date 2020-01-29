@@ -42,7 +42,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .confirmation {
-    min-height: 580px;
-  }
+.confirmation {
+  min-height: 580px;
+}
+#klarna-unsupported-page {
+  display: none;
+}
 </style>
