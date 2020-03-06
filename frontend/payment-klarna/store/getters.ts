@@ -13,7 +13,7 @@ const validateOrder = checkoutOrder => {
   return checkoutOrder.order_amount === sum
 }
 
-const getValue = (attribute, item) => parseFloat(get(item.product, config.klarna.shipping_attributes[attribute], 0)) * item.qty | 0
+const getValue = (attribute, item) => config.klarna.shipping_attributes ? parseFloat(get(item.product, config.klarna.shipping_attributes[attribute], 0)) * item.qty | 0 : 0
 
 const getProductUrl = product => {
   const storeView = currentStoreView()
