@@ -60,6 +60,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
     commit('createOrder')
     try {
       await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
+      // Plugins: beforeCreate
       const order: KlarnaOrder = plugins
         .filter(plugin => plugin.beforeCreate)
         .reduce((_order, { beforeCreate }) => beforeCreate({ getters, state, config }), getters.order)

@@ -7,7 +7,6 @@ const plugin: KlarnaPlugin = {
   beforeCreate: ({ getters }): KlarnaOrder => {
     const order: KlarnaOrder = getters.order
     const { options } = order
-    console.log('options', options)
     if (options && options.additional_checkboxes) {
       options.additional_checkboxes.forEach(checkbox => {
         if (checkbox.id === 'newsletter_opt_in') {
