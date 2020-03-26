@@ -26,3 +26,8 @@ jobs:
         run: make bundle bundle-to-localhost build-api build-ui start-api import-ci start-ui
       - name: Run e2e tests
         uses: cypress-io/github-action@v1
+        with:
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
