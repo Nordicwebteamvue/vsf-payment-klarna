@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/kodbruket/vsf-payment-klarna.git",
-  "author": [
-    "Robin Nilsson <robin@robins.nu>",
-    "Max Malm <benjick@dumfan.net>"
+  "author": "Max Malm <benjick@dumfan.net>",
+  "contributors": [
+    "Robin Nilsson <robin@robins.nu>"
   ],
   "license": "MIT",
   "scripts": {
