@@ -9,7 +9,7 @@
   ],
   "license": "MIT",
   "scripts": {
-    "lint": "eslint --ext=.js,.ts,.vue packages",
+    "lint": "eslint --ext=.js,.ts,.vue .",
     "cypress": "cypress open -p 6129",
     "cypress:ci": "cypress run"
   },

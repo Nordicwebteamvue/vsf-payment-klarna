@@ -14,7 +14,7 @@ services:
       - './.docker/vue-storefront-api/migrations:/var/www/migrations'
       - './.docker/vue-storefront-api/package.json:/var/www/package.json'
       - './.docker/vue-storefront-api/babel.config.js:/var/www/babel.config.js'
-      - './.docker/vue-storefront-api/tsconfig.json:/var/www/tsconfig.json'
+      - './.docker/api/tsconfig.json:/var/www/tsconfig.json'
       - './.docker/vue-storefront-api/nodemon.json:/var/www/nodemon.json'
       - './.docker/vue-storefront-api/scripts:/var/www/scripts'
       - './.docker/vue-storefront-api/src:/var/www/src'

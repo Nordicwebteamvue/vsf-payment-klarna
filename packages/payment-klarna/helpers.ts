@@ -1,5 +1,5 @@
 declare global {
-  interface Window { _klarnaCheckout: any; }
+  interface Window { _klarnaCheckout: any }
 }
 
 export const callApi = (callback: (api: any) => {}) => new Promise((resolve) => {

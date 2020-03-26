@@ -14,10 +14,10 @@ Cypress.Commands.add('addToCart', () => {
 })
 
 Cypress.Commands.add('itemsInCart', (items) => {
-  cy.get(`[data-testid="minicartCount"]`).scrollIntoView().contains(String(items))
+  cy.get('[data-testid="minicartCount"]').scrollIntoView().contains(String(items))
 })
 
 Cypress.Commands.add('goToCart', () => {
-  cy.get(`[data-testid="minicartCount"]`).scrollIntoView().click()
-  cy.get(`[data-testid="subscribeSubmit"]`).first().click({ force: true })
+  cy.get('[data-testid="minicartCount"]').scrollIntoView().click()
+  cy.get('[data-testid="subscribeSubmit"]').first().click({ force: true })
 })
