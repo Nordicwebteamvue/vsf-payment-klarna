@@ -29,5 +29,6 @@ context('Actions', () => {
     cy.goToCart()
     cy.wait(250)
     cy.url().should('include', '/checkout')
+    cy.contains('null').should('not.exist')
   })
 })
