@@ -101,7 +101,7 @@ export const getters: GetterTree<KlarnaState, RootState> = {
   order (state: KlarnaState, getters, rootState, rootGetters): KlarnaOrder {
     const storeView: any = currentStoreView()
     const cartItems = getters.getTrueCartItems
-    const shippingMethods = rootState.shipping.methods
+    const shippingMethods = rootGetters['checkout/getShippingMethods']
     const totals = getters.platformTotals
 
     const checkoutOrder: KlarnaOrder = {

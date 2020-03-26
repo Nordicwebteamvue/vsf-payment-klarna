@@ -11,7 +11,7 @@ context('Actions', () => {
       // eslint-disable-next-line
       expect(localStorage.getItem('kco/order-id')).to.not.be.undefined
     })
-    // cy.get('#klarna-checkout-iframe').iframe().should('contain', 'TEST DRIVE')
+    cy.getIframeBody('#klarna-checkout-iframe').contains('TEST DRIVE')
   })
 
   it('can recover a broken session checkout', () => {
@@ -21,6 +21,7 @@ context('Actions', () => {
     cy.goToCart()
     localStorage.setItem('carts/current-cart-hash', 'foo')
     localStorage.setItem('carts/current-cart', 'foo')
+    cy.log('Destroyed cart')
     cy.reload()
     cy.url().should('not', 'include', '/checkout')
     cy.visit('/gear/gear-3/joust-duffle-bag-1.html')
@@ -29,6 +30,6 @@ context('Actions', () => {
     cy.goToCart()
     cy.wait(250)
     cy.url().should('include', '/checkout')
-    cy.contains('null').should('not.exist')
+    cy.getIframeBody('#klarna-checkout-iframe').contains('TEST DRIVE')
   })
 })
