@@ -14,7 +14,7 @@ export const defaultPlugins: Array<KlarnaPlugin> = [
   shippingAttributes,
   validateOrderAmount,
   lastOrder,
-  orderId,
+  orderId
 ]
 
 export function addPlugin (plugin: KlarnaPlugin) {

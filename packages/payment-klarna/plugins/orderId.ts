@@ -18,8 +18,8 @@ const plugin: KlarnaPlugin = {
     return order
   },
   afterCreate: ({ result }) => {
-    const klarnaOrderIdExpires = new Date();
-    klarnaOrderIdExpires.setDate(klarnaOrderIdExpires.getDate() + 2);
+    const klarnaOrderIdExpires = new Date()
+    klarnaOrderIdExpires.setDate(klarnaOrderIdExpires.getDate() + 2)
     localStorage.setItem(target, JSON.stringify({
       orderId: result.order_id,
       expires: klarnaOrderIdExpires.getTime()

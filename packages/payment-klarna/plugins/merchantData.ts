@@ -5,7 +5,7 @@ const storageTarget = 'kco/merchant-data'
 
 const plugin: KlarnaPlugin = {
   name: 'merchantData',
-  onConfirmation: ({result, dispatch}) => {
+  onConfirmation: ({ result, dispatch }) => {
     if (result.merchant_data) {
       if (!localStorage.getItem(storageTarget)) {
         EventBus.$emit('kco-merchant-data', {

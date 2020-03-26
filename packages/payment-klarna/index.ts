@@ -9,7 +9,7 @@ const moduleConfig: VueStorefrontModuleConfig = {
   key: KEY,
   beforeRegistration,
   afterRegistration,
-  store: { modules: [{ key: KEY, module }] },
+  store: { modules: [{ key: KEY, module }] }
 }
 
 export const KlarnaCheckout = new VueStorefrontModule(moduleConfig)

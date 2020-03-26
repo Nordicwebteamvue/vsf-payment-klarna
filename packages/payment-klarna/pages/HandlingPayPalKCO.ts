@@ -1,6 +1,5 @@
 import config from 'config'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
-import paypal from 'paypal-rest-sdk-kodbruket-fixed'
 import { mapGetters } from 'vuex'
 
 export default {

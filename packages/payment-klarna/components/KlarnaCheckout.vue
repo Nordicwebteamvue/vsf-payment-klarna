@@ -117,7 +117,7 @@ export default {
         this.$bus.$emit('kcoAddressChange', orderData)
       }
       return callApi(api => api.on({
-        'billing_address_change': async (data) => {
+        billing_address_change: async () => {
           this.$bus.$emit('klarna-order-loaded')
         }
       }))

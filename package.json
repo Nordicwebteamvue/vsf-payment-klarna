@@ -9,27 +9,30 @@
   ],
   "license": "MIT",
   "scripts": {
-    "lint": "eslint packages",
+    "lint": "eslint --ext=.js,.ts,.vue packages",
     "cypress": "cypress open -p 6129",
     "cypress:ci": "cypress run"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.25.0",
     "babel-eslint": "^8.2.6",
     "cypress": "^3.2.0",
     "elasticdump": "^6.16.2",
-    "eslint": "^4.16.0",
-    "eslint-config-standard": "^11.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
     "eslint-friendly-formatter": "^4.0.1",
-    "eslint-loader": "^2.0.0",
-    "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.1.0",
-    "eslint-plugin-vue": "^5.2.2",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-vue": "^6.2.2",
     "eslint-plugin-vue-storefront": "^0.0.1",
     "husky": ">=1",
     "lint-staged": ">=8",
-    "pm2": "^4.2.1"
+    "pm2": "^4.2.1",
+    "typescript": "^3.8.3"
   },
   "husky": {
     "hooks": {

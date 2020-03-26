@@ -1,6 +1,8 @@
 import get from 'lodash-es/get'
 import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
 
+const hasOwnProperty = (object, property) => Object.prototype.hasOwnProperty.call(object, property)
+
 const plugin: KlarnaPlugin = {
   name: 'shippingAttributes',
   beforeCreate: ({ config, getters }): KlarnaOrder => {
@@ -28,30 +30,30 @@ const plugin: KlarnaPlugin = {
       order.order_lines.forEach(klarnaProduct => {
         if (klarnaProduct.reference) {
           const product = getters.getTrueCartItems.find(product => product.product.sku === klarnaProduct.reference)
-          let weight = getValue('weight', product)
-          let height = getValue('height', product) * 10
-          let width = getValue('width', product) * 10
-          let length = getValue('length', product) * 10
+          const weight = getValue('weight', product)
+          const height = getValue('height', product) * 10
+          const width = getValue('width', product) * 10
+          const length = getValue('length', product) * 10
 
-          let tags = []
+          const tags = []
 
-          if (config.klarna.hasOwnProperty('limitation_shipping_attributes')) {
+          if (hasOwnProperty(config.klarna, 'limitation_shipping_attributes')) {
             config.klarna.limitation_shipping_attributes.forEach((shippingMethod) => {
-            const maxWeight = shippingMethod.weight
-            const maxHeight = shippingMethod.height
-            const maxWidth = shippingMethod.width
-            const maxLength = shippingMethod.length
+              const maxWeight = shippingMethod.weight
+              const maxHeight = shippingMethod.height
+              const maxWidth = shippingMethod.width
+              const maxLength = shippingMethod.length
 
-            let checkWeightOnly = false
+              let checkWeightOnly = false
 
-            if (shippingMethod.hasOwnProperty('check_products_weight_only')) {
-              Object.keys(shippingMethod.check_products_weight_only)
-                .forEach(function eachKey(key) {
+              if (hasOwnProperty(shippingMethod, 'check_products_weight_only')) {
+                Object.keys(shippingMethod.check_products_weight_only)
+                  .forEach((key) => {
                   // Check if product only need to check weight only
-                  if (product.hasOwnProperty('product') && shippingMethod.check_products_weight_only[key].includes(product.product[key])) {
-                    checkWeightOnly = true
-                  }
-                })
+                    if (hasOwnProperty(product, 'product') && shippingMethod.check_products_weight_only[key].includes(product.product[key])) {
+                      checkWeightOnly = true
+                    }
+                  })
               }
 
               // Currently, Klarna only supports weight for order_lines, this should be updated after Klarna added "order_weight"
@@ -73,7 +75,7 @@ const plugin: KlarnaPlugin = {
           }
 
           if (
-            config.klarna.hasOwnProperty('freeshipping_tag') &&
+            hasOwnProperty(config.klarna, 'freeshipping_tag') &&
             getters.isFreeShipping
           ) {
             tags.push(config.klarna.freeshipping_tag)
@@ -82,9 +84,9 @@ const plugin: KlarnaPlugin = {
           klarnaProduct.shipping_attributes = {
             weight: weight,
             dimensions: {
-              height: height,  //mm
-              width: width, //mm
-              length: length //mm
+              height: height, // mm
+              width: width, // mm
+              length: length // mm
             },
             tags: tags
           }

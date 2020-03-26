@@ -4,7 +4,7 @@ const Confirmation = () => import(/* webpackChunkName: "vsf-payment-klarna" */ '
 const PayPalKcoPage = () => import(/* webpackChunkName: "vsf-payment-klarna" */ '../pages/HandlingPayPalKCO.vue')
 const PaypalConfirmationKCO = () => import(/* webpackChunkName: "vsf-payment-klarna" */ '../pages/ConfirmationPayPalKCO.vue')
 
-export function beforeRegistration({ config }) {
+export function beforeRegistration ({ config }) {
   const routes = [
     {
       name: 'klarna-confirmation',
@@ -20,7 +20,7 @@ export function beforeRegistration({ config }) {
       name: 'kco-paypal-response',
       path: '/paypal-response',
       component: PaypalConfirmationKCO
-    },
+    }
   ]
   setupMultistoreRoutes(config, router, routes)
 }

@@ -1,4 +1,4 @@
-import KlarnaState, { KlarnaOrder } from '../types/KlarnaState'
+import KlarnaState, { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
 import { ActionTree } from 'vuex'
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
 import config from 'config'
@@ -19,17 +19,17 @@ const execute = (url, method = 'GET', body = null) => TaskQueue.execute({
 })
 
 export const actions: ActionTree<KlarnaState, RootState> = {
-  addPlugin({}, plugin) {
+  addPlugin (context, plugin: KlarnaPlugin) {
     addPlugin(plugin)
   },
-  setPurchaseCountry ({ commit }, country: String) {
+  setPurchaseCountry ({ commit }, country: string) {
     commit('setPurchaseCountry', country)
   },
-  removeLocalStorage({ getters }) {
+  removeLocalStorage ({ getters }) {
     localStorage.removeItem(getters.storageTarget)
   },
-  async klarnaCreateOrder({ commit, dispatch }, {url, body}) {
-    const { result } : any = await execute(url, 'POST', body)
+  async klarnaCreateOrder ({ commit, dispatch }, { url, body }) {
+    const { result }: any = await execute(url, 'POST', body)
     if (result.error) {
       Vue.prototype.$bus.$emit('klarna-create-error', result)
       if (result.body && result.body.error_code === 'READ_ONLY_ORDER') {
@@ -42,7 +42,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
     }
     return result
   },
-  async orderErrorCatch({ getters, commit, dispatch, state }, error) {
+  async orderErrorCatch ({ getters, dispatch, state }, error) {
     const { order } = getters
     if (order && order.reason) {
       console.log('Error:', order.reason)
@@ -62,22 +62,22 @@ export const actions: ActionTree<KlarnaState, RootState> = {
       await dispatch('cart/syncTotals', { forceServerSync: true }, { root: true })
       const order: KlarnaOrder = plugins
         .filter(plugin => plugin.beforeCreate)
-        .reduce((_order, { beforeCreate }) => beforeCreate({getters, state, config}), getters.order)
+        .reduce((_order, { beforeCreate }) => beforeCreate({ getters, state, config }), getters.order)
       const storeCode = currentStoreView().storeCode
       const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
-      const {snippet, ...result}: any = await dispatch('klarnaCreateOrder', {
+      const { snippet, ...result }: any = await dispatch('klarnaCreateOrder', {
         url: config.klarna.endpoint,
         body: {
           order,
           storeCode,
-          dataSourceStoreCode,
+          dataSourceStoreCode
         }
       })
       // Plugins: afterCreate
       plugins
         .filter(plugin => plugin.afterCreate)
         .forEach(({ afterCreate }) => afterCreate({ result, order }))
-      Vue.prototype.$bus.$emit('klarna-created-order', {result, order})
+      Vue.prototype.$bus.$emit('klarna-created-order', { result, order })
       commit('createdOrder', {
         snippet: snippet,
         order: result
@@ -87,9 +87,9 @@ export const actions: ActionTree<KlarnaState, RootState> = {
       dispatch('orderErrorCatch', error)
     }
   },
-  async fetchOrder ({}, sid) {
+  async fetchOrder (context, sid: string) {
     const url = config.klarna.confirmation.replace('{{sid}}', sid)
-    const { result } : any = await execute(url)
+    const { result }: any = await execute(url)
     return result
   },
   async confirmation ({ commit, dispatch, getters }, { sid }) {
@@ -104,17 +104,17 @@ export const actions: ActionTree<KlarnaState, RootState> = {
     })
     return result
   },
-  async retrievePayPalKco ({ commit },) {
+  async retrievePayPalKco ({ commit }) {
     commit('getKcoPayPal')
-    let klarnaSidArray = JSON.parse(localStorage.getItem('_klarna_sdid_ch'))
+    const klarnaSidArray = JSON.parse(localStorage.getItem('_klarna_sdid_ch'))
     // last sid of order
-    let sid = klarnaSidArray[klarnaSidArray.length - 1 ][0];
+    const sid = klarnaSidArray[klarnaSidArray.length - 1][0]
     const url = config.klarna.confirmation.replace('{{sid}}', sid)
-    const { result } : any = await execute(url)
+    const { result }: any = await execute(url)
     commit('setKcoPayPal', {
       result
     })
-    return result;
+    return result
   },
   setMerchantData ({ commit }, merchantData) {
     commit('setMerchantData', merchantData)

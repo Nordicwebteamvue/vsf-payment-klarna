@@ -1,6 +1,4 @@
-import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
-
-const target = 'kco/order-id'
+import { KlarnaPlugin } from '../types/KlarnaState'
 
 const plugin: KlarnaPlugin = {
   name: 'lastOrder',

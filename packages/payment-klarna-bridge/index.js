@@ -168,7 +168,7 @@ module.exports = ({ config }) => {
         apiStatus(res, body)
       })
     } else {
-      apiStatus(res, `error`, 400)
+      apiStatus(res, 'error', 400)
     }
   })
 

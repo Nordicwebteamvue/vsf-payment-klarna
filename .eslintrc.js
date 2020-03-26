@@ -3,17 +3,21 @@ module.exports = {
   env: { 'browser': true },
   parser: 'vue-eslint-parser',
   parserOptions: {
-    parser: "babel-eslint",
+    parser: "@typescript-eslint/parser",
     ecmaVersion: 8,
     sourceType: "module"
   },
   // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
   extends: [
-    'plugin:vue/recommended', 'standard', 'plugin:vue/recommended'
+    'plugin:vue/recommended',
+    'standard',
+    'plugin:vue/recommended',
+    'plugin:@typescript-eslint/recommended'
   ],
   plugins: [
     'vue',
-    'vue-storefront'
+    'vue-storefront',
+    '@typescript-eslint'
   ],
   // add your custom rules here
   rules: {
@@ -40,6 +44,9 @@ module.exports = {
     'vue-storefront/no-corecomponent-import': 'error',
     'vue-storefront/no-corecomponent': 'error',
     'vue-storefront/no-corepage-import': 'error',
-    'vue-storefront/no-corepage': 'error'
+    'vue-storefront/no-corepage': 'error',
+    '@typescript-eslint/camelcase': 0,
+    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/explicit-function-return-type': 0
   }
 }

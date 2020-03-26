@@ -164,10 +164,10 @@ export default {
           })
 
           // If the redirect URL is present, redirect the customer to that URL
-          if (links.hasOwnProperty('approval_url')) {
+          if (Object.prototype.hasOwnProperty.call(links, 'approval_url')) {
             this.$Progress.finish()
             // Redirect the customer to links['approval_url'].href
-            window.location = links['approval_url'].href
+            window.location = links.approval_url.href
           } else {
             this.$Progress.fail()
             console.error('no redirect URI present')

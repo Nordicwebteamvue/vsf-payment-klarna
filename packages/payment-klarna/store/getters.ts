@@ -54,12 +54,12 @@ export const getters: GetterTree<KlarnaState, RootState> = {
     return rootGetters['cart/getCoupon'] || rootGetters['cart/coupon']
   },
   hasTotals (state, getters, rootState) {
-    const {platformTotals: totals} = rootState.cart
+    const { platformTotals: totals } = rootState.cart
     const productTotals = rootState.cart.cartItems.every(item => !!item.totals)
     return !!totals && productTotals
   },
   platformTotals (state, getters, rootState) {
-    const {platformTotals: totals} = rootState.cart
+    const { platformTotals: totals } = rootState.cart
     return totals || {}
   },
   storageTarget () {
@@ -67,11 +67,11 @@ export const getters: GetterTree<KlarnaState, RootState> = {
     const dbNamePrefix = storeView.storeCode ? storeView.storeCode + '-kco' : 'kco'
     return `${dbNamePrefix}/id`
   },
-  getTrueCartItems(state: KlarnaState, getters, rootState, rootGetters) {
+  getTrueCartItems (state: KlarnaState, getters, rootState, rootGetters) {
     const cartItems: Array<CartItem> = Array.from(rootGetters['cart/getCartItems'])
     const totals = getters.platformTotals
     const trueCartItems = totals.items.map(item => {
-      const newItem = {...item}
+      const newItem = { ...item }
       const vsfitem = cartItems.find(_item => _item.totals && _item.totals.item_id === item.item_id)
       if (vsfitem) {
         newItem.product = vsfitem
@@ -92,7 +92,7 @@ export const getters: GetterTree<KlarnaState, RootState> = {
     }
     return purchaseCountry
   },
-  isFreeShipping(state: KlarnaState, getters) {
+  isFreeShipping (state: KlarnaState, getters) {
     // Check if it freeshipping from coupon or not
     return getters.platformTotals.total_segments.find((totalsSegment) => {
       return totalsSegment.code === 'shipping' && parseInt(totalsSegment.value) === 0
@@ -135,7 +135,7 @@ export const getters: GetterTree<KlarnaState, RootState> = {
     }
 
     const { shippingMethod: code } = rootState.checkout.shippingDetails
-    let shippingMethod = rootGetters['shipping/shippingMethods']
+    const shippingMethod = rootGetters['shipping/shippingMethods']
       .find(method => method.method_code === code)
     if (shippingMethod) {
       const price = totals.shipping_incl_tax
@@ -150,12 +150,12 @@ export const getters: GetterTree<KlarnaState, RootState> = {
         total_amount: price ? price * 100 : 0,
         unit_price: price ? price * 100 : 0,
         total_tax_amount: taxAmount ? taxAmount * 100 : 0,
-        tax_rate: shippingTaxRate ? shippingTaxRate * 10000: 0
+        tax_rate: shippingTaxRate ? shippingTaxRate * 10000 : 0
       })
     } else {
-      let selectedShippingMethod = localStorage.getItem('shipping_method')
+      const selectedShippingMethod = localStorage.getItem('shipping_method')
       if (selectedShippingMethod) {
-        let selectedOption = JSON.parse(selectedShippingMethod)
+        const selectedOption = JSON.parse(selectedShippingMethod)
 
         checkoutOrder.order_lines.push({
           type: 'shipping_fee',

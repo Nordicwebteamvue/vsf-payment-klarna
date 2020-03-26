@@ -179,7 +179,7 @@ export default {
         client_id: config.paypal.client,
         client_secret: config.paypal.secret
       })
-      var paymentId = this.$route.query.paymentId
+      const paymentId = this.$route.query.paymentId
       paypal.payment.get(paymentId, (error, payment) => {
         if (error) {
           console.log(error)
