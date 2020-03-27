@@ -2,19 +2,6 @@
 # yarn lockfile v1
 
 
-buffer-crc32@^0.2.3:
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/buffer-crc32/-/buffer-crc32-0.2.13.tgz#0d333e3f00eac50aa1454abd30ef8c2a5d9a7242"
-  integrity sha1-DTM+PwDqxQqhRUq9MO+MKl2ackI=
-
-paypal-rest-sdk-kodbruket-fixed@^1.8.1:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/paypal-rest-sdk-kodbruket-fixed/-/paypal-rest-sdk-kodbruket-fixed-1.8.1.tgz#0de77ccd9124509e16882f998945df994578bba7"
-  integrity sha512-y91OGrqieHW3WRkNEEIExkeYurf9Jm7+2ITLu+HClqyAJtCfgCYc1PRiHIvJm3OzNYL82Y+F5OspKI7Wq4q33A==
-  dependencies:
-    buffer-crc32 "^0.2.3"
-    semver "^5.0.3"
-
 postscribe@^2.0.8:
   version "2.0.8"
   resolved "https://registry.yarnpkg.com/postscribe/-/postscribe-2.0.8.tgz#5b7a53aad4b690b6c2f75818fcefe74490f410d5"
@@ -31,8 +18,3 @@ qs@^6.7.0:
   version "6.7.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
   integrity sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==
-
-semver@^5.0.3:
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.0.tgz#790a7cf6fea5459bac96110b29b60412dc8ff96b"
-  integrity sha512-Ya52jSX2u7QKghxeoFGpLwCtGlt7j0oY9DYb5apt9nPlJ42ID+ulTXESnt/qAQcoSERyZ5sl3LDIOw0nAn/5DA==

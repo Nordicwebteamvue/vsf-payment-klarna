@@ -23,7 +23,7 @@ export default {
   mixins: [PaypalKCO],
   beforeMount () {
     try {
-      this.$store.dispatch('kco/retrievePayPalKco')
+      this.$store.dispatch('kco-paypal-kss/retrievePayPalKco')
     } catch (e) {
       console.error(e)
       window.location = config.paypal.cancel_url

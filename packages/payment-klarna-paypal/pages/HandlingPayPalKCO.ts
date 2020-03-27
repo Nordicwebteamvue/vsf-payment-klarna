@@ -15,7 +15,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      checkout: 'kco/checkout',
+      checkout: 'kco-paypal-kss/checkout',
       isVirtualCart: 'cart/isVirtualCart'
     }),
     PayPalReturnUrl () {

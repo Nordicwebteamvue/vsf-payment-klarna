@@ -16,6 +16,7 @@ import { PaymentBackendMethodsModule } from './payment-backend-methods'
 import { PaymentCashOnDeliveryModule } from './payment-cash-on-delivery'
 import { NewsletterModule } from '@vue-storefront/core/modules/newsletter'
 import { KlarnaCheckout } from './payment-klarna'
+import { KlarnaPaypal } from './payment-klarna-paypal'
 
 import { registerModule } from '@vue-storefront/core/lib/modules'
 
@@ -41,5 +42,6 @@ export function registerClientModules () {
 
 // Deprecated API, will be removed in 2.0
 export const registerModules: VueStorefrontModule[] = [
-  KlarnaCheckout
+  KlarnaCheckout,
+  KlarnaPaypal
 ]

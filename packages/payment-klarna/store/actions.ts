@@ -105,18 +105,6 @@ export const actions: ActionTree<KlarnaState, RootState> = {
     })
     return result
   },
-  async retrievePayPalKco ({ commit }) {
-    commit('getKcoPayPal')
-    const klarnaSidArray = JSON.parse(localStorage.getItem('_klarna_sdid_ch'))
-    // last sid of order
-    const sid = klarnaSidArray[klarnaSidArray.length - 1][0]
-    const url = config.klarna.confirmation.replace('{{sid}}', sid)
-    const { result }: any = await execute(url)
-    commit('setKcoPayPal', {
-      result
-    })
-    return result
-  },
   setMerchantData ({ commit }, merchantData) {
     commit('setMerchantData', merchantData)
   },

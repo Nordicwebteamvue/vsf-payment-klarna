@@ -32,12 +32,6 @@ export const mutations: MutationTree<any> = {
       loading: false
     }
   },
-  getKcoPayPal (state) {
-    state.checkout.loading = true
-  },
-  setKcoPayPal (state, payload) {
-    state.checkout.kcoPayPal = payload
-  },
   setMerchantData (state, payload) {
     state.merchantData = payload
   },

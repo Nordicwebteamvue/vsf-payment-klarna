@@ -28,6 +28,7 @@ services:
       - './.docker/frontend/theme:/var/www/src/themes/default'
       - './.docker/frontend/modules.ts:/var/www/src/modules/client.ts'
       - './packages/payment-klarna:/var/www/src/modules/payment-klarna'
+      - './packages/payment-klarna-paypal:/var/www/src/modules/payment-klarna-paypal'
 
   elasticsearch:
     build: .docker/vue-storefront-api/docker/elasticsearch/

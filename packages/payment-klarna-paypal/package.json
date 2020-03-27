@@ -1,0 +1,10 @@
+{
+  "name": "payment-klarna-paypal",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "paypal-rest-sdk-kodbruket-fixed": "^1.8.1"
+  },
+  "devDependencies": {}
+}
