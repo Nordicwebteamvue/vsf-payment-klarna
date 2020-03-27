@@ -1,4 +1,4 @@
-import { KlarnaPlugin } from '../types/KlarnaState'
+import { KlarnaPlugin } from '../types'
 
 const plugin: KlarnaPlugin = {
   name: 'lastOrder',

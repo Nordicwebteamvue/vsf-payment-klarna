@@ -1,4 +1,4 @@
-import KlarnaState, { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
+import { KlarnaState, KlarnaOrder, KlarnaPlugin } from '../types'
 import { ActionTree } from 'vuex'
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
 import config from 'config'
@@ -63,7 +63,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
       // Plugins: beforeCreate
       const order: KlarnaOrder = plugins
         .filter(plugin => plugin.beforeCreate)
-        .reduce((_order, { beforeCreate }) => beforeCreate({ getters, state, config }), getters.order)
+        .reduce((order, { beforeCreate }) => beforeCreate({ order, getters, state, config }), getters.order)
       const storeCode = currentStoreView().storeCode
       const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
       const { snippet, ...result }: any = await dispatch('klarnaCreateOrder', {

@@ -1,5 +1,5 @@
 import EventBus from '@vue-storefront/core/compatibility/plugins/event-bus'
-import { KlarnaPlugin } from '../types/KlarnaState'
+import { KlarnaPlugin } from '../types'
 
 const storageTarget = 'kco/merchant-data'
 

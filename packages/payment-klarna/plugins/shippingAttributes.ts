@@ -1,13 +1,12 @@
 import get from 'lodash-es/get'
-import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
+import { KlarnaPlugin } from '../types'
 
 const hasOwnProperty = (object, property) => Object.prototype.hasOwnProperty.call(object, property)
 
 const plugin: KlarnaPlugin = {
   name: 'shippingAttributes',
-  beforeCreate: ({ config, getters }): KlarnaOrder => {
+  beforeCreate: ({ config, getters, order }) => {
     const getValue = (attribute, item) => parseFloat(get(item.product, config.klarna.shipping_attributes[attribute], 0)) * item.qty | 0
-    const order: KlarnaOrder = getters.order
     if (config.klarna.addShippingAttributes) {
       let weightOrder = 0
       let lengthOrder = 0

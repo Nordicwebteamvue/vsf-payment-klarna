@@ -1,11 +1,10 @@
-import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
+import { KlarnaPlugin } from '../types'
 
 const target = 'kco/order-id'
 
 const plugin: KlarnaPlugin = {
   name: 'orderId',
-  beforeCreate: ({ getters }): KlarnaOrder => {
-    const order: KlarnaOrder = getters.order
+  beforeCreate: ({ order }) => {
     const maybeJson = localStorage.getItem(target)
     if (maybeJson) {
       const json = JSON.parse(maybeJson)

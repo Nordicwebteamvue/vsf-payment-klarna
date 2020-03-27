@@ -62,6 +62,7 @@ module.exports = ({ config }) => {
     }, (error, response, body) => {
       if (error || body.error_code || response.statusCode >= 300) {
         const statusCode = response.statusCode >= 300 ? response.statusCode : 400
+        delete body.merchant_urls
         apiStatus(res, {
           error: 'Klarna error',
           body,

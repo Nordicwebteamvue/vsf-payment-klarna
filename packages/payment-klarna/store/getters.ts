@@ -1,5 +1,5 @@
 import { GetterTree } from 'vuex'
-import KlarnaState, { KlarnaOrder } from '../types/KlarnaState'
+import { KlarnaState, KlarnaOrder } from '../types'
 import RootState from '@vue-storefront/core/types/RootState'
 import config from 'config'
 import { currentStoreView, localizedRoute } from '@vue-storefront/core/lib/multistore'

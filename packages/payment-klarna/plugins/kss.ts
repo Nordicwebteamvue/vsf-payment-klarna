@@ -1,10 +1,9 @@
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
-import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
+import { KlarnaPlugin } from '../types'
 
 const plugin: KlarnaPlugin = {
   name: 'kss',
-  beforeCreate: ({ config, getters }): KlarnaOrder => {
-    const order: KlarnaOrder = getters.order
+  beforeCreate: ({ config, order }) => {
     const mapRedirectUrl = (externalPaymentConfig) => {
       if (externalPaymentConfig.name === 'PayPal') {
         const uri = externalPaymentConfig.redirect_url

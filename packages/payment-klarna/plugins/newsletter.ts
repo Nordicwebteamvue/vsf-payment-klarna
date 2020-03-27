@@ -1,11 +1,10 @@
 import i18n from '@vue-storefront/i18n'
 import EventBus from '@vue-storefront/core/compatibility/plugins/event-bus'
-import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
+import { KlarnaPlugin } from '../types'
 
 const plugin: KlarnaPlugin = {
   name: 'newsletter',
-  beforeCreate: ({ getters }): KlarnaOrder => {
-    const order: KlarnaOrder = getters.order
+  beforeCreate: ({ order }) => {
     const { options } = order
     if (options && options.additional_checkboxes) {
       options.additional_checkboxes.forEach(checkbox => {
@@ -18,7 +17,7 @@ const plugin: KlarnaPlugin = {
     return order
   },
   onConfirmation: ({ result }) => {
-    const checkboxes = result.merchant_requested && result.merchant_requested.additional_checkboxes
+    const checkboxes = result.merchant_requested.additional_checkboxes
     if (checkboxes) {
       const newsletter = checkboxes.find(({ id }) => id === 'newsletter_opt_in')
       if (newsletter && newsletter.checked) {

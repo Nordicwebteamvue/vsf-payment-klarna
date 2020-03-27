@@ -1,5 +1,5 @@
 import { Module } from 'vuex'
-import KlarnaState from '../types/KlarnaState'
+import { KlarnaState } from '../types'
 import { actions } from './actions'
 import { getters } from './getters'
 import { mutations } from './mutations'

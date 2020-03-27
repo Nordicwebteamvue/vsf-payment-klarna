@@ -1,9 +1,8 @@
-import { KlarnaOrder, KlarnaPlugin } from '../types/KlarnaState'
+import { KlarnaPlugin } from '../types'
 
 const plugin: KlarnaPlugin = {
   name: 'buttonColor',
-  beforeCreate: ({ getters }): KlarnaOrder => {
-    const order: KlarnaOrder = getters.order
+  beforeCreate: ({ order }) => {
     order.options = {
       ...order.options,
       color_button: '#00FF00'

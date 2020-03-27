@@ -1,4 +1,4 @@
-import { KlarnaPlugin } from '../types/KlarnaState'
+import { KlarnaPlugin } from '../types'
 import newsletter from './newsletter'
 import kss from './kss'
 import shippingAttributes from './shippingAttributes'
