@@ -1,0 +1,11 @@
+{
+  "name": "payment-klarna",
+  "version": "2.0.0",
+  "main": "index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "postscribe": "^2.0.8",
+    "qs": "^6.7.0"
+  },
+  "devDependencies": {}
+}

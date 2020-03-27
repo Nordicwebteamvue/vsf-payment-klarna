@@ -2,16 +2,34 @@
 
 context('Actions', () => {
   it('can render checkout', () => {
-    cy.visit('http://localhost:3000/p/24-WB07/overnight-duffle')
-    cy.wait(100)
-    cy.get(`[data-testid="closeCookieButton"]`).click()
-    cy.wait(100)
-    cy.get(`[data-testid="addToCart"]`).click()
-    cy.get(`[data-testid="notificationAction1"]`).click()
-    cy.scrollTo(0, 0)
-    cy.get(`[data-testid="minicartCount"]`).contains('1')
-    cy.get(`[data-testid="minicartCount"]`).parent().click()
+    cy.visit('/gear/gear-3/joust-duffle-bag-1.html')
+    cy.addToCart()
+    cy.itemsInCart(1)
+    cy.goToCart()
+    cy.wait(2000)
+    cy.url().should('include', '/checkout').should(() => {
+      // eslint-disable-next-line
+      expect(localStorage.getItem('kco/order-id')).to.not.be.undefined
+    })
+    cy.getIframeBody('#klarna-checkout-iframe').contains('TEST DRIVE')
+  })
+
+  it('can recover a broken session checkout', () => {
+    cy.visit('/men/bottoms-men/shorts-men/shorts-19/cobalt-cooltech-and-trade-fitness-short-898.html')
+    cy.addToCart()
+    cy.itemsInCart(1)
+    cy.goToCart()
+    localStorage.setItem('carts/current-cart-hash', 'foo')
+    localStorage.setItem('carts/current-cart', 'foo')
+    cy.log('Destroyed cart')
+    cy.reload()
+    cy.url().should('not', 'include', '/checkout')
+    cy.visit('/gear/gear-3/joust-duffle-bag-1.html')
+    cy.addToCart()
+    cy.itemsInCart(2)
+    cy.goToCart()
     cy.wait(250)
-    cy.get(`[data-testid="subscribeSubmit"]`).first().click()
+    cy.url().should('include', '/checkout')
+    cy.getIframeBody('#klarna-checkout-iframe').contains('TEST DRIVE')
   })
 })
