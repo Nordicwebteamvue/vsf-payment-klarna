@@ -45,6 +45,9 @@ export default {
 .confirmation {
   min-height: 580px;
 }
+</style>
+
+<style lang="scss">
 #klarna-unsupported-page {
   display: none;
 }

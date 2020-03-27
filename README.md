@@ -44,7 +44,9 @@ See [beforeRegistration.ts](packages/payment-klarna/hooks/beforeRegistration.ts)
 
 ##### Plugins
 
-There's a few default plugins already made. See [plugins](packages/payment-klarna/plugins).
+If you need to extend this library you most likely don't need to fork it, just create a plugin!
+
+There's a few default plugins already made. See the [plugins folder](packages/payment-klarna/plugins) for README and inspiration.
 
 ### Backend
 
