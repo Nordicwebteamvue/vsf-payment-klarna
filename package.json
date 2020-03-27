@@ -1,6 +1,6 @@
 {
   "name": "vsf-payment-klarna",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "index.js",
   "repository": "https://github.com/kodbruket/vsf-payment-klarna.git",
   "author": "Max Malm <benjick@dumfan.net>",
