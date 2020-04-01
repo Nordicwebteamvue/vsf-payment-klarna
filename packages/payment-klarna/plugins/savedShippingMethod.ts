@@ -1,9 +1,15 @@
 import { KlarnaPlugin, KlarnaEvents } from '../types'
+import { currentStoreView } from '@vue-storefront/core/lib/multistore'
+
+function getStorageTarget() {
+  const storeView = currentStoreView()
+  return storeView.storeCode + '/kco/shipping_method'
+}
 
 const plugin: KlarnaPlugin = {
   name: 'savedShippingMethod',
   beforeCreate: ({ order }) => {
-    const selectedShippingMethod = localStorage.getItem('shipping_method')
+    const selectedShippingMethod = localStorage.getItem(getStorageTarget())
     if (selectedShippingMethod) {
       const selectedOption = JSON.parse(selectedShippingMethod)
       order.order_lines = order.order_lines.filter(line => line.type !== 'shipping_fee')
@@ -32,7 +38,7 @@ const plugin: KlarnaPlugin = {
   on: {
     [KlarnaEvents.SHIPPING_OPTION_CHANGE](data) {
       /* Watch shipping option event from Klarna */
-      localStorage.setItem('shipping_method', JSON.stringify(data))
+      localStorage.setItem(getStorageTarget(), JSON.stringify(data))
     }
   }
 }
