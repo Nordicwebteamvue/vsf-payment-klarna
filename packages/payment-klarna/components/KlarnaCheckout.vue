@@ -17,7 +17,7 @@ import { callApi } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import LoadingSpinner from 'theme/components/theme/blocks/AsyncSidebar/LoadingSpinner.vue'
 import { isServer } from '@vue-storefront/core/helpers'
-import { klarnaEvents } from '../types'
+import { KlarnaEvents } from '../types'
 import { plugins } from '../plugins'
 
 export default {
@@ -67,7 +67,7 @@ export default {
   methods: {
     setupKlarnaListeners () {
       const events = {}
-      klarnaEvents.forEach(event => {
+      Object.values(KlarnaEvents).forEach(event => {
         events[event] = data => {
           plugins.filter(plugin => plugin.on && plugin.on[event]).forEach(plugin => {
             plugin.on[event](data)
