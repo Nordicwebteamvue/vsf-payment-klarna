@@ -5,6 +5,7 @@ import shippingAttributes from './shippingAttributes'
 import validateOrderAmount from './validateOrderAmount'
 import lastOrder from './lastOrder'
 import orderId from './orderId'
+import savedShippingMethod from './savedShippingMethod'
 
 export const plugins: Array<KlarnaPlugin> = []
 
@@ -14,7 +15,8 @@ export const defaultPlugins: Array<KlarnaPlugin> = [
   shippingAttributes,
   validateOrderAmount,
   lastOrder,
-  orderId
+  orderId,
+  savedShippingMethod
 ]
 
 export function addPlugin (plugin: KlarnaPlugin) {
