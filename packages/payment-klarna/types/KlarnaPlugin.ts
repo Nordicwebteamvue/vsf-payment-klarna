@@ -10,7 +10,7 @@ export interface KlarnaPlugin {
   onConfirmation?: (arg0: OnConfirmation) => void;
   on?: {
     [key in KlarnaEvents]?: (arg0: any) => void;
-  }
+  };
 }
 
 export interface BeforeCreate {

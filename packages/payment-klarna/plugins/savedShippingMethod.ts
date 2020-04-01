@@ -1,7 +1,7 @@
 import { KlarnaPlugin, KlarnaEvents } from '../types'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
-function getStorageTarget() {
+function getStorageTarget () {
   const storeView = currentStoreView()
   return storeView.storeCode + '/kco/shipping_method'
 }
@@ -36,7 +36,7 @@ const plugin: KlarnaPlugin = {
     return order
   },
   on: {
-    [KlarnaEvents.SHIPPING_OPTION_CHANGE](data) {
+    [KlarnaEvents.SHIPPING_OPTION_CHANGE] (data) {
       /* Watch shipping option event from Klarna */
       localStorage.setItem(getStorageTarget(), JSON.stringify(data))
     }
