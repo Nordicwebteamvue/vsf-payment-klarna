@@ -1,4 +1,4 @@
-import { KlarnaPlugin } from '../types'
+import { KlarnaPlugin, KlarnaEvents } from '../types'
 
 const plugin: KlarnaPlugin = {
   name: 'savedShippingMethod',
@@ -8,9 +8,13 @@ const plugin: KlarnaPlugin = {
       const selectedOption = JSON.parse(selectedShippingMethod)
       order.order_lines = order.order_lines.filter(line => line.type !== 'shipping_fee')
       order.order_lines.push({
-        ...selectedOption,
         type: 'shipping_fee',
-        quantity: 1
+        quantity: 1,
+        name: selectedOption.name,
+        total_amount: selectedOption.price,
+        unit_price: selectedOption.price,
+        total_tax_amount: selectedOption.tax_amount,
+        tax_rate: selectedOption.tax_rate
       })
       order.selected_shipping_option = selectedOption
 
@@ -24,6 +28,12 @@ const plugin: KlarnaPlugin = {
       order.order_tax_amount = Math.round(orderTaxAmount)
     }
     return order
+  },
+  on: {
+    [KlarnaEvents.SHIPPING_OPTION_CHANGE](data) {
+      /* Watch shipping option event from Klarna */
+      localStorage.setItem('shipping_method', JSON.stringify(data))
+    }
   }
 }
 
