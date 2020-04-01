@@ -135,8 +135,8 @@ export const getters: GetterTree<KlarnaState, RootState> = {
     }
 
     const { shippingMethod: code } = rootState.checkout.shippingDetails
-    const shippingMethod = code ? shippingMethods
-      .find(method => method.method_code === code) : shippingMethods[0]
+    const shippingMethod = shippingMethods
+      .find(method => method.method_code === code)
     if (shippingMethod) {
       const price = totals.shipping_incl_tax
       const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
