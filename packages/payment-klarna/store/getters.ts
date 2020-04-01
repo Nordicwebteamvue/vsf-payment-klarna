@@ -135,7 +135,7 @@ export const getters: GetterTree<KlarnaState, RootState> = {
     }
 
     const { shippingMethod: code } = rootState.checkout.shippingDetails
-    const shippingMethod = rootGetters['shipping/shippingMethods']
+    const shippingMethod = shippingMethods
       .find(method => method.method_code === code)
     if (shippingMethod) {
       const price = totals.shipping_incl_tax
@@ -152,31 +152,6 @@ export const getters: GetterTree<KlarnaState, RootState> = {
         total_tax_amount: taxAmount ? taxAmount * 100 : 0,
         tax_rate: shippingTaxRate ? shippingTaxRate * 10000 : 0
       })
-    } else {
-      const selectedShippingMethod = localStorage.getItem('shipping_method')
-      if (selectedShippingMethod) {
-        const selectedOption = JSON.parse(selectedShippingMethod)
-
-        checkoutOrder.order_lines.push({
-          type: 'shipping_fee',
-          quantity: 1,
-          name: selectedOption.name,
-          total_amount: selectedOption.price,
-          unit_price: selectedOption.price,
-          total_tax_amount: selectedOption.tax_amount,
-          tax_rate: selectedOption.tax_rate
-        })
-        checkoutOrder.selected_shipping_option = selectedOption
-
-        let orderAmount = 0
-        let orderTaxAmount = 0
-        checkoutOrder.order_lines.forEach((orderLine) => {
-          orderAmount += orderLine.total_amount
-          orderTaxAmount += orderLine.total_tax_amount
-        })
-        checkoutOrder.order_amount = Math.round(orderAmount)
-        checkoutOrder.order_tax_amount = Math.round(orderTaxAmount)
-      }
     }
     return checkoutOrder
   }

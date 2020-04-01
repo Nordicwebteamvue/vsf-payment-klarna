@@ -17,10 +17,8 @@ import { callApi } from '../helpers'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import LoadingSpinner from 'theme/components/theme/blocks/AsyncSidebar/LoadingSpinner.vue'
 import { isServer } from '@vue-storefront/core/helpers'
-
-const klarnaEvents = [
-  'load', 'customer', 'change', 'billing_address_change', 'shipping_address_change', 'shipping_option_change', 'order_total_change', 'can_not_complete_order', 'network_error'
-]
+import { KlarnaEvents } from '../types'
+import { plugins } from '../plugins'
 
 export default {
   name: 'KlarnaCheckout',
@@ -69,16 +67,15 @@ export default {
   methods: {
     setupKlarnaListeners () {
       const events = {}
-      klarnaEvents.forEach(event => {
+      Object.values(KlarnaEvents).forEach(event => {
         events[event] = data => {
+          plugins.filter(plugin => plugin.on && plugin.on[event]).forEach(plugin => {
+            plugin.on[event](data)
+          })
           this.$bus.$emit('klarna-event-' + event, data)
         }
       })
       callApi(api => api.on(events))
-      this.$bus.$on('klarna-event-shipping_option_change', (data) => {
-        /* Watch shipping option event from Klarna */
-        localStorage.setItem('shipping_method', JSON.stringify(data))
-      })
 
       // Todo: refactor
       this.$bus.$on('klarna-order-loaded', () => {

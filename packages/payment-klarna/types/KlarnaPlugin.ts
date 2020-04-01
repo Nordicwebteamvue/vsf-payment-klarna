@@ -1,12 +1,16 @@
 import { KlarnaOrder } from './KlarnaOrder'
 import KlarnaState from './KlarnaState'
 import { KlarnaResult } from './KlarnaResult'
+import { KlarnaEvents } from './KlarnaEvents'
 
 export interface KlarnaPlugin {
+  name: string;
   beforeCreate?: (arg0: BeforeCreate) => KlarnaOrder;
   afterCreate?: (arg0: AfterCreate) => void;
   onConfirmation?: (arg0: OnConfirmation) => void;
-  name: string;
+  on?: {
+    [key in KlarnaEvents]?: (arg0: any) => void;
+  };
 }
 
 export interface BeforeCreate {
