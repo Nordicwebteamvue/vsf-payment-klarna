@@ -10,6 +10,21 @@ interface KlarnaCustomer {
   gender?: string;
 }
 
+interface ExternalPaymentMethod {
+  name: string;
+  redirect_url: string;
+  image_url?: string;
+  fee?: number;
+  description?: string;
+}
+
+interface ExternalCheckout {
+  name: string;
+  redirect_uri: string;
+  image_uri: string;
+  fee: number
+}
+
 export interface KlarnaOrder {
   orderId?: string;
   purchase_country: string;
@@ -25,8 +40,8 @@ export interface KlarnaOrder {
   // merchant_reference2?: string // reserved for API
   options?: GenericObject;
   attachment?: GenericObject;
-  external_payment_methods?: Array<any>;
-  external_checkouts?: Array<any>;
+  external_payment_methods: Array<ExternalPaymentMethod>;
+  external_checkouts: Array<ExternalCheckout>;
   shipping_countries: Array<string>;
   shipping_options: Array<any>;
   merchant_data: string;
