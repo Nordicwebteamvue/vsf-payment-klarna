@@ -22,7 +22,7 @@ interface ExternalCheckout {
   name: string;
   redirect_uri: string;
   image_uri: string;
-  fee: number
+  fee: number;
 }
 
 export interface KlarnaOrder {

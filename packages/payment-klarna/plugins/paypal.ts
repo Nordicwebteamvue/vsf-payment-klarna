@@ -10,7 +10,7 @@ const plugin: KlarnaPlugin = {
       name: 'PayPal',
       redirect_url: config.paypal.redirect_url,
       image_url: 'https://www.paypalobjects.com/images/shared/paypal-logo-129x32.svg',
-      description: 'Pay with PayPal' 
+      description: 'Pay with PayPal'
     })
     return order
   }
