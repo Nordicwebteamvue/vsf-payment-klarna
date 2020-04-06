@@ -1,20 +1,12 @@
 import { router } from '@vue-storefront/core/app'
 import { setupMultistoreRoutes } from '@vue-storefront/core/lib/multistore'
-const PayPalKcoPage = () => import(/* webpackChunkName: "vsf-payment-klarna" */ '../pages/HandlingPayPalKCO.vue')
-const PaypalConfirmationKCO = () => import(/* webpackChunkName: "vsf-payment-klarna" */ '../pages/ConfirmationPayPalKCO.vue')
+const PayPalConfirmation = () => import(/* webpackChunkName: "vsf-payment-klarna-paypal" */ '../pages/PayPalConfirmation.vue')
 
 export function beforeRegistration ({ config }) {
-  const routes = [
-    {
-      name: 'kco-paypal-handling-order',
-      path: '/paypal-handling-order',
-      component: PayPalKcoPage
-    },
-    {
-      name: 'kco-paypal-response',
-      path: '/paypal-response',
-      component: PaypalConfirmationKCO
-    }
-  ]
+  const routes = [{
+    name: 'kco-paypal-response',
+    path: '/paypal-confirmation',
+    component: PayPalConfirmation
+  }]
   setupMultistoreRoutes(config, router, routes)
 }

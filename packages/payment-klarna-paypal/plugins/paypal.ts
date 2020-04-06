@@ -1,5 +1,5 @@
 import i18n from '@vue-storefront/i18n'
-import { KlarnaPlugin } from '../types'
+import { KlarnaPlugin } from 'src/modules/payment-klarna/types'
 
 const plugin: KlarnaPlugin = {
   name: 'paypal',

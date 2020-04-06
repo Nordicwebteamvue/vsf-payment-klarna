@@ -6,8 +6,7 @@ const KEY = 'kco-paypal-kss'
 
 const moduleConfig: VueStorefrontModuleConfig = {
   key: KEY,
-  beforeRegistration,
-  store: { modules: [{ key: KEY, module }] }
+  beforeRegistration
 }
 
 export const KlarnaPaypal = new VueStorefrontModule(moduleConfig)

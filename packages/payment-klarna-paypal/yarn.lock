@@ -2,20 +2,12 @@
 # yarn lockfile v1
 
 
-buffer-crc32@^0.2.3:
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/buffer-crc32/-/buffer-crc32-0.2.13.tgz#0d333e3f00eac50aa1454abd30ef8c2a5d9a7242"
-  integrity sha1-DTM+PwDqxQqhRUq9MO+MKl2ackI=
+country-code-lookup@^0.0.17:
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/country-code-lookup/-/country-code-lookup-0.0.17.tgz#3607c909df9981d67f2ec346c4d4eaf31708113f"
+  integrity sha512-LI4sIeuuYhkuxbI0Bf78aBoupQxjTMH5mVgT1bul1m2XnaT7jaxlaplRcH8XA6ZNFBN4CmuzQKOpSESzuGHlig==
 
-paypal-rest-sdk-kodbruket-fixed@^1.8.1:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/paypal-rest-sdk-kodbruket-fixed/-/paypal-rest-sdk-kodbruket-fixed-1.8.1.tgz#0de77ccd9124509e16882f998945df994578bba7"
-  integrity sha512-y91OGrqieHW3WRkNEEIExkeYurf9Jm7+2ITLu+HClqyAJtCfgCYc1PRiHIvJm3OzNYL82Y+F5OspKI7Wq4q33A==
-  dependencies:
-    buffer-crc32 "^0.2.3"
-    semver "^5.0.3"
-
-semver@^5.0.3:
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
-  integrity sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==
+qs@^6.9.3:
+  version "6.9.3"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.9.3.tgz#bfadcd296c2d549f1dffa560619132c977f5008e"
+  integrity sha512-EbZYNarm6138UKKq46tdx08Yo/q9ZhFoAXAI1meAFd2GtbRDhbZY2WQSICskT0c5q99aFzLG1D4nvTk9tqfXIw==

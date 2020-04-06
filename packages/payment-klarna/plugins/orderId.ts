@@ -9,7 +9,7 @@ const plugin: KlarnaPlugin = {
     if (maybeJson) {
       const json = JSON.parse(maybeJson)
       if (json.expires > Date.now()) {
-        order.orderId = json.orderId
+        order.order_id = json.orderId
       } else {
         localStorage.removeItem(target)
       }
