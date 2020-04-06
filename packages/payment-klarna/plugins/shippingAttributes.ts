@@ -6,8 +6,8 @@ const hasOwnProperty = (object, property) => Object.prototype.hasOwnProperty.cal
 const plugin: KlarnaPlugin = {
   name: 'shippingAttributes',
   beforeCreate: ({ config, getters, order }) => {
-    const getValue = (attribute, item) => parseFloat(get(item.product, config.klarna.shipping_attributes[attribute], 0)) * item.qty | 0
-    if (config.klarna.addShippingAttributes) {
+    if (config.klarna.addShippingAttributes && config.klarna.shipping_attributes) {
+      const getValue = (attribute, item) => parseFloat(get(item.product, config.klarna.shipping_attributes[attribute], 0)) * item.qty | 0
       let weightOrder = 0
       let lengthOrder = 0
       let heightOrder = 0
