@@ -1,6 +1,6 @@
 # vsf-payment-klarna ![for VSF 1.11](https://img.shields.io/static/v1?label=vsf&message=1.11&color=brightgreen) ![](https://github.com/kodbruket/vsf-payment-klarna/workflows/Tests/badge.svg)
 
-- [Installation](#installation)
+- [Usage](#usage)
   * [Frontend](#frontend)
     + [Checkout](#checkout)
     + [Confirmation page](#confirmation-page)
@@ -12,7 +12,7 @@
   * [Get started](#get-started)
   * [e2e](#e2e)
 
-## Installation
+## Usage
 
 ### Frontend
 
