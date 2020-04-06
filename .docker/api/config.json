@@ -7,12 +7,12 @@
       "id": "200",
       "terms": "https://example.com/terms",
       "checkout": "https://example.com/checkout?sid={checkout.order.id}",
-      "confirmation": "https://example.com/api/ext/payment-klarna-example/confirmation?sid={checkout.order.id}",
-      "push": "https://example.com/api/ext/payment-klarna-example/push?uri={checkout.order.id}",
-      "validation": "https://example.com/api/ext/payment-klarna/validation",
-      "shipping_option_update": "https://example.com/api/ext/payment-klarna-example/shipping_option_update",
-      "address_update": "https://example.com/api/ext/payment-klarna/address_update",
-      "notification": "https://example.com/api/ext/payment-klarna/notification"
+      "confirmation": "https://magento2.example.com/{{storeCode}}/kodbruketklarnaapi/order/confirmation?id={checkout.order.id}",
+      "push": "https://magento2.example.com/{{storeCode}}/kodbruketklarnaapi/order/push?id={checkout.order.id}",
+      "validation": "https://magento2.example.com/{{storeCode}}/kodbruketklarnaapi/order/validate",
+      "shipping_option_update": "https://magento2.example.com/{{storeCode}}/kodbruketklarnaapi/order/shippingOptionUpdate",
+      "address_update": "https://magento2.example.com/{{storeCode}}/kodbruketklarnaapi/order/addressUpdate",
+      "country_change": "https://magento2.example.com/{{storeCode}}/kodbruketklarnaapi/order/changeCountry"
     },
     "name": "VSF Payment Klarna",
     "auth": {
