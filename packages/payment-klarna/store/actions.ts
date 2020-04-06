@@ -101,6 +101,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
       .filter(plugin => plugin.onConfirmation)
       .forEach(({ onConfirmation }) => onConfirmation({ result, dispatch, getters }))
     commit('confirmationDone', {
+      ...result,
       snippet: html_snippet
     })
     return result

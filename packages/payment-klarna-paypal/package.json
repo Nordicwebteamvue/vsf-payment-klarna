@@ -4,7 +4,8 @@
   "main": "index.ts",
   "license": "MIT",
   "dependencies": {
-    "paypal-rest-sdk-kodbruket-fixed": "^1.8.1"
+    "country-code-lookup": "^0.0.17",
+    "qs": "^6.9.3"
   },
   "devDependencies": {}
 }

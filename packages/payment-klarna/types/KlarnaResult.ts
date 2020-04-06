@@ -71,7 +71,7 @@ export interface KlarnaResult {
   shipping_countries: Array<string>;
   shipping_options: Array<ShippingOption>;
   merchant_data: string;
-  merchant_requested: {
+  merchant_requested?: {
     additional_checkbox: boolean;
     additional_checkboxes: Array<{
       id: string;
