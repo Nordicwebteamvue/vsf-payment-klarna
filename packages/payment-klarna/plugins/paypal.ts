@@ -1,3 +1,4 @@
+import i18n from '@vue-storefront/i18n'
 import { KlarnaPlugin } from '../types'
 
 const plugin: KlarnaPlugin = {
@@ -10,7 +11,7 @@ const plugin: KlarnaPlugin = {
       name: 'PayPal',
       redirect_url: config.paypal.redirect_url,
       image_url: 'https://www.paypalobjects.com/images/shared/paypal-logo-129x32.svg',
-      description: 'Pay with PayPal'
+      description: i18n.tc('Pay with PayPal')
     })
     return order
   }
