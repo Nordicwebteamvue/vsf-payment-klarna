@@ -12,7 +12,9 @@
         </div>
       </div>
       <div class="content-detail">
-        <h4 class="h3 my5">{{ $t('Items Purchased') }}</h4>
+        <h4 class="h3 my5">
+          {{ $t('Items Purchased') }}
+        </h4>
         <div class="items">
           <!-- eslint-disable-next-line -->
           <div class="item-detail my10" v-for="(item, index) in confirmation.order_lines" :key="index">
@@ -22,7 +24,9 @@
         </div>
       </div>
       <div class="content-detail">
-        <h4 class="h3 my5">{{ $t('Order Detail') }}</h4>
+        <h4 class="h3 my5">
+          {{ $t('Order Detail') }}
+        </h4>
         <div class="total my10">
           <div>
             {{ $t('Total') }}
@@ -41,7 +45,9 @@
         </div>
       </div>
       <div class="content-detail">
-        <h4 class="h3 my5">{{ $t('Shipping Detail') }}</h4>
+        <h4 class="h3 my5">
+          {{ $t('Shipping Detail') }}
+        </h4>
         <div class="shipping my10">
           <div>
             {{ $t('Address Line 1') }}
@@ -76,7 +82,7 @@
         </div>
       </div>
       <div class="paypal-logo">
-        <img src="https://www.paypalobjects.com/images/shared/paypal-logo-129x32.svg" />
+        <img src="https://www.paypalobjects.com/images/shared/paypal-logo-129x32.svg">
       </div>
     </div>
   </div>
@@ -112,7 +118,7 @@ export default {
     }
   },
   methods: {
-    lookup(countryCode) {
+    lookup (countryCode) {
       const countryObject = lookup.byIso(countryCode)
       if (countryObject) {
         return countryObject.country

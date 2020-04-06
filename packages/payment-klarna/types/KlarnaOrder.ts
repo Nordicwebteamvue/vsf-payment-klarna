@@ -46,7 +46,7 @@ interface ShippingOption {
   tax_amount: number;
   tax_rate: number;
   preselected?: boolean;
-  shipping_method?: ShippingMethod
+  shipping_method?: ShippingMethod;
 }
 
 export interface KlarnaOrder {
