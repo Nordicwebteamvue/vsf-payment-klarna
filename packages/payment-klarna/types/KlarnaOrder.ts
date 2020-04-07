@@ -50,6 +50,7 @@ interface ShippingOption {
 }
 
 export interface KlarnaOrder {
+  order_id?: string;
   purchase_country: string;
   purchase_currency: string;
   locale: string;
