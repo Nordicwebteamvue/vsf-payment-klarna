@@ -8,7 +8,7 @@ module.exports = ({ config }) => {
   const headers = genereateHeaders(config)
 
   const upsertOrder = async (req, res) => {
-    const { order, headers } = res.locals
+    const { order } = res.locals
     const { endpoints } = config.klarna
     const url = order.orderId ? `${endpoints.orders}/${order.orderId}` : endpoints.orders
     const data = await rp.post({
