@@ -1,5 +1,5 @@
 import { GetterTree } from 'vuex'
-import { KlarnaState, KlarnaOrder } from '../types'
+import { KlarnaState, KlarnaOrder, ShippingOption, KlarnaProduct } from '../types'
 import RootState from '@vue-storefront/core/types/RootState'
 import config from 'config'
 import { currentStoreView, localizedRoute } from '@vue-storefront/core/lib/multistore'
@@ -19,20 +19,20 @@ const getProductUrl = product => {
 
 const mapProductToKlarna = (product) => {
   const vsfProduct = product.product
-  const klarnaProduct: any = {
+  const klarnaProduct: KlarnaProduct = {
     name: product.name,
     quantity: product.qty,
-    unit_price: Math.round(product.price_incl_tax * 100),
-    tax_rate: Math.round(product.tax_percent * 100),
-    total_amount: Math.round(product.row_total_incl_tax * 100) - Math.round(product.base_discount_amount * 100),
-    total_discount_amount: Math.round((product.discount_amount || 0) * 100),
-    total_tax_amount: Math.round(product.tax_amount * 100)
+    unitPrice: Math.round(product.price_incl_tax * 100),
+    taxRate: Math.round(product.tax_percent * 100),
+    totalAmount: Math.round(product.row_total_incl_tax * 100) - Math.round(product.base_discount_amount * 100),
+    totalDiscountAmount: Math.round((product.discount_amount || 0) * 100),
+    totalTaxAmount: Math.round(product.tax_amount * 100)
   }
   if (vsfProduct) {
-    klarnaProduct.image_url = getThumbnailPath(vsfProduct.image, 600, 600) || ''
+    klarnaProduct.imageUrl = getThumbnailPath(vsfProduct.image, 600, 600) || ''
     klarnaProduct.reference = vsfProduct.sku
     if (config.klarna.productBaseUrl) {
-      klarnaProduct.product_url = config.klarna.productBaseUrl + getProductUrl(vsfProduct)
+      klarnaProduct.productUrl = config.klarna.productBaseUrl + getProductUrl(vsfProduct)
     }
   }
   return klarnaProduct
@@ -105,23 +105,23 @@ export const getters: GetterTree<KlarnaState, RootState> = {
     const totals = getters.platformTotals
 
     const checkoutOrder: KlarnaOrder = {
-      purchase_country: getters.getPurchaseCountry,
-      purchase_currency: storeView.i18n.currencyCode,
+      purchaseCountry: getters.getPurchaseCountry,
+      purchaseCurrency: storeView.i18n.currencyCode,
       locale: storeView.i18n.defaultLocale,
-      shipping_options: [],
-      shipping_countries: storeView.shipping_countries || [],
-      order_lines: cartItems.map(mapProductToKlarna),
-      order_amount: Math.round(totals.base_grand_total * 100),
-      order_tax_amount: Math.round(totals.base_tax_amount * 100),
+      shippingOptions: [],
+      shippingCountries: storeView.shipping_countries || [],
+      orderLines: cartItems.map(mapProductToKlarna),
+      orderAmount: Math.round(totals.base_grand_total * 100),
+      orderTaxAmount: Math.round(totals.base_tax_amount * 100),
       options: config.klarna.options ? config.klarna.options : null,
-      merchant_data: JSON.stringify(state.merchantData),
-      external_payment_methods: [],
-      external_checkouts: []
+      merchantData: JSON.stringify(state.merchantData),
+      externalPaymentMethods: [],
+      externalCheckouts: []
     }
     if (config.klarna.showShippingOptions && state.shippingOptions) {
-      checkoutOrder.order_amount = Math.round((totals.base_grand_total - totals.base_shipping_incl_tax) * 100)
-      checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount - totals.base_shipping_tax_amount) * 100)
-      checkoutOrder.shipping_options = shippingMethods.map((method, index: number) => {
+      checkoutOrder.orderAmount = Math.round((totals.base_grand_total - totals.base_shipping_incl_tax) * 100)
+      checkoutOrder.orderTaxAmount = Math.round((totals.base_tax_amount - totals.base_shipping_tax_amount) * 100)
+      checkoutOrder.shippingOptions = shippingMethods.map((method, index: number): ShippingOption => {
         const price = method.price_incl_tax || method.price || 0
         const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
         const taxAmount = getTaxAmount(price, shippingTaxRate)
@@ -129,8 +129,8 @@ export const getters: GetterTree<KlarnaState, RootState> = {
           id: method.method_code,
           name: `${method.method_title}`,
           price: price ? Math.round(price * 100) : 0,
-          tax_amount: taxAmount ? Math.round(taxAmount * 100) : 0,
-          tax_rate: shippingTaxRate ? Math.round(shippingTaxRate * 10000) : 0,
+          taxAmount: taxAmount ? Math.round(taxAmount * 100) : 0,
+          taxRate: shippingTaxRate ? Math.round(shippingTaxRate * 10000) : 0,
           preselected: index === 0
         }
       })
@@ -143,16 +143,16 @@ export const getters: GetterTree<KlarnaState, RootState> = {
       const price = totals.shipping_incl_tax
       const shippingTaxRate = totals.shipping_tax_amount / totals.shipping_amount
       const taxAmount = getTaxAmount(totals.shipping_incl_tax, shippingTaxRate)
-      checkoutOrder.order_amount = Math.round((totals.base_grand_total) * 100)
-      checkoutOrder.order_tax_amount = Math.round((totals.base_tax_amount) * 100)
-      checkoutOrder.order_lines.push({
+      checkoutOrder.orderAmount = Math.round((totals.base_grand_total) * 100)
+      checkoutOrder.orderTaxAmount = Math.round((totals.base_tax_amount) * 100)
+      checkoutOrder.orderLines.push({
         type: 'shipping_fee',
         quantity: 1,
         name: `${shippingMethod.carrier_title} (${shippingMethod.method_title})`,
-        total_amount: price ? price * 100 : 0,
-        unit_price: price ? price * 100 : 0,
-        total_tax_amount: taxAmount ? taxAmount * 100 : 0,
-        tax_rate: shippingTaxRate ? shippingTaxRate * 10000 : 0
+        totalAmount: price ? price * 100 : 0,
+        unitPrice: price ? price * 100 : 0,
+        totalTaxAmount: taxAmount ? taxAmount * 100 : 0,
+        taxRate: shippingTaxRate ? shippingTaxRate * 10000 : 0
       })
     }
     return checkoutOrder

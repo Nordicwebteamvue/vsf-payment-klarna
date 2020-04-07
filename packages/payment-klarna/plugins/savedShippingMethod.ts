@@ -12,26 +12,26 @@ const plugin: KlarnaPlugin = {
     const selectedShippingMethod = localStorage.getItem(getStorageTarget())
     if (selectedShippingMethod) {
       const selectedOption = JSON.parse(selectedShippingMethod)
-      order.order_lines = order.order_lines.filter(line => line.type !== 'shipping_fee')
-      order.order_lines.push({
+      order.orderLines = order.orderLines.filter(line => line.type !== 'shipping_fee')
+      order.orderLines.push({
         type: 'shipping_fee',
         quantity: 1,
         name: selectedOption.name,
-        total_amount: selectedOption.price,
-        unit_price: selectedOption.price,
-        total_tax_amount: selectedOption.tax_amount,
-        tax_rate: selectedOption.tax_rate
+        totalAmount: selectedOption.price,
+        unitPrice: selectedOption.price,
+        totalTaxAmount: selectedOption.tax_amount,
+        taxRate: selectedOption.tax_rate
       })
-      order.selected_shipping_option = selectedOption
+      order.selectedShippingOption = selectedOption
 
       let orderAmount = 0
       let orderTaxAmount = 0
-      order.order_lines.forEach((orderLine) => {
-        orderAmount += orderLine.total_amount
-        orderTaxAmount += orderLine.total_tax_amount
+      order.orderLines.forEach((orderLine) => {
+        orderAmount += orderLine.totalAmount
+        orderTaxAmount += orderLine.totalTaxAmount
       })
-      order.order_amount = Math.round(orderAmount)
-      order.order_tax_amount = Math.round(orderTaxAmount)
+      order.orderAmount = Math.round(orderAmount)
+      order.orderTaxAmount = Math.round(orderTaxAmount)
     }
     return order
   },

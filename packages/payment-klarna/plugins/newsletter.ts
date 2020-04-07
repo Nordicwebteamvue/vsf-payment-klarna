@@ -17,12 +17,12 @@ const plugin: KlarnaPlugin = {
     return order
   },
   onConfirmation: ({ result }) => {
-    const checkboxes = result.merchant_requested && result.merchant_requested.additional_checkboxes
+    const checkboxes = result.merchantRequested && result.merchantRequested.additionalCheckboxes
     if (checkboxes) {
       const newsletter = checkboxes.find(({ id }) => id === 'newsletter_opt_in')
       if (newsletter && newsletter.checked) {
         EventBus.$emit('newsletter-signup', {
-          email: result.billing_address.email
+          email: result.billingAddress.email
         })
       }
     }

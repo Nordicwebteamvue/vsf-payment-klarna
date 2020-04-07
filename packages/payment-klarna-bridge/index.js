@@ -1,177 +1,65 @@
-import { apiStatus } from '../../../lib/util'
 import { Router } from 'express'
-import request from 'request'
-import jwt from 'jsonwebtoken'
-
-function addStoreCode (merchantUrls, storeCode = '', dataSourceStoreCode = '') {
-  Object.keys(merchantUrls).forEach(url => {
-    if (merchantUrls[url].includes('{{storeCode}}')) {
-      merchantUrls[url] = merchantUrls[url]
-        .replace('{{storeCode}}', storeCode)
-        .replace(/([^:]\/)\/+/g, '$1')
-    }
-    if (merchantUrls[url].includes('{{dataSourceStoreCode}}')) {
-      merchantUrls[url] = merchantUrls[url]
-        .replace('{{dataSourceStoreCode}}', dataSourceStoreCode)
-        .replace(/([^:]\/)\/+/g, '$1')
-    }
-  })
-}
-
-const maybeDecodeCartId = cartId => {
-  if (/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/.test(cartId)) {
-    return jwt.decode(cartId).cartId
-  } else {
-    return cartId
-  }
-}
-
-const middleware = config => function (req, res, next) {
-  const { order, storeCode, dataSourceStoreCode } = req.body
-  const { cartId } = req.query
-  if (!order || !cartId) {
-    throw new Error('Bad Request: Missing order or cartId')
-  }
-  order.merchant_urls = { ...config.klarna.merchant_urls }
-  if (storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].merchant_urls) {
-    order.merchant_urls = {
-      ...order.merchant_urls,
-      ...config.storeViews[storeCode].merchant_urls
-    }
-  }
-  addStoreCode(order.merchant_urls, storeCode, dataSourceStoreCode)
-  order.merchant_reference2 = maybeDecodeCartId(cartId)
-  res.locals.order = order
-  next()
-}
+import rp from 'request-promise-native'
+import { merchantUrls } from './middleware'
+import { genereateHeaders, wrap } from './helpers'
 
 module.exports = ({ config }) => {
   const api = Router()
-  api.post('/create-or-update-order', middleware(config), (req, res) => {
+  const headers = genereateHeaders(config)
+
+  const upsertOrder = async (req, res) => {
     const { order } = res.locals
-    const { auth, endpoints } = config.klarna
+    const { endpoints } = config.klarna
     const url = order.orderId ? `${endpoints.orders}/${order.orderId}` : endpoints.orders
-    request.post({
+    const data = await rp.post({
+      ...headers,
       url,
-      auth,
-      body: order,
-      json: true,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }, (error, response, body) => {
-      if (error || body.error_code || response.statusCode >= 300) {
-        const statusCode = response.statusCode >= 300 ? response.statusCode : 400
-        delete body.merchant_urls
-        apiStatus(res, {
-          error: 'Klarna error',
-          body,
-          order
-        }, statusCode)
-        return
-      }
-      body.snippet = body.html_snippet
-      apiStatus(res, body)
+      body: order
     })
-  })
+    data.snippet = data.html_snippet
+    return data
+  }
 
-  api.get('/order-id', (req, res) => {
-    const { sid } = req.query
-    if (!sid) {
-      apiStatus(res, 'Missing sid', 400)
-      return
+  const getOrder = async (req) => {
+    if (!req.query.sid) {
+      throw new Error('Missing sid')
     }
-    request.get({
-      url: config.klarna.endpoints.orders + '/' + sid,
-      auth: config.klarna.auth,
-      json: true,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }, (error, response, body) => {
-      if (error) {
-        const statusCode = response.statusCode >= 300 ? response.statusCode : 400
-        apiStatus(res, 'Klarna error', statusCode)
-        return
-      }
-      apiStatus(res, body)
+    const data = await rp.get({
+      ...headers,
+      url: config.klarna.endpoints.orders + '/' + req.query.sid
     })
-  })
+    return data
+  }
 
-  api.post('/retrieve', (req, res) => {
-    const klarnaApiUrl = req.body.klarnaApiUrl
-    if (!klarnaApiUrl) {
-      return apiStatus(res, 'Bad Request', 400)
-    }
-    request.get({
-      url: klarnaApiUrl,
-      auth: config.klarna.auth
-    }, (error, response, body) => {
-      const statusCode = response.statusCode >= 300 ? response.statusCode : 400
-      if (error || body.error_code) {
-        apiStatus(res, `Klarna error: ${body.error_code}`, statusCode)
-        return
-      }
-      apiStatus(res, { snippet: body.html_snippet })
-    })
-  })
-
-  api.post('/update', (req, res) => {
-    const klarnaApiUrl = req.body.klarnaApiUrl
-    const order = req.body.order
-    if (!klarnaApiUrl || !order) {
-      return apiStatus(res, 'Bad Request', 400)
-    }
-
-    request.post({
-      url: klarnaApiUrl,
-      json: true,
-      body: order,
-      auth: config.klarna.auth
-    }, (error, response, body) => {
-      if (error || body.error_code) {
-        const statusCode = response.statusCode >= 300 ? response.statusCode : 400
-        apiStatus(res, `Klarna error: ${body.error_code}`, statusCode)
-        return
-      }
-      apiStatus(res, { orderId: body.order_id, snippet: body.html_snippet })
-    })
-  })
-
-  api.post('/validate-kco-callback', (req, res) => {
+  const validateKcoCallback = async (req) => {
     const { cartId } = req.query
     const { orderId } = req.body
-    if (cartId && orderId) {
-      const body = {
+    if (!(cartId && orderId)) {
+      throw new Error('Missing cartId or orderId')
+    }
+    const klarnaApiUrl = config.klarna.endpoints.validate_order && config.klarna.endpoints.validate_order.replace('{{cartId}}', cartId)
+    if (!klarnaApiUrl) {
+      throw new Error('Missing validate_order URL')
+    }
+    const data = await rp.post({
+      url: klarnaApiUrl,
+      json: true,
+      body: {
         quote: {
           klarna_order_id: orderId
         }
       }
-      const klarnaApiUrl = config.klarna.endpoints.validate_order && config.klarna.endpoints.validate_order.replace('{{cartId}}', cartId)
-      if (!klarnaApiUrl) {
-        apiStatus(res, 'Missing validate_order URL', 404)
-        return
-      }
-      request.post({
-        url: klarnaApiUrl,
-        json: true,
-        body
-      }, (error, response, body) => {
-        if (error || body.error_code) {
-          const statusCode = response.statusCode >= 300 ? response.statusCode : 400
-          apiStatus(res, `Error: ${error || body.error_code}`, statusCode)
-          return
-        }
-        if (body.error) {
-          apiStatus(res, body, 400)
-          return
-        }
-        apiStatus(res, body)
-      })
-    } else {
-      apiStatus(res, 'error', 400)
-    }
-  })
+    })
+    return data
+  }
 
+  api.get('/confirmation', wrap(getOrder))
+  api.post('/upsert-order', merchantUrls(config), wrap(upsertOrder))
+  api.post('/validate-order', wrap(validateKcoCallback))
+
+  // Deprecated
+  api.get('/order-id', wrap(getOrder))
+  api.post('/create-or-update-order', merchantUrls(config), wrap(upsertOrder))
+  api.post('/validate-kco-callback', wrap(validateKcoCallback))
   return api
 }

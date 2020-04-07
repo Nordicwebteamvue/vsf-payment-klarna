@@ -1,20 +1,20 @@
 export interface Address {
-  organization_name: string;
+  organizationName: string;
   reference: string;
   attention: string;
-  given_name: string;
-  family_name: string;
+  givenName: string;
+  familyName: string;
   email: string;
   title: string;
-  street_address: string;
-  street_address2: string;
-  street_name: string;
-  street_number: string;
-  house_extension: string;
-  postal_code: string;
+  streetAddress: string;
+  streetAddress2: string;
+  streetName: string;
+  streetNumber: string;
+  houseExtension: string;
+  postalCode: string;
   city: string;
   region: string;
   phone: string;
   country: string;
-  care_of: string;
+  careOf: string;
 }
