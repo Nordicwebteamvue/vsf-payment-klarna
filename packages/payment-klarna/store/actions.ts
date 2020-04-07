@@ -67,7 +67,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
       const storeCode = currentStoreView().storeCode
       const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
       const { snippet, ...result }: any = await dispatch('klarnaCreateOrder', {
-        url: config.klarna.endpoint,
+        url: config.klarna.create || config.klarna.endpoint,
         body: {
           order,
           storeCode,

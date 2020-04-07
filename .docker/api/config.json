@@ -14,7 +14,6 @@
       "address_update": "https://magento2.example.com/{{storeCode}}/kodbruketklarnaapi/order/addressUpdate",
       "country_change": "https://magento2.example.com/{{storeCode}}/kodbruketklarnaapi/order/changeCountry"
     },
-    "name": "VSF Payment Klarna",
     "auth": {
       "user": "PK05273_caa011a9eda3",
       "pass": "TSL8CTtBVK9y8p76"
