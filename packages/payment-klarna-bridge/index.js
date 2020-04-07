@@ -2,6 +2,7 @@ import { apiStatus } from '../../../lib/util'
 import { Router } from 'express'
 import request from 'request'
 import jwt from 'jsonwebtoken'
+import humps from 'humps'
 
 function addStoreCode (merchantUrls, storeCode = '', dataSourceStoreCode = '') {
   Object.keys(merchantUrls).forEach(url => {
@@ -41,7 +42,7 @@ const middleware = config => function (req, res, next) {
   }
   addStoreCode(order.merchant_urls, storeCode, dataSourceStoreCode)
   order.merchant_reference2 = maybeDecodeCartId(cartId)
-  res.locals.order = order
+  res.locals.order = humps.decamelizeKeys(order)
   next()
 }
 
@@ -65,7 +66,7 @@ module.exports = ({ config }) => {
         delete body.merchant_urls
         apiStatus(res, {
           error: 'Klarna error',
-          body,
+          body: humps.camelizeKeys(body),
           order
         }, statusCode)
         return
@@ -126,7 +127,7 @@ module.exports = ({ config }) => {
     request.post({
       url: klarnaApiUrl,
       json: true,
-      body: order,
+      body: humps.camelizeKeys(order),
       auth: config.klarna.auth
     }, (error, response, body) => {
       if (error || body.error_code) {

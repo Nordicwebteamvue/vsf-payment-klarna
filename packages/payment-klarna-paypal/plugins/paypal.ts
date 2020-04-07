@@ -7,10 +7,10 @@ const plugin: KlarnaPlugin = {
     if (!config.paypal.redirect_url) {
       throw new Error('Missing redirect_url in config.paypal')
     }
-    order.external_payment_methods.push({
+    order.externalPaymentMethods.push({
       name: 'PayPal',
-      redirect_url: config.paypal.redirect_url,
-      image_url: 'https://www.paypalobjects.com/images/shared/paypal-logo-129x32.svg',
+      redirectUrl: config.paypal.redirect_url,
+      imageUrl: 'https://www.paypalobjects.com/images/shared/paypal-logo-129x32.svg',
       description: i18n.tc('Pay with PayPal')
     })
     return order

@@ -26,7 +26,7 @@ const plugin: KlarnaPlugin = {
         length: lengthOrder,
         width: widthOrder
       }
-      order.order_lines.forEach(klarnaProduct => {
+      order.orderLines.forEach(klarnaProduct => {
         if (klarnaProduct.reference) {
           const product = getters.getTrueCartItems.find(product => product.product.sku === klarnaProduct.reference)
           const weight = getValue('weight', product)
@@ -80,7 +80,7 @@ const plugin: KlarnaPlugin = {
             tags.push(config.klarna.freeshipping_tag)
           }
 
-          klarnaProduct.shipping_attributes = {
+          klarnaProduct.shippingAttributes = {
             weight: weight,
             dimensions: {
               height: height, // mm
