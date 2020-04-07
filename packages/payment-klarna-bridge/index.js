@@ -5,7 +5,6 @@ import humps from 'humps'
 import { merchantUrls } from './middleware'
 
 const apiStatusError = (res, e) => {
-  console.log('e', e)
   const error = e.error || e.message || e
   const statusCode = e.statusCode >= 300 ? e.statusCode : 400
   apiStatus(res, { error }, statusCode)
