@@ -1,45 +1,18 @@
 <template>
   <div id="checkout">
-    <div class="container">
-      <div class="row" v-show="!isThankYouPage">
-        <div class="col-sm-7 col-xs-12 pb70">
-          <div class="checkout-title py5 px20">
-            <h1>
-              {{ $t('Checkout') }}
-            </h1>
-          </div>
-          <klarna-checkout />
-        </div>
-        <div class="hidden-xs col-sm-5 bg-cl-secondary">
-          <cart-summary />
-        </div>
-      </div>
-    </div>
-    <thank-you-page v-show="isThankYouPage" />
+    <klarna-checkout />
   </div>
 </template>
 
 <script>
 import Checkout from '@vue-storefront/core/pages/Checkout'
 
-import PersonalDetails from 'theme/components/core/blocks/Checkout/PersonalDetails'
-import Shipping from 'theme/components/core/blocks/Checkout/Shipping'
-import Payment from 'theme/components/core/blocks/Checkout/Payment'
-import OrderReview from 'theme/components/core/blocks/Checkout/OrderReview'
-import CartSummary from 'theme/components/core/blocks/Checkout/CartSummary'
-import ThankYouPage from 'theme/components/core/blocks/Checkout/ThankYouPage'
 import { registerModule } from '@vue-storefront/core/lib/modules'
 import { OrderModule } from '@vue-storefront/core/modules/order'
 import KCO from 'src/modules/payment-klarna/components/KlarnaCheckout'
 
 export default {
   components: {
-    PersonalDetails,
-    Shipping,
-    Payment,
-    OrderReview,
-    CartSummary,
-    ThankYouPage,
     'klarna-checkout': KCO
   },
   mixins: [Checkout],
