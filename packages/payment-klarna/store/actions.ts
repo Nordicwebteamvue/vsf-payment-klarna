@@ -32,7 +32,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
     const { result }: any = await execute(url, 'POST', body)
     if (result.error) {
       Vue.prototype.$bus.$emit('klarna-create-error', result)
-      if (result.body && result.body.error_code === 'READ_ONLY_ORDER') {
+      if (result.error && result.error.error_code === 'READ_ONLY_ORDER') {
         dispatch('removeLocalStorage')
         await dispatch('createOrder')
         return false
