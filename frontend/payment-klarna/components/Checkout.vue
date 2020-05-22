@@ -23,8 +23,6 @@ export default {
     LoadingSpinner
   },
   async mounted () {
-    await this.upsertOrder()
-    // Todo: refactor
     this.$bus.$on('kcoOrderLoaded', () => {
       setTimeout(async () => {
         const order = await this.$store.dispatch('kco/fetchOrder', this.checkout.orderId)
@@ -32,8 +30,10 @@ export default {
           totalSegments: this.totals.total_segments,
           shippingAddress: order.shipping_address
         })
-      }, 2000)
+      }, 500)
     })
+
+    await this.upsertOrder()
   },
   beforeMount () {
     this.$bus.$on('updateKlarnaOrder', this.configureUpdateOrder)
@@ -103,6 +103,15 @@ export default {
     onKcoAddressChange (orderData) {
       if (orderData.shippingAddress.postal_code) {
         this.$bus.$emit('kcoAddressChange', orderData)
+
+        this.$store.dispatch('checkout/saveShippingDetails',
+            Object.assign(
+            {},
+            this.$store.state.checkout.shippingDetails,
+            { country: orderData.shippingAddress.country }
+          )
+        )
+        this.$store.dispatch('cart/syncTotals', { forceServerSync: true })
       }
       return callApi(api => api.on({
         'billing_address_change': async (data) => {
