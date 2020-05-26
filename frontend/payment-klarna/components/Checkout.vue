@@ -108,7 +108,7 @@ export default {
             Object.assign(
             {},
             this.$store.state.checkout.shippingDetails,
-            { country: orderData.shippingAddress.country }
+            { country: orderData.shippingAddress.country.toUpperCase() }
           )
         )
         this.$store.dispatch('cart/syncTotals', { forceServerSync: true })
