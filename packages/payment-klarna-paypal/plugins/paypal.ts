@@ -1,5 +1,6 @@
 import i18n from '@vue-storefront/i18n'
 import { KlarnaPlugin } from 'src/modules/payment-klarna/types'
+import { processURLAddress } from '@vue-storefront/core/helpers'
 
 const plugin: KlarnaPlugin = {
   name: 'paypal',
@@ -9,7 +10,7 @@ const plugin: KlarnaPlugin = {
     }
     order.external_payment_methods.push({
       name: 'PayPal',
-      redirect_url: config.paypal.redirect_url,
+      redirect_url: processURLAddress(config.paypal.redirect_url),
       image_url: 'https://www.paypalobjects.com/images/shared/paypal-logo-129x32.svg',
       description: i18n.tc('Pay with PayPal')
     })
