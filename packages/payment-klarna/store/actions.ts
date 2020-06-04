@@ -5,6 +5,7 @@ import config from 'config'
 import RootState from '@vue-storefront/core/types/RootState'
 import Vue from 'vue'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
+import { processURLAddress } from '@vue-storefront/core/helpers'
 import { plugins, addPlugin } from '../plugins'
 
 const execute = (url, method = 'GET', body = null) => TaskQueue.execute({
@@ -67,7 +68,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
       const storeCode = currentStoreView().storeCode
       const dataSourceStoreCode = storeCode && config.storeViews[storeCode] && config.storeViews[storeCode].dataSourceStoreCode
       const { snippet, ...result }: any = await dispatch('klarnaCreateOrder', {
-        url: config.klarna.create || config.klarna.endpoint,
+        url: processURLAddress(config.klarna.create || config.klarna.endpoint),
         body: {
           order,
           storeCode,
@@ -89,7 +90,7 @@ export const actions: ActionTree<KlarnaState, RootState> = {
     }
   },
   async fetchOrder (context, sid: string) {
-    const url = config.klarna.confirmation.replace('{{sid}}', sid)
+    const url = processURLAddress(config.klarna.confirmation.replace('{{sid}}', sid))
     const { result }: any = await execute(url)
     return result
   },

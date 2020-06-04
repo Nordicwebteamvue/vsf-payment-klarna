@@ -1,4 +1,5 @@
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
+import { processURLAddress } from '@vue-storefront/core/helpers'
 import { defaultPlugins, addPlugin } from '../plugins'
 
 const execute = (url, body) => TaskQueue.execute({
@@ -17,7 +18,7 @@ export function afterRegistration ({ Vue, isServer, config, store }) {
       addPlugin(plugin)
     })
     if (config.klarna.validate_order) {
-      const url = config.klarna.validate_order
+      const url = processURLAddress(config.klarna.validate_order)
       Vue.prototype.$bus.$on('klarna-event-order_total_change', () => {
         const { orderId } = store.state.kco.checkout
         if (url && orderId) {
