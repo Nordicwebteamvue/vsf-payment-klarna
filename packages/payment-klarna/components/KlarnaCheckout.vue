@@ -47,13 +47,13 @@ export default {
   },
   watch: {
     coupon (newValue, oldValue) {
-      if (!oldValue || newValue.code !== oldValue.code) {
+      if (!oldValue || !newValue || newValue.code !== oldValue.code) {
         this.$bus.$emit('klarna-update-order')
       }
     },
     totals (newValue, oldValue) {
       if (oldValue) {
-        if (newValue.qty !== oldValue.qty || newValue.base_grand_total !== oldValue.base_grand_total) {
+        if (newValue.items_qty !== oldValue.items_qty || newValue.base_grand_total !== oldValue.base_grand_total) {
           const storeView = currentStoreView()
           const countryId = this.$store.state.checkout.shippingDetails.country ? this.$store.state.checkout.shippingDetails.country : storeView.tax.defaultCountry
           this.$store.dispatch('cart/syncShippingMethods', {
