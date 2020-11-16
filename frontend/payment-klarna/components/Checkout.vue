@@ -103,15 +103,6 @@ export default {
     onKcoAddressChange (orderData) {
       if (orderData.shippingAddress.postal_code) {
         this.$bus.$emit('kcoAddressChange', orderData)
-
-        this.$store.dispatch('checkout/saveShippingDetails',
-            Object.assign(
-            {},
-            this.$store.state.checkout.shippingDetails,
-            { country: orderData.shippingAddress.country.toUpperCase() }
-          )
-        )
-        this.$store.dispatch('cart/syncTotals', { forceServerSync: true })
       }
       return callApi(api => api.on({
         'billing_address_change': async (data) => {
