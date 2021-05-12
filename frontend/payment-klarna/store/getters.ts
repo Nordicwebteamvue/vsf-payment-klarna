@@ -141,7 +141,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       options: klarnaOptions ? klarnaOptions : null,
       merchant_data: JSON.stringify({
         ...state.merchantData,
-        couponCode: getters.coupon?.code
+        couponCode: getters.coupon?.code || ''
       })
     }
     if (state.checkout.orderId) {
