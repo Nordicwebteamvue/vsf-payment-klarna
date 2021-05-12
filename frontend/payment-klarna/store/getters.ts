@@ -98,7 +98,6 @@ export const getters: GetterTree<CheckoutState, RootState> = {
     const storeView: any = currentStoreView()
     const shippingMethods = rootState.shipping.methods
     const cartItems = rootGetters['cart/getCartItems']
-    const coupon = rootGetters['cart/getCoupon']
     const {platformTotals: totals} = rootState.cart
     if (!getters.hasTotals) {
       return {
@@ -142,7 +141,7 @@ export const getters: GetterTree<CheckoutState, RootState> = {
       options: klarnaOptions ? klarnaOptions : null,
       merchant_data: JSON.stringify({
         ...state.merchantData,
-        couponCode: coupon?.code
+        couponCode: getters.coupon?.code
       })
     }
     if (state.checkout.orderId) {
