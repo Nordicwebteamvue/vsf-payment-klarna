@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "country-code-lookup": "^0.0.17",
-    "qs": "^6.9.3"
+    "qs": "^6.9.7"
   },
   "devDependencies": {}
 }
