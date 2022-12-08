@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "postscribe": "^2.0.8",
-    "qs": "^6.7.0"
+    "qs": "^6.7.3"
   },
   "devDependencies": {}
 }
